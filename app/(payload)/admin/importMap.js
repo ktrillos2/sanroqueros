@@ -1,5 +1,5 @@
-import { default as default_ccac93edd49436199e8d2c168dbd7605 } from './components/MediaCell'
+import { default as default_32e0dd5fee3f87d70ce0b509e4f9d6c3 } from './components/PreviewCell'
 
 export const importMap = {
-  "./components/MediaCell#default": default_ccac93edd49436199e8d2c168dbd7605
+  "./components/PreviewCell#default": default_32e0dd5fee3f87d70ce0b509e4f9d6c3
 }

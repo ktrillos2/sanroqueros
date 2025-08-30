@@ -9,7 +9,7 @@ export const Media: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'alt',
-    defaultColumns: ['alt', 'updatedAt'],
+  defaultColumns: ['alt', 'updatedAt','miniatura'],
     components: {
       // Otros componentes del admin pueden ir aquí si se requieren
     },
@@ -30,9 +30,6 @@ export const Media: CollectionConfig = {
       label: 'Texto alternativo',
       admin: {
         description: 'Describe la imagen para accesibilidad y SEO.',
-        components: {
-          Cell: './components/MediaCell',
-        },
       },
     },
     {
@@ -43,6 +40,17 @@ export const Media: CollectionConfig = {
         readOnly: true,
         position: 'sidebar',
         description: 'Generado automáticamente para mostrar la imagen en el Admin.',
+      },
+    },
+    
+    {
+      name: 'miniatura',
+      label: 'Miniatura',
+      type: 'ui',
+      admin: {
+        components: {
+          Cell: './components/PreviewCell',
+        },
       },
     },
   ],
