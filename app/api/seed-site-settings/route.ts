@@ -16,33 +16,33 @@ export async function GET(req: NextRequest) {
   const payload = await getPayload({ config })
 
   const data = {
-    businessName: 'SANROQUE',
+    nombreComercial: 'SANROQUE',
     logos: {
-      light: '/images/sanroque-logo-black.png',
-      dark: '/images/sanroque-logo-white.png',
+      claro: null as any, // ID de media (se puede cargar desde el Admin)
+      oscuro: null as any,
     },
     whatsapps: [
-      { label: 'Principal', numberRaw: '573154433109', display: '+57 315 443 3109', isPrimary: true },
+      { etiqueta: 'Principal', numero: '573154433109', mostrar: '+57 315 443 3109', principal: true },
     ],
-    emails: [
-      { address: 'info@sanroque.com', label: 'General', isPrimary: true },
+    correos: [
+      { direccion: 'info@sanroque.com', etiqueta: 'General', principal: true },
     ],
-    location: {
-      cityCountry: 'Bogotá, Colombia',
-      address: '',
+    ubicacion: {
+      ciudadPais: 'Bogotá, Colombia',
+      direccion: '',
       googleMapsUrl: '',
     },
-    hours: [
-      { day: 'Lunes a Viernes', open: '09:00', close: '18:00', note: '' },
-      { day: 'Sábado', open: '09:00', close: '14:00', note: '' },
+    horarios: [
+      { dia: 'Lunes a Viernes', abre: '09:00', cierra: '18:00', nota: '' },
+      { dia: 'Sábado', abre: '09:00', cierra: '14:00', nota: '' },
     ],
-    social: {
+    redes: {
       instagram: '',
       facebook: '',
       youtube: '',
       tiktok: '',
     },
-    whatsappDefaultMessage:
+    mensajeWhatsAppPorDefecto:
       'Hola, vengo desde la web. Me gustaría agendar una cita para mi mascota.',
   }
 

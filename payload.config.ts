@@ -10,16 +10,31 @@ import sharp from 'sharp'
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import SiteSettings from './globals/SiteSettings'
+// Nota: Payload v3 no expone admin.i18n en el config de forma estable.
+// Usaremos una inyección ligera de script para forzar 'es' en el admin.
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
 export default buildConfig({
+  serverURL:
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    (process.env.CODESPACE_NAME && process.env.GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN
+      ? `https://${process.env.CODESPACE_NAME}-3000.${process.env.GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}`
+      : 'http://localhost:3000'),
   admin: {
     user: Users.slug,
     importMap: {
-      baseDir: path.resolve(dirname),
+  // Base del import map al folder del admin para que los paths relativos queden correctos
+  baseDir: path.resolve(dirname, 'app/(payload)/admin'),
     },
+    autoLogin: process.env.NODE_ENV !== 'production' && process.env.ADMIN_EMAIL && process.env.ADMIN_PASSWORD
+      ? {
+          email: process.env.ADMIN_EMAIL,
+          password: process.env.ADMIN_PASSWORD,
+          prefillOnly: false,
+        }
+      : undefined,
   },
   collections: [Users, Media],
   globals: [SiteSettings],

@@ -2,7 +2,7 @@ import type React from "react"
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
-import { FloatingWhatsappButton } from "@/components/floating-whatsapp-button"
+import { ConditionalWhatsapp } from "@/components/conditional-whatsapp"
 
 const moonglade = Inter({
   subsets: ["latin"],
@@ -74,8 +74,8 @@ export default function RootLayout({
   return (
     <html lang="es" className={`${moonglade.variable} ${helveticaNeue.variable}`}>
       <body className="font-sans antialiased">
-        {children}
-        <FloatingWhatsappButton />
+  {children}
+  <ConditionalWhatsapp />
       </body>
     </html>
   )
