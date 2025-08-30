@@ -18,9 +18,9 @@ export function Footer() {
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Logo and Description */}
           <div className="lg:col-span-2">
-            <Link href="/" className="inline-block mb-4">
+      <Link href="/" className="inline-block mb-4">
               <Image
-                src="/images/sanroque-logo-white.png"
+        src="/images/sanroque-logo-white.png"
                 alt="SANROQUE"
                 width={180}
                 height={48}
