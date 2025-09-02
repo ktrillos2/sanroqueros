@@ -53,12 +53,12 @@ export function Header() {
             </Link>
 
             {/* Desktop Navigation */}
-            <nav className="hidden md:flex items-center space-x-8">
+    <nav className="hidden md:flex items-center space-x-8">
               {navItems.map((item) => (
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`font-medium transition-colors hover:text-brand-yellow ${
+      className={`moonglade font-medium transition-colors hover:text-brand-yellow ${
                     isScrolled ? "text-gray-900" : "text-white"
                   }`}
                 >
@@ -69,7 +69,7 @@ export function Header() {
 
             {/* CTA Button */}
             <div className="hidden md:block">
-              <Button asChild className="bg-brand-yellow hover:bg-yellow-400 text-black font-semibold">
+              <Button asChild className="moonglade bg-brand-yellow hover:bg-yellow-400 text-black font-semibold">
                 <Link href="/#contacto">Agendar Cita</Link>
               </Button>
             </div>
@@ -98,18 +98,18 @@ export function Header() {
                 exit={{ opacity: 0, height: 0 }}
                 transition={{ duration: 0.3 }}
               >
-                <nav className="flex flex-col space-y-4 px-4">
+        <nav className="flex flex-col space-y-4 px-4">
                   {navItems.map((item) => (
                     <Link
                       key={item.name}
                       href={item.href}
-                      className="text-gray-900 font-medium hover:text-brand-yellow transition-colors"
+            className="moonglade text-gray-900 font-medium hover:text-brand-yellow transition-colors"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       {item.name}
                     </Link>
                   ))}
-                  <Button asChild className="bg-brand-yellow hover:bg-yellow-400 text-black font-semibold mt-4">
+          <Button asChild className="moonglade bg-brand-yellow hover:bg-yellow-400 text-black font-semibold mt-4">
                     <Link href="/#contacto" onClick={() => setIsMobileMenuOpen(false)}>
                       Agendar Cita
                     </Link>

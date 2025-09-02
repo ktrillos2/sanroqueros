@@ -72,7 +72,7 @@ Me gustaría agendar una cita para mi mascota.`
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
           >
-            <Card className="bg-white/10 backdrop-blur-md border-gray-700">
+            <Card className="bg-white/10 backdrop-blur-md border-gray-700 py-6">
               <CardHeader>
                 <CardTitle className="text-white font-heading text-2xl">Agenda tu Cita</CardTitle>
                 <CardDescription className="text-gray-300">
@@ -155,7 +155,7 @@ Me gustaría agendar una cita para mi mascota.`
                 <div className="space-y-4">
                   <Button
                     onClick={handleWhatsAppSubmit}
-                    className="w-full bg-brand-yellow hover:bg-yellow-400 text-black font-semibold text-lg py-3"
+                    className="w-full bg-brand-yellow hover:bg-yellow-400 text-white hover:cursor-pointer hover:text-black font-semibold text-lg py-3"
                     size="lg"
                   >
                     <Send className="mr-2 w-5 h-5" />

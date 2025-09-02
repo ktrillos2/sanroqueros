@@ -40,7 +40,7 @@ export function SpaExperienceSection() {
           viewport={{ once: true }}
         >
           <h2 className="moonglade text-4xl lg:text-5xl font-bold text-brand-black mb-6">
-           Experiencia <span className="text-brand-yellow">Spa 360°</span>
+           Experiencia <span className="text-brand-yellow">Spa <span className="font-helvetica">360</span>°</span>
            
           </h2>
           <p className="font-helvetica text-gray-600 text-lg max-w-3xl mx-auto mb-8">
