@@ -113,7 +113,7 @@ export default function GatosPage() {
     <main className="min-h-screen bg-black">
       <Header />
 
-      <section className="relative pt-32 pb-20 overflow-hidden">
+  <section className="relative pt-24 pb-12 md:pt-32 md:pb-20 overflow-hidden">
         {/* Animated background */}
         <div className="absolute inset-0 bg-black">
           <div className="absolute top-20 left-10 w-32 h-32 bg-[#FFB1BE]/20 rounded-full blur-3xl animate-pulse"></div>
@@ -164,25 +164,25 @@ export default function GatosPage() {
         </div>
       </section>
 
-      <section className="py-20 bg-black">
+    <section className="py-12 md:py-16 bg-black">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
+      <div className="text-center mb-10 md:mb-16">
             <h2 className="font-heading text-3xl md:text-4xl font-bold text-white mb-4">Nuestros Servicios</h2>
             <p className="text-lg text-gray-400 max-w-3xl mx-auto">
               Servicios especializados para el cuidado felino con los mejores productos y técnicas
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
+      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
             {services.map((service) => (
               <Card
                 key={service.id}
-                className={`relative bg-gray-900 border-gray-800 text-white hover:scale-105 transition-all duration-300 hover:${service.shadowColor} hover:shadow-2xl ${
+        className={`relative bg-gray-900 border-gray-800 text-white hover:scale-105 transition-all duration-300 hover:${service.shadowColor} hover:shadow-2xl pt-6 ${
                   service.isPopular ? "ring-2 ring-yellow-500" : ""
                 }`}
               >
                 {service.isPopular && (
-                  <Badge className="absolute -top-2 -right-2 bg-gradient-to-r from-yellow-500 to-yellow-600 text-black font-semibold px-3 py-1 rounded-full text-xs">
+                  <Badge className="absolute -top-2 -right-2 font-semibold px-3 py-1 rounded-full text-xs">
                     Más Popular
                   </Badge>
                 )}
@@ -225,9 +225,9 @@ export default function GatosPage() {
         </div>
       </section>
 
-      <section id="identificar-manto" className="py-24 bg-gradient-to-br from-gray-900 to-black">
+    <section id="identificar-manto" className="py-12 md:py-16 bg-gradient-to-br from-gray-900 to-black">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
+      <div className="text-center mb-10 md:mb-16">
             <h2 className="font-heading text-4xl lg:text-5xl font-bold text-white mb-6 animate-fade-in">
               ¿No sabes qué tipo de manto es tu gato?
             </h2>
@@ -237,20 +237,20 @@ export default function GatosPage() {
             </p>
           </div>
 
-          <div className="max-w-6xl mx-auto">
-            <Card className="shadow-2xl bg-transparent border-2 border-[#88D3EE] backdrop-blur-sm">
-              <CardHeader className="text-center bg-gray-800/50 text-white">
-                <CardTitle className="font-heading text-4xl font-bold">🔍 Identificador de Tipo de Manto</CardTitle>
+          <div className="max-w-6xl w-full mx-auto">
+            <Card className="shadow-2xl bg-transparent border-2 border-[#88D3EE] backdrop-blur-sm p-0 overflow-hidden">
+              <CardHeader className="text-center bg-gray-800/50 text-white py-4">
+                <CardTitle className="font-heading text-xl font-bold">🔍 Identificador de Tipo de Manto</CardTitle>
                 <CardDescription className="text-gray-300 text-base">
                   Encuentra la raza de tu gato y conoce su tipo de manto
                 </CardDescription>
               </CardHeader>
 
-              <CardContent className="p-8 bg-gray-900/50">
+              <CardContent className="p-4 md:p-8 bg-gray-900/50">
                 <div>
                   <label className="block text-lg font-bold text-white mb-4">Selecciona la raza de tu gato:</label>
                   <Select onValueChange={handleBreedSelect}>
-                    <SelectTrigger className="w-full h-12 text-base bg-gray-700 border-[#88D3EE] text-white">
+                    <SelectTrigger className="w-full h-12 text-base bg-gray-700 border-[#88D3EE] text-white data-[placeholder]:text-white">
                       <SelectValue placeholder="🔍 Busca y selecciona la raza de tu gato..." />
                     </SelectTrigger>
                     <SelectContent className="bg-gray-800 border-[#88D3EE] max-h-60">
@@ -266,33 +266,29 @@ export default function GatosPage() {
                 </div>
 
                 {selectedBreed && coatType && (
-                  <div className="p-6 bg-gradient-to-r from-[#88D3EE]/10 to-[#FFB1BE]/10 rounded-2xl border-2 border-[#FFE550] animate-fade-in">
+                  <div className="p-4 mt-2 md:p-6 bg-gradient-to-r from-[#88D3EE]/10 to-[#FFB1BE]/10 rounded-2xl border-2 border-[#FFE550] animate-fade-in">
                     <div className="space-y-6">
                       <div className="flex items-center space-x-4">
                         <CheckCircle className="w-8 h-8 text-[#FFE550]" />
                         <div>
-                          <h3 className="text-xl font-bold text-white">¡Identificado! 🎉</h3>
+                          <h3 className="text-lg font-bold text-white">¡Identificado! 🎉</h3>
                           <p className="text-gray-300 text-base">
-                            Raza: <span className="font-bold text-[#FFE550]">{selectedBreed}</span>
+                            Raza: <span className="font-bold text-[#FFE550] break-words">{selectedBreed}</span>
                           </p>
                         </div>
                       </div>
 
-                      <div className="grid md:grid-cols-2 gap-6">
-                        <div className="bg-gradient-to-r from-gray-800 to-gray-700 rounded-2xl p-6 border-l-8 border-[#FFE550] shadow-2xl">
-                          <h4 className="font-bold text-xl text-white mb-4 flex items-center">✂️ Tipo de Manto:</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="min-w-0 rounded-xl p-0 md:bg-gradient-to-r md:from-gray-800 md:to-gray-700 md:rounded-2xl md:p-6 md:border-l-8 md:border-[#FFE550] md:shadow-2xl">
+                          <h4 className="font-bold text-lg md:text-xl text-white mb-3 md:mb-4 flex items-center break-words">✂️ Tipo de Manto:</h4>
                           <div className="mb-4">
                             <Badge
-                              className={`text-lg px-6 py-3 font-bold shadow-xl transform hover:scale-105 transition-all duration-300 ${
-                                coatType === "Manto Corto"
-                                  ? "bg-gradient-to-r from-[#88D3EE] to-[#88D3EE]/80 text-white"
-                                  : "bg-gradient-to-r from-[#FFB1BE] to-[#FFB1BE]/80 text-white"
-                              }`}
+                              className={`text-lg px-6 py-3 font-bold shadow-xl transform hover:scale-105 transition-all duration-300`}
                             >
                               {coatType === "Manto Corto" ? "🔹 MANTO CORTO" : "🔸 MANTO MEDIO Y LARGO"}
                             </Badge>
                           </div>
-                          <div className="bg-[#000] rounded-xl p-4 border border-[#FFE550]/30">
+                          <div className="bg-[#000] md:bg-transparent rounded-xl md:rounded-none p-4 md:p-0 border border-[#FFE550]/30 md:border-0">
                             <p className="text-gray-300 text-base leading-relaxed">
                               {coatType === "Manto Corto"
                                 ? "🐱 Tu gato tiene pelo corto que requiere cuidados específicos para mantener su brillo natural y textura suave."
@@ -301,8 +297,8 @@ export default function GatosPage() {
                           </div>
                         </div>
 
-                        <div className="bg-gradient-to-r from-gray-800 to-gray-700 rounded-2xl p-6 shadow-2xl border border-[#88D3EE]/30">
-                          <h4 className="font-bold text-xl text-white mb-4 flex items-center">
+                        <div className="min-w-0 bg-gradient-to-r from-gray-800 to-gray-700 rounded-2xl p-6 shadow-2xl border border-[#88D3EE]/30">
+                          <h4 className="font-bold text-lg md:text-xl text-white mb-3 md:mb-4 flex items-center break-words">
                             💰 Precios para {selectedBreed}:
                           </h4>
                           <div className="grid grid-cols-1 gap-3">
@@ -327,9 +323,9 @@ export default function GatosPage() {
         </div>
       </section>
 
-      <section className="py-24 bg-gradient-to-b from-black to-gray-900">
+    <section className="py-12 md:py-16 bg-gradient-to-b from-black to-gray-900">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
+      <div className="text-center mb-10 md:mb-16">
             <h2 className="font-heading text-4xl lg:text-5xl font-bold text-white mb-6">
               Lista de Precios <span className="text-[#FFE550]">2025</span>
             </h2>
@@ -338,15 +334,15 @@ export default function GatosPage() {
             </p>
           </div>
 
-          <div className="space-y-16">
+      <div className="space-y-10 md:space-y-16">
             <div className="animate-fade-in">
-              <div className="text-center mb-8">
-                <Badge className="bg-[#88D3EE] mb-6 font-bold shadow-2xl text-black text-lg px-4 py-2">
+        <div className="text-center mb-6 md:mb-8">
+                <Badge className="mb-6 font-bold shadow-2xl text-lg px-4 py-2">
                   🔹 Manto Corto / Pelo Corto
                 </Badge>
               </div>
 
-              <div className="overflow-x-auto">
+              <div className="overflow-x-auto scrollbar-white">
                 <table className="w-full bg-gray-800 text-white rounded-2xl overflow-hidden shadow-2xl border-2 border-[#88D3EE]">
                   <thead className="bg-gradient-to-r from-[#88D3EE] to-[#88D3EE]/80">
                     <tr>
@@ -371,13 +367,13 @@ export default function GatosPage() {
             </div>
 
             <div className="animate-fade-in">
-              <div className="text-center mb-8">
-                <Badge className="bg-[#FFB1BE] mb-6 font-bold shadow-2xl text-black py-2 px-4 text-lg">
+              <div className="text-center mb-6 md:mb-8">
+                <Badge className="mb-6 font-bold shadow-2xl py-2 px-4 text-lg">
                   🔸 Manto Medio y Largo
                 </Badge>
               </div>
 
-              <div className="overflow-x-auto">
+              <div className="overflow-x-auto scrollbar-white">
                 <table className="w-full bg-gray-800 text-white rounded-2xl overflow-hidden shadow-2xl border-2 border-[#FFB1BE]">
                   <thead className="bg-gradient-to-r from-[#FFB1BE] to-[#FFB1BE]/80">
                     <tr>

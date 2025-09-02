@@ -99,7 +99,7 @@ export function HeroSection() {
           >
             <div className="space-y-4">
               <motion.h1
-                className="font-moonglade text-5xl lg:text-7xl font-bold leading-tight font-serif"
+                className="moonglade text-5xl lg:text-7xl font-bold leading-tight text-center tracking-tight lg:tracking-tighter"
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2, duration: 0.8 }}
@@ -124,7 +124,7 @@ export function HeroSection() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6, duration: 0.8 }}
             >
-              <Button variant="primary"
+              <Button variant="outline"
                 size="lg"
                 className="bg-brand-yellow hover:bg-yellow-400 font-helvetica font-semibold text-lg px-8 py-4 text-white"
                 asChild

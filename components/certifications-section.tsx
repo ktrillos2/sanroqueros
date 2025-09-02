@@ -60,7 +60,7 @@ export function CertificationsSection() {
             Certificaciones de Excelencia
           </motion.div>
 
-          <h2 className="font-moonglade text-4xl lg:text-5xl font-bold text-brand-black mb-4 font-serif">
+          <h2 className="moonglade text-4xl lg:text-5xl font-bold text-brand-black mb-4">
             Nuestras <span className="text-brand-yellow">Certificaciones</span>
           </h2>
 
@@ -83,7 +83,7 @@ export function CertificationsSection() {
                 viewport={{ once: true }}
                 whileHover={{ scale: 1.02 }}
               >
-                <div className="bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-500 border border-gray-100 relative overflow-hidden h-full">
+                <div className="bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-500 border border-gray-100 relative overflow-hidden h-full font-helvetica">
                   {/* Background gradient */}
                   <div className={`absolute inset-0 bg-gradient-to-br ${cert.color} opacity-5 rounded-3xl`}></div>
 
@@ -110,7 +110,7 @@ export function CertificationsSection() {
                     <div className="space-y-4">
                       <div className="flex items-center justify-center gap-2 mb-2">
                         <cert.icon className={`w-6 h-6 bg-gradient-to-r ${cert.color} bg-clip-text text-transparent`} />
-                        <h3 className="font-moonglade text-xl font-bold text-brand-black">{cert.title}</h3>
+                        <h3 className="text-xl font-bold text-brand-black">{cert.title}</h3>
                       </div>
 
                       <p
@@ -140,7 +140,7 @@ export function CertificationsSection() {
           viewport={{ once: true }}
         >
           <div className="text-center mb-8">
-            <h3 className="font-moonglade text-2xl lg:text-3xl font-bold text-white mb-4">
+            <h3 className="moonglade text-2xl lg:text-3xl font-bold text-white mb-4">
               Lo que nos hace <span className="text-brand-yellow">únicos</span>
             </h3>
             <p className="font-helvetica text-gray-300">

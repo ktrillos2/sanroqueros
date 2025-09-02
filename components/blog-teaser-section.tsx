@@ -63,7 +63,7 @@ export function BlogTeaserSection() {
               transition={{ duration: 0.8, delay: index * 0.2 }}
               viewport={{ once: true }}
             >
-              <Card className="bg-white border-gray-200 h-full hover:border-black transition-all duration-300 group overflow-hidden">
+              <Card className="pt-0 bg-white border-gray-200 h-full hover:border-black transition-all duration-300 group overflow-hidden">
                 <CardContent className="p-0">
                   <div className="relative h-48 overflow-hidden">
                     <Image
@@ -73,7 +73,7 @@ export function BlogTeaserSection() {
                       className="object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                     <div className="absolute top-4 left-4">
-                      <Badge className="bg-brand-yellow text-black font-semibold">{post.category}</Badge>
+                      <Badge className="font-semibold">{post.category}</Badge>
                     </div>
                   </div>
 

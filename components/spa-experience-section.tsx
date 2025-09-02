@@ -39,7 +39,7 @@ export function SpaExperienceSection() {
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
         >
-          <h2 className="font-moonglade text-4xl lg:text-5xl font-bold text-brand-black mb-6 font-serif">
+          <h2 className="moonglade text-4xl lg:text-5xl font-bold text-brand-black mb-6">
            Experiencia <span className="text-brand-yellow">Spa 360°</span>
            
           </h2>
@@ -63,7 +63,7 @@ export function SpaExperienceSection() {
               >
                 <Play className="w-16 h-16 mx-auto mb-4 text-brand-yellow" />
               </motion.div>
-              <p className="font-moonglade text-xl">Video próximamente</p>
+              <p className="moonglade text-xl">Video próximamente</p>
               <p className="font-helvetica text-sm text-gray-400 mt-2">Experiencia Spa 360° - Detrás de cámaras</p>
             </div>
           </motion.div>
@@ -79,7 +79,7 @@ export function SpaExperienceSection() {
               viewport={{ once: true }}
               whileHover={{ y: -10 }}
             >
-              <Card className="overflow-hidden group hover:shadow-2xl transition-all duration-500 border-0 bg-white">
+              <Card className="overflow-hidden group hover:shadow-2xl transition-all duration-500 border-0 bg-white gap-0">
                 <div className="relative h-48 overflow-hidden">
                   <Image
                     src={experience.image || "/placeholder.svg"}
@@ -98,7 +98,7 @@ export function SpaExperienceSection() {
                 </div>
 
                 <CardContent className="p-6">
-                  <h3 className="font-moonglade text-xl font-bold text-brand-black mb-2">{experience.title}</h3>
+                  <h3 className="moonglade text-xl font-bold text-brand-black mb-2">{experience.title}</h3>
                   <p className="font-helvetica text-gray-600 text-sm">{experience.description}</p>
                 </CardContent>
               </Card>

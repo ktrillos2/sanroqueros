@@ -44,7 +44,7 @@ export function WhatIsSpaSection() {
           >
             <div className="space-y-4">
               <motion.h2
-                className="font-moonglade text-4xl lg:text-5xl font-bold text-brand-black font-serif"
+                className="moonglade text-4xl lg:text-5xl font-bold text-brand-black text-center"
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2, duration: 0.8 }}
@@ -110,7 +110,7 @@ export function WhatIsSpaSection() {
                         <benefit.icon className="w-6 h-6 text-black" />
                       </motion.div>
                       <div className="flex-1">
-                        <h3 className="font-moonglade text-lg font-semibold text-brand-black mb-2 flex items-center gap-2">
+                        <h3 className="moonglade text-lg font-semibold text-brand-black mb-2 flex items-center gap-2">
                           {benefit.title}
                           {benefit.isSpecial && (
                             <span className="inline-block w-2 h-2 bg-brand-yellow rounded-full animate-pulse"></span>

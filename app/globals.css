@@ -142,6 +142,21 @@
     font-family: var(--font-moonglade);
   }
 
+  /* Utility class to apply Moonglade font directly */
+  .moonglade {
+    font-family: var(--font-moonglade);
+  }
+
+  /* Backwards-compat alias while we migrate */
+  .font-moonglade {
+    font-family: var(--font-moonglade);
+  }
+
+  /* Utility class to apply Helvetica Neue directly */
+  .font-helvetica {
+    font-family: var(--font-helvetica-neue);
+  }
+
   .bg-brand-black {
     background-color: var(--brand-black);
   }
@@ -166,6 +181,28 @@
 /* Added smooth scrolling and custom animations */
 html {
   scroll-behavior: smooth;
+}
+
+/* Evitar scroll horizontal globalmente */
+html, body {
+  overflow-x: hidden;
+  width: 100%;
+}
+
+/* Scrollbar blanca para contenedores con overflow-x */
+.scrollbar-white::-webkit-scrollbar { height: 10px; }
+.scrollbar-white::-webkit-scrollbar-track { background: transparent; }
+.scrollbar-white::-webkit-scrollbar-thumb { background: #fff; border-radius: 9999px; }
+.scrollbar-white { scrollbar-color: #ffffff transparent; scrollbar-width: thin; }
+
+/* Asegurar que imágenes y contenedores no excedan el ancho */
+img, svg, canvas, video {
+  max-width: 100%;
+}
+
+/* Evitar que transformaciones rompan el flujo horizontal */
+*[style*="translateX("] {
+  will-change: transform;
 }
 
 @keyframes float {

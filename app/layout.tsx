@@ -1,15 +1,12 @@
 import type React from "react"
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
+import { moonglade as moongladeLocal } from "@/app/fonts/moonglade"
 import "./globals.css"
 import { ConditionalWhatsapp } from "@/components/conditional-whatsapp"
 
-const moonglade = Inter({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-moonglade",
-  weight: ["400", "600", "700"],
-})
+// Use local Moonglade font files (Light 300, Regular 400, Bold 700)
+const moonglade = moongladeLocal
 
 const helveticaNeue = Inter({
   subsets: ["latin"],
@@ -73,7 +70,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" className={`${moonglade.variable} ${helveticaNeue.variable}`}>
-      <body className="font-sans antialiased">
+      <body className="font-sans antialiased overflow-x-hidden">
   {children}
   <ConditionalWhatsapp />
       </body>

@@ -80,11 +80,11 @@ export function GallerySection() {
               >
                 {galleryImages.map((image, index) => (
                   <div key={index} className="w-full flex-shrink-0">
-                    <Card className="overflow-hidden border-0 shadow-xl">
+                    <Card className="overflow-hidden border-0 shadow-xl p-0">
                       <div className="relative h-80">
                         <Image src={image.src || "/placeholder.svg"} alt={image.title} fill className="object-cover" />
                         <div className="absolute top-4 left-4">
-                          <Badge className="bg-brand-yellow text-black font-semibold">{image.category}</Badge>
+                          <Badge className="font-semibold">{image.category}</Badge>
                         </div>
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
                         <div className="absolute bottom-4 left-4 right-4 text-white">
@@ -157,7 +157,7 @@ export function GallerySection() {
                       className="object-cover group-hover:scale-110 transition-transform duration-700"
                     />
                     <div className="absolute top-4 left-4">
-                      <Badge className="bg-brand-yellow text-black font-semibold">{image.category}</Badge>
+                      <Badge className="font-semibold">{image.category}</Badge>
                     </div>
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     <div className="absolute bottom-4 left-4 right-4 text-white transform translate-y-4 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300">

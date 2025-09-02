@@ -115,7 +115,7 @@ export function StoreLocationSection() {
             viewport={{ once: true }}
           >
             <div className="space-y-6">
-              <h3 className="font-heading text-3xl font-bold text-brand-black">
+              <h3 className="font-heading text-3xl font-bold text-brand-black text-center">
                 Instalaciones de <span className="text-brand-yellow">Primera Clase</span>
               </h3>
               <p className="text-gray-600 text-lg leading-relaxed">

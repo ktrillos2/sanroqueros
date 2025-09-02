@@ -76,7 +76,7 @@ export function TestimonialsSection() {
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
         >
-          <h2 className="font-moonglade text-4xl lg:text-5xl font-bold text-white mb-6">
+          <h2 className="font-heading text-4xl lg:text-5xl font-bold text-white mb-6">
             Lo que Dicen Nuestros <span className="text-brand-yellow">Clientes</span>
           </h2>
           <p className="font-helvetica text-gray-300 text-lg max-w-3xl mx-auto mb-8">
@@ -115,7 +115,7 @@ export function TestimonialsSection() {
             <div className="relative z-20 flex items-center justify-center h-full text-white">
               <div className="text-center">
                 <Play className="w-16 h-16 mx-auto mb-4 text-brand-yellow" />
-                <h3 className="text-xl font-bold mb-2">{videos[currentVideo].title}</h3>
+                <h3 className="font-heading text-xl font-bold mb-2">{videos[currentVideo].title}</h3>
                 <p className="text-sm text-gray-300">{videos[currentVideo].description}</p>
               </div>
             </div>
