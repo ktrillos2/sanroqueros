@@ -1,27 +1,78 @@
 "use client"
 
+import { useEffect, useMemo, useState } from "react"
 import { motion } from "framer-motion"
 import Image from "next/image"
 import { Play, Heart, Sparkles, Star } from "lucide-react"
 
+type MediaRef = { url?: string }
+type Rich = any
+type Feature = { icon: 'heart' | 'sparkles' | 'star'; title: string; description?: Rich }
+type Video = { sourceType?: 'youtube' | 'upload'; youtubeUrl?: string; file?: MediaRef | string; caption?: string }
+type Images = { main?: MediaRef | string; secondary?: MediaRef | string }
+type MichiData = { title?: { pink?: string; rest?: string }; intro?: Rich; features?: Feature[]; video?: Video; images?: Images }
+
+const getMediaUrl = (m?: MediaRef | string) => typeof m === 'string' ? m : m?.url
+const IconFromName = ({ name }: { name: Feature['icon'] }) => name === 'heart' ? <Heart className="w-6 h-6 text-white" /> : name === 'sparkles' ? <Sparkles className="w-6 h-6 text-white" /> : <Star className="w-6 h-6 text-white" />
+
+function extractRichParagraphs(rich?: Rich): string[] {
+  if (!rich) return []
+  if (rich?.root?.children && Array.isArray(rich.root.children)) {
+    const paras: string[] = []
+    for (const node of rich.root.children) {
+      if (node?.type === 'paragraph' && Array.isArray(node.children)) {
+        const t = node.children.map((c: any) => c?.text || '').join('')
+        if (t.trim()) paras.push(t)
+      }
+    }
+    return paras
+  }
+  if (typeof rich === 'string') return [rich]
+  return []
+}
+
+function toYouTubeEmbed(url?: string): string | null {
+  if (!url) return null
+  try {
+    const u = new URL(url)
+    if (u.hostname.includes('youtu.be')) {
+      const id = u.pathname.replace('/', '')
+      return id ? `https://www.youtube.com/embed/${id}` : null
+    }
+    if (u.hostname.includes('youtube.com')) {
+      const id = u.searchParams.get('v')
+      if (id) return `https://www.youtube.com/embed/${id}`
+      if (u.pathname.startsWith('/embed/')) return url
+    }
+  } catch { }
+  return null
+}
+
 export function MichiFriendlySection() {
-  const catFeatures = [
-    {
-      icon: Heart,
-      title: "Ambiente Tranquilo",
-      description: "Espacios diseñados especialmente para el bienestar felino",
-    },
-    {
-      icon: Sparkles,
-      title: "Técnicas Especializadas",
-      description: "Métodos suaves adaptados al comportamiento de los gatos",
-    },
-    {
-      icon: Star,
-      title: "Productos Específicos",
-      description: "Líneas de cuidado formuladas exclusivamente para felinos",
-    },
-  ]
+  const [data, setData] = useState<MichiData | null>(null)
+
+  useEffect(() => {
+    let mounted = true
+      ; (async () => {
+        try {
+          const res = await fetch('/api/michi-friendly', { cache: 'no-store' })
+          const json = res.ok ? await res.json() : null
+          if (!mounted) return
+          setData(json)
+        } catch {
+          if (!mounted) return
+          setData(null)
+        }
+      })()
+    return () => { mounted = false }
+  }, [])
+
+  const titlePink = data?.title?.pink ?? 'Michi'
+  const titleRest = data?.title?.rest ?? 'Friendly'
+  const introParas = useMemo(() => extractRichParagraphs(data?.intro), [data?.intro])
+  const features = data?.features ?? []
+  const mainUrl = getMediaUrl(data?.images?.main) || "/images/ragdoll-cat.jpg"
+  const secondaryUrl = getMediaUrl(data?.images?.secondary) || "/images/yorkshire-terriers.png"
 
   return (
     <section className="py-20 bg-brand-black relative overflow-hidden">
@@ -43,17 +94,18 @@ export function MichiFriendlySection() {
           >
             <div className="space-y-6">
               <h2 className="font-heading text-4xl lg:text-5xl font-bold leading-tight">
-                <span className="text-brand-pink">Michi</span> Friendly
+                <span className="text-brand-pink">{titlePink}</span> {titleRest}
               </h2>
-              <p className="text-xl text-gray-300 leading-relaxed">
-                Sabemos que los gatos son especiales. Por eso hemos creado un ambiente y servicios diseñados
-                específicamente para el bienestar y comodidad de nuestros amigos felinos.
-              </p>
+              <div className="text-xl text-gray-300 leading-relaxed space-y-4">
+                {introParas.length ? introParas.map((t, i) => (<p key={i}>{t}</p>)) : (
+                  <p>Sabemos que los gatos son especiales. Por eso hemos creado un ambiente y servicios diseñados específicamente para el bienestar y comodidad de nuestros amigos felinos.</p>
+                )}
+              </div>
             </div>
 
             {/* Features */}
             <div className="space-y-6">
-              {catFeatures.map((feature, index) => (
+              {features.map((feature, index) => (
                 <motion.div
                   key={feature.title}
                   className="flex items-start gap-4"
@@ -63,30 +115,47 @@ export function MichiFriendlySection() {
                   viewport={{ once: true }}
                 >
                   <div className="w-12 h-12 bg-brand-pink rounded-full flex items-center justify-center flex-shrink-0">
-                    <feature.icon className="w-6 h-6 text-white" />
+                    <IconFromName name={feature.icon} />
                   </div>
                   <div>
                     <h3 className="font-heading text-xl font-semibold text-white mb-2">{feature.title}</h3>
-                    <p className="text-gray-400">{feature.description}</p>
+                    <div className="text-gray-400 space-y-2">
+                      {extractRichParagraphs(feature.description).map((t, i) => (<p key={i}>{t}</p>))}
+                    </div>
                   </div>
                 </motion.div>
               ))}
             </div>
 
-            {/* Video Placeholder */}
-            <motion.div
-              className="aspect-video bg-gray-900 rounded-2xl flex items-center justify-center text-white border border-gray-800"
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-              viewport={{ once: true }}
-            >
-              <div className="text-center">
-                <Play className="w-12 h-12 mx-auto mb-3 text-brand-pink" />
-                <p className="text-sm">Video próximamente</p>
-                <p className="text-xs text-gray-400 mt-1">Experiencia Michi Friendly</p>
-              </div>
-            </motion.div>
+            {/* Video */}
+            {(() => {
+              const v = data?.video
+              const fileUrl = getMediaUrl(v?.file)
+              const yt = toYouTubeEmbed(v?.youtubeUrl)
+              if (v?.sourceType === 'youtube' && yt) {
+                return (
+                  <motion.div className="aspect-video rounded-2xl overflow-hidden border border-gray-800" initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6, delay: 0.4 }} viewport={{ once: true }}>
+                    <iframe src={yt} title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen className="w-full h-full" />
+                  </motion.div>
+                )
+              }
+              if (v?.sourceType === 'upload' && fileUrl) {
+                return (
+                  <motion.div className="aspect-video rounded-2xl overflow-hidden border border-gray-800" initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6, delay: 0.4 }} viewport={{ once: true }}>
+                    <video className="w-full h-full" src={fileUrl} controls preload="metadata" />
+                  </motion.div>
+                )
+              }
+              return (
+                <motion.div className="aspect-video bg-gray-900 rounded-2xl flex items-center justify-center text-white border border-gray-800" initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8, delay: 0.4 }} viewport={{ once: true }}>
+                  <div className="text-center">
+                    <Play className="w-12 h-12 mx-auto mb-3 text-brand-pink" />
+                    <p className="text-sm">Video próximamente</p>
+                    <p className="text-xs text-gray-400 mt-1">{data?.video?.caption ?? 'Experiencia Michi Friendly'}</p>
+                  </div>
+                </motion.div>
+              )
+            })()}
           </motion.div>
 
           {/* Right Content - Cat Images */}
@@ -106,7 +175,7 @@ export function MichiFriendlySection() {
               >
                 <div className="relative w-[350px] h-[350px]">
                   <Image
-                    src="/images/ragdoll-cat.jpg"
+                    src={mainUrl}
                     alt="Gato Ragdoll relajado en SANROQUE"
                     fill
                     sizes="(max-width: 1024px) 50vw, 350px"
@@ -123,7 +192,7 @@ export function MichiFriendlySection() {
               >
                 <div className="relative w-[300px] h-[300px]">
                   <Image
-                    src="/images/yorkshire-terriers.png"
+                    src={secondaryUrl}
                     alt="Yorkshire Terriers en SANROQUE"
                     fill
                     sizes="(max-width: 1024px) 50vw, 300px"
