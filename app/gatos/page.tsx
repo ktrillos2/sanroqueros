@@ -182,7 +182,7 @@ export default function GatosPage() {
                 }`}
               >
                 {service.isPopular && (
-                  <Badge className="absolute -top-2 -right-2 font-semibold px-3 py-1 rounded-full text-xs">
+                  <Badge className="text-black absolute -top-2 -right-2 font-semibold px-3 py-1 rounded-full text-xs">
                     Más Popular
                   </Badge>
                 )}
@@ -238,7 +238,7 @@ export default function GatosPage() {
           </div>
 
           <div className="max-w-6xl w-full mx-auto">
-            <Card className="shadow-2xl bg-transparent border-2 border-[#88D3EE] backdrop-blur-sm p-0 overflow-hidden">
+            <Card className="shadow-2xl bg-transparent border-2 border-[#88D3EE] backdrop-blur-sm p-0 gap-0 overflow-hidden">
               <CardHeader className="text-center bg-gray-800/50 text-white py-4">
                 <CardTitle className="font-heading text-xl font-bold">🔍 Identificador de Tipo de Manto</CardTitle>
                 <CardDescription className="text-gray-300 text-base">
@@ -327,7 +327,7 @@ export default function GatosPage() {
         <div className="container mx-auto px-4">
       <div className="text-center mb-10 md:mb-16">
             <h2 className="font-heading text-4xl lg:text-5xl font-bold text-white mb-6">
-              Lista de Precios <span className="text-[#FFE550]">2025</span>
+              Lista de Precios <span className="text-[#FFE550] font-helvetica">2025</span>
             </h2>
             <p className="text-lg text-gray-300 max-w-3xl mx-auto">
               Precios transparentes para servicios felinos especializados
@@ -337,7 +337,7 @@ export default function GatosPage() {
       <div className="space-y-10 md:space-y-16">
             <div className="animate-fade-in">
         <div className="text-center mb-6 md:mb-8">
-                <Badge className="mb-6 font-bold shadow-2xl text-lg px-4 py-2">
+                <Badge className="mb-6 font-bold shadow-2xl text-lg px-4 py-2 text-black">
                   🔹 Manto Corto / Pelo Corto
                 </Badge>
               </div>
@@ -368,7 +368,7 @@ export default function GatosPage() {
 
             <div className="animate-fade-in">
               <div className="text-center mb-6 md:mb-8">
-                <Badge className="mb-6 font-bold shadow-2xl py-2 px-4 text-lg">
+                <Badge className="mb-6 font-bold shadow-2xl py-2 px-4 text-lg text-black">
                   🔸 Manto Medio y Largo
                 </Badge>
               </div>

@@ -1,11 +1,12 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useEffect, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Menu, X } from "lucide-react"
+// Fetch header data from server API to avoid bundling Node modules on client
 
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false)
@@ -20,13 +21,42 @@ export function Header() {
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
-  const navItems = [
-    { name: "Inicio", href: "/" },
-    { name: "Perros", href: "/perros" },
-    { name: "Gatos", href: "/gatos" },
-    { name: "Blog", href: "/blog" },
-    { name: "Contacto", href: "/#contacto" },
-  ]
+  const [navItems, setNavItems] = useState<{ label: string; href: string }[]>([])
+  const [cta, setCta] = useState<{ label: string; href: string } | null>(null)
+
+  useEffect(() => {
+    let mounted = true
+  ;(async () => {
+      try {
+    const res = await fetch('/api/header', { cache: 'no-store' })
+    const data = res.ok ? await res.json() : null
+        if (!mounted) return
+        setNavItems(
+          (data?.menu?.length ? data.menu : [
+            { label: "Inicio", href: "/" },
+            { label: "Perros", href: "/perros" },
+            { label: "Gatos", href: "/gatos" },
+            { label: "Blog", href: "/blog" },
+            { label: "Contacto", href: "/#contacto" },
+          ])
+        )
+        setCta(data?.cta ?? { label: "Agendar Cita", href: "/#contacto" })
+      } catch {
+        if (!mounted) return
+        setNavItems([
+          { label: "Inicio", href: "/" },
+          { label: "Perros", href: "/perros" },
+          { label: "Gatos", href: "/gatos" },
+          { label: "Blog", href: "/blog" },
+          { label: "Contacto", href: "/#contacto" },
+        ])
+        setCta({ label: "Agendar Cita", href: "/#contacto" })
+      }
+    })()
+    return () => {
+      mounted = false
+    }
+  }, [])
 
   return (
     <AnimatePresence>
@@ -54,24 +84,26 @@ export function Header() {
 
             {/* Desktop Navigation */}
     <nav className="hidden md:flex items-center space-x-8">
-              {navItems.map((item) => (
+        {navItems.map((item) => (
                 <Link
-                  key={item.name}
-                  href={item.href}
+          key={item.label}
+          href={item.href}
       className={`moonglade font-medium transition-colors hover:text-brand-yellow ${
                     isScrolled ? "text-gray-900" : "text-white"
                   }`}
                 >
-                  {item.name}
+          {item.label}
                 </Link>
               ))}
             </nav>
 
             {/* CTA Button */}
             <div className="hidden md:block">
-              <Button asChild className="moonglade bg-brand-yellow hover:bg-yellow-400 text-black font-semibold">
-                <Link href="/#contacto">Agendar Cita</Link>
-              </Button>
+              {cta && (
+                <Button asChild className="moonglade bg-brand-yellow hover:bg-yellow-400 text-black font-semibold">
+                  <Link href={cta.href}>{cta.label}</Link>
+                </Button>
+              )}
             </div>
 
             {/* Mobile Menu Button */}
@@ -101,19 +133,21 @@ export function Header() {
         <nav className="flex flex-col space-y-4 px-4">
                   {navItems.map((item) => (
                     <Link
-                      key={item.name}
+                      key={item.label}
                       href={item.href}
             className="moonglade text-gray-900 font-medium hover:text-brand-yellow transition-colors"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
-                      {item.name}
+                      {item.label}
                     </Link>
                   ))}
-          <Button asChild className="moonglade bg-brand-yellow hover:bg-yellow-400 text-black font-semibold mt-4">
-                    <Link href="/#contacto" onClick={() => setIsMobileMenuOpen(false)}>
-                      Agendar Cita
-                    </Link>
-                  </Button>
+                  {cta && (
+                    <Button asChild className="moonglade bg-brand-yellow hover:bg-yellow-400 text-black font-semibold mt-4">
+                      <Link href={cta.href} onClick={() => setIsMobileMenuOpen(false)}>
+                        {cta.label}
+                      </Link>
+                    </Button>
+                  )}
                 </nav>
               </motion.div>
             )}

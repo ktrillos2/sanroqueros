@@ -10,6 +10,7 @@ import sharp from 'sharp'
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import SiteSettings from './globals/SiteSettings'
+import HeaderGlobal from './globals/Header'
 // Nota: Payload v3 no expone admin.i18n en el config de forma estable.
 // Usaremos una inyección ligera de script para forzar 'es' en el admin.
 
@@ -37,7 +38,7 @@ export default buildConfig({
       : undefined,
   },
   collections: [Users, Media],
-  globals: [SiteSettings],
+  globals: [SiteSettings, HeaderGlobal],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

@@ -272,7 +272,7 @@ export default function PerrosPage() {
                 }`}
               >
                 {service.isPopular && (
-                  <Badge className="absolute top-2.5 right-2.5 font-semibold px-3 py-1 rounded-full text-xs">
+                  <Badge className="text-black absolute -top-2 -right-2 font-semibold px-3 py-1 rounded-full text-xs">
                     Más Popular
                   </Badge>
                 )}
@@ -430,7 +430,7 @@ export default function PerrosPage() {
         <div className="container mx-auto px-4">
       <div className="text-center mb-10 md:mb-16">
             <h2 className="font-heading text-4xl lg:text-5xl font-bold text-white mb-6">
-              Lista de Precios <span className="text-[#FFE550]">2025</span>
+              Lista de Precios <span className="text-[#FFE550] font-helvetica">2025</span>
             </h2>
             <p className="text-lg text-gray-300 max-w-3xl mx-auto">
               Precios transparentes según el tamaño y tipo de manto de tu mascota
@@ -440,7 +440,7 @@ export default function PerrosPage() {
       <div className="space-y-10 md:space-y-16">
             <div className="animate-fade-in">
         <div className="text-center mb-6 md:mb-8">
-                <Badge className="mb-6 font-bold shadow-2xl text-lg px-4 py-2">
+                <Badge className="mb-6 font-bold shadow-2xl text-lg px-4 py-2 text-black">
                   🔹 Manto Corto / Pelo Corto
                 </Badge>
               </div>
@@ -473,7 +473,7 @@ export default function PerrosPage() {
 
             <div className="animate-fade-in">
               <div className="text-center mb-6 md:mb-8">
-                <Badge className="mb-6 font-bold shadow-2xl py-2 px-4 text-lg">
+                <Badge className="mb-6 font-bold shadow-2xl py-2 px-4 text-lg text-black">
                   🔸 Manto Medio y Largo
                 </Badge>
               </div>

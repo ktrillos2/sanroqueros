@@ -69,7 +69,7 @@ export function ProductsCollaborationsSection() {
                     className="object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                   <div className="absolute top-4 left-4">
-                    <Badge className="font-semibold">{product.badge}</Badge>
+                    <Badge className="font-semibold text-black">{product.badge}</Badge>
                   </div>
                   <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-transparent to-transparent opacity-60 text-white"></div>
                 </div>
