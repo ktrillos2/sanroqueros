@@ -1,33 +1,69 @@
 "use client"
 
+import { useEffect, useMemo, useState } from "react"
 import { motion } from "framer-motion"
 import Image from "next/image"
 import { Card, CardContent } from "@/components/ui/card"
 import { Play, Sparkles } from "lucide-react"
 
+type MediaRef = { url?: string }
+type Rich = any
+type ExpItem = { title: string; image?: MediaRef | string; description?: Rich }
+type SpaData = { title?: { left?: string; yellow?: string }; intro?: Rich; video?: { url?: string; caption?: string }; experiences?: ExpItem[] }
+
+const getMediaUrl = (m?: MediaRef | string) => typeof m === 'string' ? m : m?.url
+
+function extractRichParagraphs(rich?: Rich): string[] {
+  if (!rich) return []
+  if (rich?.root?.children && Array.isArray(rich.root.children)) {
+    const paras: string[] = []
+    for (const node of rich.root.children) {
+      if (node?.type === 'paragraph' && Array.isArray(node.children)) {
+        const t = node.children.map((c: any) => c?.text || '').join('')
+        if (t.trim()) paras.push(t)
+      }
+    }
+    return paras
+  }
+  if (Array.isArray(rich)) {
+    const paras: string[] = []
+    for (const n of rich) {
+      if (Array.isArray(n?.children)) {
+        const t = n.children.map((c: any) => c?.text || '').join('')
+        if (t.trim()) paras.push(t)
+      } else if (typeof n?.text === 'string' && n.text.trim()) {
+        paras.push(n.text)
+      }
+    }
+    return paras
+  }
+  if (typeof rich === 'string') return [rich]
+  return []
+}
+
 export function SpaExperienceSection() {
-  const experiences = [
-    {
-      title: "Baños Terapéuticos",
-      image: "/images/happy-dog-bath.png",
-      description: "Experiencia relajante con productos premium",
-    },
-    {
-      title: "Masajes Especializados",
-      image: "/images/dog-head-massage.jpeg",
-      description: "Técnicas profesionales para el bienestar",
-    },
-    {
-      title: "Ozonoterapia",
-      image: "/images/ozone-therapy.png",
-      description: "Tratamientos avanzados para la salud",
-    },
-    {
-      title: "Ambiente Profesional",
-      image: "/images/spa-reception.png",
-      description: "Instalaciones de primera clase",
-    },
-  ]
+  const [data, setData] = useState<SpaData | null>(null)
+
+  useEffect(() => {
+    let mounted = true
+      ; (async () => {
+        try {
+          const res = await fetch('/api/spa-experience', { cache: 'no-store' })
+          const json = res.ok ? await res.json() : null
+          if (!mounted) return
+          setData(json)
+        } catch {
+          if (!mounted) return
+          setData(null)
+        }
+      })()
+    return () => { mounted = false }
+  }, [])
+
+  const titleLeft = data?.title?.left ?? 'Experiencia'
+  const titleYellow = data?.title?.yellow ?? 'Spa 360°'
+  const introParas = useMemo(() => extractRichParagraphs(data?.intro), [data?.intro])
+  const experiences: ExpItem[] = data?.experiences ?? []
 
   return (
     <section className="py-20 bg-white">
@@ -40,12 +76,13 @@ export function SpaExperienceSection() {
           viewport={{ once: true }}
         >
           <h2 className="moonglade text-4xl lg:text-5xl font-bold text-brand-black mb-6">
-           Experiencia <span className="text-brand-yellow">Spa <span className="font-helvetica">360</span>°</span>
-           
+            {titleLeft} <span className="text-brand-yellow">{titleYellow}</span>
           </h2>
-          <p className="font-helvetica text-gray-600 text-lg max-w-3xl mx-auto mb-8">
-            Un enfoque integral que combina bienestar, salud y belleza para tu mascota
-          </p>
+          <div className="font-helvetica text-gray-600 text-lg max-w-3xl mx-auto mb-8 space-y-4">
+            {introParas.length ? introParas.map((t, i) => (<p key={i}>{t}</p>)) : (
+              <p>Un enfoque integral que combina bienestar, salud y belleza para tu mascota</p>
+            )}
+          </div>
 
           <motion.div
             className="aspect-video bg-gradient-to-br from-brand-black to-gray-800 rounded-2xl flex items-center justify-center text-white text-lg mb-12 max-w-4xl mx-auto shadow-2xl relative overflow-hidden"
@@ -63,8 +100,8 @@ export function SpaExperienceSection() {
               >
                 <Play className="w-16 h-16 mx-auto mb-4 text-brand-yellow" />
               </motion.div>
-              <p className="moonglade text-xl">Video próximamente</p>
-              <p className="font-helvetica text-sm text-gray-400 mt-2">Experiencia Spa 360° - Detrás de cámaras</p>
+              <p className="moonglade text-xl">{data?.video?.url ? 'Ver video' : 'Video próximamente'}</p>
+              <p className="font-helvetica text-sm text-gray-400 mt-2">{data?.video?.caption ?? 'Experiencia Spa 360° - Detrás de cámaras'}</p>
             </div>
           </motion.div>
         </motion.div>
@@ -82,7 +119,7 @@ export function SpaExperienceSection() {
               <Card className="overflow-hidden group hover:shadow-2xl transition-all duration-500 border-0 bg-white gap-0">
                 <div className="relative h-48 overflow-hidden">
                   <Image
-                    src={experience.image || "/placeholder.svg"}
+                    src={getMediaUrl(experience.image) || "/placeholder.svg"}
                     alt={experience.title}
                     fill
                     className="object-cover group-hover:scale-110 transition-transform duration-700"
@@ -99,7 +136,9 @@ export function SpaExperienceSection() {
 
                 <CardContent className="p-6">
                   <h3 className="moonglade text-xl font-bold text-brand-black mb-2">{experience.title}</h3>
-                  <p className="font-helvetica text-gray-600 text-sm">{experience.description}</p>
+                  <div className="font-helvetica text-gray-600 text-sm space-y-2">
+                    {extractRichParagraphs(experience.description).map((t, i) => (<p key={i}>{t}</p>))}
+                  </div>
                 </CardContent>
               </Card>
             </motion.div>

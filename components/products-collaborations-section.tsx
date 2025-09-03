@@ -51,17 +51,17 @@ export function ProductsCollaborationsSection() {
 
   useEffect(() => {
     let mounted = true
-    ;(async () => {
-      try {
-        const res = await fetch('/api/products-collaborations', { cache: 'no-store' })
-        const json = res.ok ? await res.json() : null
-        if (!mounted) return
-        setData(json)
-      } catch {
-        if (!mounted) return
-        setData(null)
-      }
-    })()
+      ; (async () => {
+        try {
+          const res = await fetch('/api/products-collaborations', { cache: 'no-store' })
+          const json = res.ok ? await res.json() : null
+          if (!mounted) return
+          setData(json)
+        } catch {
+          if (!mounted) return
+          setData(null)
+        }
+      })()
     return () => { mounted = false }
   }, [])
 
