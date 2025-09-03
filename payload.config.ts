@@ -28,17 +28,17 @@ export default buildConfig({
   admin: {
     user: Users.slug,
     importMap: {
-  // Base del import map al folder del admin para que los paths relativos queden correctos
-  baseDir: path.resolve(dirname, 'app/(payload)/admin'),
+      // Base del import map al folder del admin para que los paths relativos queden correctos
+      baseDir: path.resolve(dirname, 'app/(payload)/admin'),
     },
     // i18n del Admin en Español
-    
+
     autoLogin: process.env.NODE_ENV !== 'production' && process.env.ADMIN_EMAIL && process.env.ADMIN_PASSWORD
       ? {
-          email: process.env.ADMIN_EMAIL,
-          password: process.env.ADMIN_PASSWORD,
-          prefillOnly: false,
-        }
+        email: process.env.ADMIN_EMAIL,
+        password: process.env.ADMIN_PASSWORD,
+        prefillOnly: false,
+      }
       : undefined,
   } as any,
   collections: [Users, Media],

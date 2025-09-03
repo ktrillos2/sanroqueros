@@ -19,13 +19,15 @@
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0); /* Brand black */
+  --primary: oklch(0.205 0 0);
+  /* Brand black */
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.97 0 0);
   --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0); /* Brand yellow */
+  --accent: oklch(0.97 0 0);
+  /* Brand yellow */
   --accent-foreground: oklch(0.205 0 0);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.577 0.245 27.325);
@@ -53,7 +55,8 @@
 }
 
 .dark {
-  --background: oklch(0.145 0 0); /* Brand black background */
+  --background: oklch(0.145 0 0);
+  /* Brand black background */
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.2 0 0);
   --card-foreground: oklch(0.985 0 0);
@@ -133,6 +136,7 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
@@ -184,19 +188,36 @@ html {
 }
 
 /* Evitar scroll horizontal globalmente */
-html, body {
+html,
+body {
   overflow-x: hidden;
   width: 100%;
 }
 
 /* Scrollbar blanca para contenedores con overflow-x */
-.scrollbar-white::-webkit-scrollbar { height: 10px; }
-.scrollbar-white::-webkit-scrollbar-track { background: transparent; }
-.scrollbar-white::-webkit-scrollbar-thumb { background: #fff; border-radius: 9999px; }
-.scrollbar-white { scrollbar-color: #ffffff transparent; scrollbar-width: thin; }
+.scrollbar-white::-webkit-scrollbar {
+  height: 10px;
+}
+
+.scrollbar-white::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-white::-webkit-scrollbar-thumb {
+  background: #fff;
+  border-radius: 9999px;
+}
+
+.scrollbar-white {
+  scrollbar-color: #ffffff transparent;
+  scrollbar-width: thin;
+}
 
 /* Asegurar que imágenes y contenedores no excedan el ancho */
-img, svg, canvas, video {
+img,
+svg,
+canvas,
+video {
   max-width: 100%;
 }
 
@@ -206,10 +227,12 @@ img, svg, canvas, video {
 }
 
 @keyframes float {
+
   0%,
   100% {
     transform: translateY(0px);
   }
+
   50% {
     transform: translateY(-10px);
   }
@@ -220,10 +243,12 @@ img, svg, canvas, video {
 }
 
 @keyframes pulse-glow {
+
   0%,
   100% {
     box-shadow: 0 0 20px rgba(255, 229, 80, 0.3);
   }
+
   50% {
     box-shadow: 0 0 30px rgba(255, 229, 80, 0.6);
   }
@@ -235,8 +260,17 @@ img, svg, canvas, video {
 
 /* Loader dots timing helpers */
 @keyframes pulse {
-  0%, 100% { opacity: 0.3; transform: scale(0.9); }
-  50% { opacity: 1; transform: scale(1.1); }
+
+  0%,
+  100% {
+    opacity: 0.3;
+    transform: scale(0.9);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
 }
 
 /* Adding fade-in animation for the dogs page */
@@ -245,6 +279,7 @@ img, svg, canvas, video {
     opacity: 0;
     transform: translateY(20px);
   }
+
   100% {
     opacity: 1;
     transform: translateY(0);
@@ -257,30 +292,36 @@ img, svg, canvas, video {
 
 /* Adding glow effect animation for brand colors */
 @keyframes glow-yellow {
+
   0%,
   100% {
     box-shadow: 0 0 20px rgba(255, 229, 80, 0.3);
   }
+
   50% {
     box-shadow: 0 0 40px rgba(255, 229, 80, 0.6);
   }
 }
 
 @keyframes glow-pink {
+
   0%,
   100% {
     box-shadow: 0 0 20px rgba(255, 177, 190, 0.3);
   }
+
   50% {
     box-shadow: 0 0 40px rgba(255, 177, 190, 0.6);
   }
 }
 
 @keyframes glow-blue {
+
   0%,
   100% {
     box-shadow: 0 0 20px rgba(136, 211, 238, 0.3);
   }
+
   50% {
     box-shadow: 0 0 40px rgba(136, 211, 238, 0.6);
   }
@@ -300,23 +341,28 @@ img, svg, canvas, video {
 
 /* Adding missing animations for blog hero section */
 @keyframes gradient-shift {
+
   0%,
   100% {
     background: linear-gradient(135deg, #000000 0%, #1f2937 50%, #000000 100%);
   }
+
   50% {
     background: linear-gradient(135deg, #1f2937 0%, #000000 50%, #1f2937 100%);
   }
 }
 
 @keyframes float-slow {
+
   0%,
   100% {
     transform: translateY(0px) translateX(0px);
   }
+
   33% {
     transform: translateY(-15px) translateX(10px);
   }
+
   66% {
     transform: translateY(5px) translateX(-5px);
   }
@@ -327,9 +373,11 @@ img, svg, canvas, video {
     transform: translateX(-100%);
     opacity: 0;
   }
+
   50% {
     opacity: 1;
   }
+
   100% {
     transform: translateX(100%);
     opacity: 0;

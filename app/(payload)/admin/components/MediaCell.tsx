@@ -25,6 +25,7 @@ export default function MediaCell({ data, rowData }: Props) {
       ) : (
         <div style={{ width: 40, height: 40, borderRadius: 6, background: 'transparent' }} />
       )}
-  <span style={{ fontSize: 12 }}>{alt}</span>
+      <span style={{ fontSize: 12 }}>{alt}</span>
     </div>
-  )}
+  )
+}

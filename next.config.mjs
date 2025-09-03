@@ -6,7 +6,7 @@ if (process.env.NEXT_PUBLIC_SITE_URL) {
   try {
     const u = new URL(process.env.NEXT_PUBLIC_SITE_URL);
     if (u.host) allowedOrigins.push(u.host);
-  } catch {}
+  } catch { }
 }
 if (process.env.NEXT_ALLOWED_ORIGINS) {
   allowedOrigins.push(

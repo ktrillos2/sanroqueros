@@ -72,9 +72,9 @@ export default function RootLayout({
   return (
     <html lang="es" className={`${moonglade.variable} ${helveticaNeue.variable}`}>
       <body className="font-sans antialiased overflow-x-hidden">
-  <GlobalFetchLoader />
-  {children}
-  <ConditionalWhatsapp />
+        <GlobalFetchLoader />
+        {children}
+        <ConditionalWhatsapp />
       </body>
     </html>
   )

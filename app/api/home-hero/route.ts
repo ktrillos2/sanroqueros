@@ -5,11 +5,11 @@ import config from '@/payload.config'
 export const dynamic = 'force-dynamic'
 
 export async function GET() {
-  try {
-    const payload = await getPayload({ config })
-    const data = await (payload as any).findGlobal({ slug: 'homeHero' as any, depth: 1 })
-    return NextResponse.json(data, { status: 200 })
-  } catch (e) {
-    return NextResponse.json({ error: 'failed-to-load-home-hero' }, { status: 500 })
-  }
+    try {
+        const payload = await getPayload({ config })
+        const data = await (payload as any).findGlobal({ slug: 'homeHero' as any, depth: 1 })
+        return NextResponse.json(data, { status: 200 })
+    } catch (e) {
+        return NextResponse.json({ error: 'failed-to-load-home-hero' }, { status: 500 })
+    }
 }

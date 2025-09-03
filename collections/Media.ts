@@ -9,7 +9,7 @@ export const Media: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'alt',
-  defaultColumns: ['alt', 'updatedAt','miniatura'],
+    defaultColumns: ['alt', 'updatedAt', 'miniatura'],
     components: {
       // Otros componentes del admin pueden ir aquí si se requieren
     },
@@ -17,10 +17,10 @@ export const Media: CollectionConfig = {
   access: {
     // Listar/consultar medios desde Admin o público
     read: () => true,
-  // En desarrollo, permitir subir/editar/borrar sin exigir sesión (para evitar bloqueos por proxys)
-  create: () => process.env.NODE_ENV !== 'production',
-  update: () => process.env.NODE_ENV !== 'production',
-  delete: () => process.env.NODE_ENV !== 'production',
+    // En desarrollo, permitir subir/editar/borrar sin exigir sesión (para evitar bloqueos por proxys)
+    create: () => process.env.NODE_ENV !== 'production',
+    update: () => process.env.NODE_ENV !== 'production',
+    delete: () => process.env.NODE_ENV !== 'production',
   },
   fields: [
     {
@@ -32,7 +32,7 @@ export const Media: CollectionConfig = {
         description: 'Describe la imagen para accesibilidad y SEO.',
       },
     },
-    
+
     {
       name: 'miniatura',
       label: 'Miniatura',
@@ -45,10 +45,10 @@ export const Media: CollectionConfig = {
     },
   ],
   hooks: {
-  beforeValidate: [({ data = {}, req, operation }) => {
+    beforeValidate: [({ data = {}, req, operation }) => {
       // Si alt viene vacío o sin definir, lo derivamos del nombre del archivo
       const current = data?.alt?.toString().trim()
-  if (current) return data
+      if (current) return data
 
       // Posibles fuentes del nombre
       const fromData = (data as any)?.filename as string | undefined
@@ -58,7 +58,7 @@ export const Media: CollectionConfig = {
         : (req as any)?.files?.file?.[0]?.originalname
 
       const rawName = fromData || fromMulter || fromMulterArr
-  if (!rawName) return data
+      if (!rawName) return data
 
       // Derivar texto alternativo legible del nombre
       const clean = rawName
@@ -67,7 +67,7 @@ export const Media: CollectionConfig = {
         .replace(/\s+/g, ' ') // colapsar espacios
         .trim()
 
-  return { ...data, alt: clean || 'Imagen sin título' }
+      return { ...data, alt: clean || 'Imagen sin título' }
     }],
   },
   upload: {
