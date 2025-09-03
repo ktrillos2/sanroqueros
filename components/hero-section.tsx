@@ -1,12 +1,66 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { ChevronRight, Sparkles, Heart } from "lucide-react"
 import Link from "next/link"
 
+type MediaRef = { url?: string; sizes?: { thumbnail?: { url?: string } } }
+type HomeHero = {
+  title?: { left?: string; yellow?: string; between?: string; pink?: string }
+  subtitle?: string
+  ctaPrimary?: { label?: string; type?: string; href?: string }
+  ctaSecondary?: { label?: string; type?: string; href?: string }
+  images?: { cat?: MediaRef | string; kitten?: MediaRef | string }
+}
+
 export function HeroSection() {
+  const [data, setData] = useState<HomeHero | null>(null)
+
+  useEffect(() => {
+    let mounted = true
+    ;(async () => {
+      try {
+        const res = await fetch('/api/home-hero', { cache: 'no-store' })
+        const json = res.ok ? await res.json() : null
+        if (!mounted) return
+        setData(json)
+      } catch {
+        if (!mounted) return
+        setData(null)
+      }
+    })()
+    return () => { mounted = false }
+  }, [])
+
+  const titleLeft = data?.title?.left ?? 'El Mejor'
+  const titleYellow = data?.title?.yellow ?? 'Spa'
+  const titleBetween = data?.title?.between ?? 'para'
+  const titlePink = data?.title?.pink ?? 'Woofies y Michis'
+  const subtitle = data?.subtitle ?? 'Experiencia premium con productos de alta gama y técnicas profesionales en el corazón de Bogotá'
+
+  const resolveHref = (cta?: { type?: string; href?: string }, fallback?: string) => {
+    if (!cta) return fallback
+    if (cta.type === 'anchor') return cta.href || fallback
+    if (cta.type === 'page' || cta.type === 'custom' || cta.type === 'whatsapp' || cta.type === 'email') return cta.href || fallback
+    return fallback
+  }
+
+  const primaryHref = resolveHref(data?.ctaPrimary, '#contacto')
+  const primaryLabel = data?.ctaPrimary?.label ?? 'Agenda tu Cita'
+  const secondaryHref = resolveHref(data?.ctaSecondary, '/perros')
+  const secondaryLabel = data?.ctaSecondary?.label ?? 'Ver Servicios'
+
+  const getMediaUrl = (m?: MediaRef | string) => {
+    if (!m) return undefined
+    if (typeof m === 'string') return m
+    return  m.url
+  }
+
+  const catUrl =  getMediaUrl((data as any)?.images?.cat) ||'/images/ragdoll-cat.jpg'
+  const kittenUrl =  getMediaUrl((data as any)?.images?.kitten) ||'/images/kitten-cover.png'
   return (
     <section className="relative min-h-screen bg-brand-black overflow-hidden">
       <div className="absolute inset-0">
@@ -104,8 +158,8 @@ export function HeroSection() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2, duration: 0.8 }}
               >
-                El Mejor <span className="text-brand-yellow">Spa</span> para{" "}
-                <span className="text-brand-pink">Woofies y Michis</span>
+                {titleLeft} <span className="text-brand-yellow">{titleYellow}</span> {titleBetween}{" "}
+                <span className="text-brand-pink">{titlePink}</span>
               </motion.h1>
 
               <motion.p
@@ -114,7 +168,7 @@ export function HeroSection() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4, duration: 0.8 }}
               >
-                Experiencia premium con productos de alta gama y técnicas profesionales en el corazón de Bogotá
+                {subtitle}
               </motion.p>
             </div>
 
@@ -129,8 +183,8 @@ export function HeroSection() {
                 className="bg-brand-yellow hover:bg-yellow-400 font-helvetica font-semibold text-lg px-8 py-4 text-white"
                 asChild
               >
-                <Link href="#contacto">
-                  Agenda tu Cita
+                <Link href={primaryHref ?? "#"}>
+                  {primaryLabel}
                   <ChevronRight className="ml-2 w-5 h-5" />
                 </Link>
               </Button>
@@ -141,7 +195,7 @@ export function HeroSection() {
                 className="border-white text-white hover:bg-white hover:text-black font-helvetica text-lg px-8 py-4 bg-transparent"
                 asChild
               >
-                <Link href="/perros">Ver Servicios</Link>
+                <Link href={secondaryHref??'#'}>{secondaryLabel}</Link>
               </Button>
             </motion.div>
           </motion.div>
@@ -170,7 +224,7 @@ export function HeroSection() {
               >
                 <div className="relative">
                   <Image
-                    src="/images/ragdoll-cat.jpg"
+                    src={catUrl}
                     alt="Hermoso gato Ragdoll en SANROQUE"
                     width={400}
                     height={400}
@@ -199,7 +253,7 @@ export function HeroSection() {
               >
                 <div className="relative">
                   <Image
-                    src="/images/kitten-cover.png"
+                    src={kittenUrl}
                     alt="Adorable gatito en SANROQUE"
                     width={300}
                     height={200}

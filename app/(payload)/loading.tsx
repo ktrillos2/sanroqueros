@@ -1,5 +1,4 @@
-import BrandLoader from "@/components/brand-loader"
-
 export default function Loading() {
-  return <BrandLoader />
+	// No mostrar loader en el admin de Payload
+	return null;
 }

@@ -2,7 +2,7 @@
 import * as React from 'react'
 
 export default function MediaCard({ doc }: { doc: any }) {
-  const url = doc?.url || doc?.sizes?.thumbnail?.url
+  const url = doc?.sizes?.thumbnail?.url || doc?.url
   const alt = doc?.alt || doc?.filename
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>

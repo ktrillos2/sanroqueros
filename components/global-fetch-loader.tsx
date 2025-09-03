@@ -1,7 +1,8 @@
 "use client"
 
-import { useEffect, useMemo, useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import BrandLoader from "@/components/brand-loader"
+import { usePathname } from "next/navigation"
 
 function shouldTrack(url: string) {
   try {
@@ -17,15 +18,21 @@ function shouldTrack(url: string) {
 }
 
 export default function GlobalFetchLoader() {
+  const pathname = usePathname()
+  // Evitar overlay en el Admin de Payload (funciona en SSR y Client)
+  if (pathname?.startsWith('/admin')) return null
+
   const [count, setCount] = useState(0)
-  const [visible, setVisible] = useState(true)
+  const [visible, setVisible] = useState(false)
   const hideTimer = useRef<number | null>(null)
   const origFetch = useRef<typeof window.fetch | null>(null)
 
   // Patch fetch para contar solicitudes a /api
   useEffect(() => {
     if (typeof window === "undefined") return
-    if (origFetch.current) return
+  if (origFetch.current) return
+  // Si estamos en admin por alguna razón, no parchear
+  if (pathname?.startsWith('/admin')) return
     origFetch.current = window.fetch.bind(window)
     window.fetch = async (...args) => {
       const url = typeof args[0] === "string" ? args[0] : (args[0] as Request).url

@@ -8,7 +8,7 @@ type Props = {
 
 export default function MediaCell({ data, rowData }: Props) {
   const doc = rowData || data || {}
-  const url: string | undefined = doc.previewDataURI || doc?.sizes?.thumbnail?.url || doc?.url
+  const url: string | undefined = doc?.sizes?.thumbnail?.url || doc?.url
   const alt: string = doc?.alt || doc?.filename || 'Imagen'
 
   return (

@@ -32,16 +32,6 @@ export const Media: CollectionConfig = {
         description: 'Describe la imagen para accesibilidad y SEO.',
       },
     },
-    {
-      name: 'previewDataURI',
-      label: 'Vista previa',
-      type: 'textarea',
-      admin: {
-        readOnly: true,
-        position: 'sidebar',
-        description: 'Generado automáticamente para mostrar la imagen en el Admin.',
-      },
-    },
     
     {
       name: 'miniatura',
@@ -79,25 +69,6 @@ export const Media: CollectionConfig = {
 
   return { ...data, alt: clean || 'Imagen sin título' }
     }],
-    beforeChange: [
-      async ({ data = {}, req }) => {
-        const file: any = (req as any)?.file
-        const buffer: Buffer | undefined = file?.buffer
-        if (!buffer) return data
-
-        try {
-          const thumb = await sharp(buffer)
-            .resize(160, 160, { fit: 'cover' })
-            // Exportar en PNG para preservar transparencia
-            .png({ compressionLevel: 9, adaptiveFiltering: true })
-            .toBuffer()
-          const uri = `data:image/png;base64,${thumb.toString('base64')}`
-          return { ...data, previewDataURI: uri }
-        } catch {
-          return data
-        }
-      },
-    ],
   },
   upload: {
     mimeTypes: ['image/png', 'image/jpeg', 'image/webp', 'image/svg+xml'],
