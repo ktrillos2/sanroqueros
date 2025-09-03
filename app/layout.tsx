@@ -4,6 +4,7 @@ import { Inter } from "next/font/google"
 import { moonglade as moongladeLocal } from "@/app/fonts/moonglade"
 import "./globals.css"
 import { ConditionalWhatsapp } from "@/components/conditional-whatsapp"
+import GlobalFetchLoader from "@/components/global-fetch-loader"
 
 // Use local Moonglade font files (Light 300, Regular 400, Bold 700)
 const moonglade = moongladeLocal
@@ -71,6 +72,7 @@ export default function RootLayout({
   return (
     <html lang="es" className={`${moonglade.variable} ${helveticaNeue.variable}`}>
       <body className="font-sans antialiased overflow-x-hidden">
+  <GlobalFetchLoader />
   {children}
   <ConditionalWhatsapp />
       </body>

@@ -233,6 +233,12 @@ img, svg, canvas, video {
   animation: pulse-glow 2s ease-in-out infinite;
 }
 
+/* Loader dots timing helpers */
+@keyframes pulse {
+  0%, 100% { opacity: 0.3; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.1); }
+}
+
 /* Adding fade-in animation for the dogs page */
 @keyframes fade-in {
   0% {
