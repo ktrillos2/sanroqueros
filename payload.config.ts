@@ -11,6 +11,7 @@ import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import SiteSettings from './globals/SiteSettings'
 import HeaderGlobal from './globals/Header'
+import { es } from '@payloadcms/translations/languages/es'
 // Nota: Payload v3 no expone admin.i18n en el config de forma estable.
 // Usaremos una inyección ligera de script para forzar 'es' en el admin.
 
@@ -29,6 +30,8 @@ export default buildConfig({
   // Base del import map al folder del admin para que los paths relativos queden correctos
   baseDir: path.resolve(dirname, 'app/(payload)/admin'),
     },
+    // i18n del Admin en Español
+    
     autoLogin: process.env.NODE_ENV !== 'production' && process.env.ADMIN_EMAIL && process.env.ADMIN_PASSWORD
       ? {
           email: process.env.ADMIN_EMAIL,
@@ -36,8 +39,11 @@ export default buildConfig({
           prefillOnly: false,
         }
       : undefined,
-  },
+  } as any,
   collections: [Users, Media],
+  i18n: {
+    supportedLanguages: { es },
+  },
   globals: [SiteSettings, HeaderGlobal],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
