@@ -77,12 +77,12 @@ export function MichiFriendlySection() {
   return (
     <section className="py-20 bg-brand-black relative overflow-hidden">
       {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-10">
+      <div className="absolute inset-0 opacity-10 pointer-events-none z-0">
         <div className="absolute top-20 left-20 w-32 h-32 border-2 border-brand-pink rounded-full animate-pulse"></div>
         <div className="absolute bottom-32 right-32 w-24 h-24 border-2 border-brand-blue rounded-full animate-pulse delay-1000"></div>
       </div>
 
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-4 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left Content */}
           <motion.div
@@ -134,20 +134,20 @@ export function MichiFriendlySection() {
               const yt = toYouTubeEmbed(v?.youtubeUrl)
               if (v?.sourceType === 'youtube' && yt) {
                 return (
-                  <motion.div className="aspect-video rounded-2xl overflow-hidden border border-gray-800" initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6, delay: 0.4 }} viewport={{ once: true }}>
+                  <motion.div className="aspect-video rounded-2xl overflow-hidden border border-gray-800 relative z-10" initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6, delay: 0.4 }} viewport={{ once: true }}>
                     <iframe src={yt} title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen className="w-full h-full" />
                   </motion.div>
                 )
               }
               if (v?.sourceType === 'upload' && fileUrl) {
                 return (
-                  <motion.div className="aspect-video rounded-2xl overflow-hidden border border-gray-800" initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6, delay: 0.4 }} viewport={{ once: true }}>
+                  <motion.div className="aspect-video rounded-2xl overflow-hidden border border-gray-800 relative z-10" initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6, delay: 0.4 }} viewport={{ once: true }}>
                     <video className="w-full h-full" src={fileUrl} controls preload="metadata" />
                   </motion.div>
                 )
               }
               return (
-                <motion.div className="aspect-video bg-gray-900 rounded-2xl flex items-center justify-center text-white border border-gray-800" initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8, delay: 0.4 }} viewport={{ once: true }}>
+                <motion.div className="aspect-video bg-gray-900 rounded-2xl flex items-center justify-center text-white border border-gray-800 relative z-10" initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8, delay: 0.4 }} viewport={{ once: true }}>
                   <div className="text-center">
                     <Play className="w-12 h-12 mx-auto mb-3 text-brand-pink" />
                     <p className="text-sm">Video próximamente</p>
