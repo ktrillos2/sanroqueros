@@ -1,34 +1,63 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
 import Image from "next/image"
 import { Sparkles, Heart, Shield, Home } from "lucide-react"
 
+type MediaRef = { url?: string }
+type WhatIsSpa = {
+  title?: { left?: string; yellow?: string; between?: string; pink?: string }
+  paragraphs?: { text: string }[]
+  benefits?: { title: string; description: string; icon: "shield" | "sparkles" | "heart" | "home"; isSpecial?: boolean }[]
+  images?: { main?: MediaRef | string; secondary?: MediaRef | string }
+}
+
+const iconMap = {
+  shield: Shield,
+  sparkles: Sparkles,
+  heart: Heart,
+  home: Home,
+} as const
+
 export function WhatIsSpaSection() {
-  const benefits = [
-    {
-      icon: Shield,
-      title: "Evaluación Completa",
-      description: "Revisión detallada del estado de salud y bienestar de tu mascota antes de cada tratamiento",
-    },
-    {
-      icon: Sparkles,
-      title: "Productos Premium",
-      description: "Utilizamos las mejores marcas como Iv San Bernard y Hydra para resultados excepcionales",
-    },
-    {
-      icon: Heart,
-      title: "Cuidado Personalizado",
-      description: "Cada tratamiento se adapta a las necesidades específicas de tu perro o gato",
-    },
-    {
-      icon: Home,
-      title: "Ambiente Libre de Jaulas",
-      description:
-        "Tu mascota disfruta de total libertad de movimiento durante su tratamiento, creando una experiencia relajante y sin estrés en un ambiente completamente abierto",
-      isSpecial: true,
-    },
+  const [data, setData] = useState<WhatIsSpa | null>(null)
+
+  useEffect(() => {
+    let mounted = true
+    ;(async () => {
+      try {
+        const res = await fetch('/api/what-is-spa', { cache: 'no-store' })
+        const json = res.ok ? await res.json() : null
+        if (!mounted) return
+        setData(json)
+      } catch {
+        if (!mounted) return
+        setData(null)
+      }
+    })()
+    return () => { mounted = false }
+  }, [])
+
+  const title = data?.title || { left: "¿Qué es un", yellow: "Spa", between: "para", pink: "Perros y Gatos" }
+  const paragraphs = data?.paragraphs?.length ? data.paragraphs : [
+    { text: "Un spa para mascotas es mucho más que un simple baño. Es una experiencia integral de bienestar que combina técnicas profesionales de grooming con tratamientos relajantes y terapéuticos, diseñados específicamente para el cuidado y la salud de perros y gatos." },
+    { text: "En SANROQUE, transformamos el cuidado tradicional en una experiencia premium que no solo mejora la apariencia de tu mascota, sino que también contribuye a su salud física y bienestar emocional." },
   ]
+  const benefits = data?.benefits?.length ? data.benefits : [
+    { title: 'Evaluación Completa', description: 'Revisión detallada del estado de salud y bienestar de tu mascota antes de cada tratamiento', icon: 'shield', isSpecial: false },
+    { title: 'Productos Premium', description: 'Utilizamos marcas como Iv San Bernard e Hydra para resultados excepcionales', icon: 'sparkles', isSpecial: false },
+    { title: 'Cuidado Personalizado', description: 'Cada tratamiento se adapta a las necesidades específicas de tu perro o gato', icon: 'heart', isSpecial: false },
+    { title: 'Ambiente Libre de Jaulas', description: 'Tu mascota disfruta de total libertad de movimiento durante su tratamiento, creando una experiencia relajante y sin estrés en un ambiente completamente abierto', icon: 'home', isSpecial: true },
+  ]
+
+  const getMediaUrl = (m?: MediaRef | string) => {
+    if (!m) return undefined
+    if (typeof m === 'string') return m
+    return m.url
+  }
+  const mainUrl = getMediaUrl((data as any)?.images?.main) || '/images/happy-dog-bath.png'
+  const secondaryUrl = getMediaUrl((data as any)?.images?.secondary) || '/images/spa-reception.png'
 
   return (
     <section className="py-20 bg-white">
@@ -50,32 +79,22 @@ export function WhatIsSpaSection() {
                 transition={{ delay: 0.2, duration: 0.8 }}
                 viewport={{ once: true }}
               >
-                ¿Qué es un <span className="text-brand-yellow">Spa</span> para{" "}
-                <span className="text-brand-pink">Perros y Gatos</span>?
+                {title.left} <span className="text-brand-yellow">{title.yellow}</span> {title.between}{" "}
+                <span className="text-brand-pink">{title.pink}</span>?
               </motion.h2>
 
-              <motion.p
-                className="font-helvetica text-lg text-gray-700 leading-relaxed"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4, duration: 0.8 }}
-                viewport={{ once: true }}
-              >
-                Un spa para mascotas es mucho más que un simple baño. Es una experiencia integral de bienestar que
-                combina técnicas profesionales de grooming con tratamientos relajantes y terapéuticos, diseñados
-                específicamente para el cuidado y la salud de perros y gatos.
-              </motion.p>
-
-              <motion.p
-                className="font-helvetica text-lg text-gray-700 leading-relaxed"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.6, duration: 0.8 }}
-                viewport={{ once: true }}
-              >
-                En SANROQUE, transformamos el cuidado tradicional en una experiencia premium que no solo mejora la
-                apariencia de tu mascota, sino que también contribuye a su salud física y bienestar emocional.
-              </motion.p>
+              {paragraphs.map((p, idx) => (
+                <motion.p
+                  key={idx}
+                  className="font-helvetica text-lg text-gray-700 leading-relaxed"
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 + idx * 0.2, duration: 0.8 }}
+                  viewport={{ once: true }}
+                >
+                  {p.text}
+                </motion.p>
+              ))}
             </div>
 
             <motion.div
@@ -107,7 +126,11 @@ export function WhatIsSpaSection() {
                         whileHover={benefit.isSpecial ? { rotate: 360 } : {}}
                         transition={{ duration: 0.5 }}
                       >
-                        <benefit.icon className="w-6 h-6 text-black" />
+                        {(() => {
+                          const key = (benefit.icon ?? 'shield') as keyof typeof iconMap
+                          const Icon = iconMap[key]
+                          return <Icon className="w-6 h-6 text-black" />
+                        })()}
                       </motion.div>
                       <div className="flex-1">
                         <h3 className="moonglade text-lg font-semibold text-brand-black mb-2 flex items-center gap-2">
@@ -148,7 +171,7 @@ export function WhatIsSpaSection() {
               >
                 <div className="relative w-[400px] h-[400px]">
                   <Image
-                    src="/images/happy-dog-bath.png"
+                    src={mainUrl}
                     alt="Perro feliz durante su spa en SANROQUE"
                     fill
                     sizes="(max-width: 1024px) 50vw, 400px"
@@ -173,7 +196,7 @@ export function WhatIsSpaSection() {
               >
                 <div className="relative w-[300px] h-[200px]">
                   <Image
-                    src="/images/spa-reception.png"
+                    src={secondaryUrl}
                     alt="Recepción profesional de SANROQUE"
                     fill
                     sizes="(max-width: 1024px) 50vw, 300px"
