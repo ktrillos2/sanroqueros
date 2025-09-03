@@ -14,6 +14,7 @@ import HeaderGlobal from './globals/Header'
 import HomeHeroGlobal from './globals/HomeHero'
 import WhatIsSpaGlobal from './globals/WhatIsSpa'
 import CertificationsGlobal from './globals/Certifications'
+import ProductsCollaborationsGlobal from './globals/ProductsCollaborations'
 import { es } from '@payloadcms/translations/languages/es'
 // Nota: Payload v3 no expone admin.i18n en el config de forma estable.
 // Usaremos una inyección ligera de script para forzar 'es' en el admin.
@@ -47,7 +48,7 @@ export default buildConfig({
   i18n: {
     supportedLanguages: { es },
   },
-  globals: [SiteSettings, HeaderGlobal, HomeHeroGlobal, WhatIsSpaGlobal, CertificationsGlobal],
+  globals: [SiteSettings, HeaderGlobal, HomeHeroGlobal, WhatIsSpaGlobal, CertificationsGlobal, ProductsCollaborationsGlobal],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
