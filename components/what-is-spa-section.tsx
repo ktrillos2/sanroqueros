@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { motion } from "framer-motion"
 import Image from "next/image"
 import { Sparkles, Heart, Shield, Home } from "lucide-react"
@@ -8,7 +8,7 @@ import { Sparkles, Heart, Shield, Home } from "lucide-react"
 type MediaRef = { url?: string }
 type WhatIsSpa = {
   title?: { left?: string; yellow?: string; between?: string; pink?: string }
-  paragraphs?: { text: string }[]
+  content?: any
   benefits?: { title: string; description: string; icon: "shield" | "sparkles" | "heart" | "home"; isSpecial?: boolean }[]
   images?: { main?: MediaRef | string; secondary?: MediaRef | string }
 }
@@ -25,25 +25,40 @@ export function WhatIsSpaSection() {
 
   useEffect(() => {
     let mounted = true
-    ;(async () => {
-      try {
-        const res = await fetch('/api/what-is-spa', { cache: 'no-store' })
-        const json = res.ok ? await res.json() : null
-        if (!mounted) return
-        setData(json)
-      } catch {
-        if (!mounted) return
-        setData(null)
-      }
-    })()
+      ; (async () => {
+        try {
+          const res = await fetch('/api/what-is-spa', { cache: 'no-store' })
+          const json = res.ok ? await res.json() : null
+          if (!mounted) return
+          setData(json)
+        } catch {
+          if (!mounted) return
+          setData(null)
+        }
+      })()
     return () => { mounted = false }
   }, [])
 
   const title = data?.title || { left: "¿Qué es un", yellow: "Spa", between: "para", pink: "Perros y Gatos" }
-  const paragraphs = data?.paragraphs?.length ? data.paragraphs : [
-    { text: "Un spa para mascotas es mucho más que un simple baño. Es una experiencia integral de bienestar que combina técnicas profesionales de grooming con tratamientos relajantes y terapéuticos, diseñados específicamente para el cuidado y la salud de perros y gatos." },
-    { text: "En SANROQUE, transformamos el cuidado tradicional en una experiencia premium que no solo mejora la apariencia de tu mascota, sino que también contribuye a su salud física y bienestar emocional." },
-  ]
+  const paragraphs = useMemo(() => {
+    const rich = (data as any)?.content
+    // Extraer párrafos desde estructura Lexical
+    if (rich?.root?.children && Array.isArray(rich.root.children)) {
+      const out: string[] = []
+      for (const node of rich.root.children) {
+        if (node?.type === 'paragraph' && Array.isArray(node.children)) {
+          const t = node.children.map((c: any) => c?.text || '').join('')
+          if (t.trim()) out.push(t)
+        }
+      }
+      if (out.length) return out
+    }
+    // Fallback
+    return [
+      "Un spa para mascotas es mucho más que un simple baño. Es una experiencia integral de bienestar que combina técnicas profesionales de grooming con tratamientos relajantes y terapéuticos, diseñados específicamente para el cuidado y la salud de perros y gatos.",
+      "En SANROQUE, transformamos el cuidado tradicional en una experiencia premium que no solo mejora la apariencia de tu mascota, sino que también contribuye a su salud física y bienestar emocional.",
+    ]
+  }, [data?.content])
   const benefits = data?.benefits?.length ? data.benefits : [
     { title: 'Evaluación Completa', description: 'Revisión detallada del estado de salud y bienestar de tu mascota antes de cada tratamiento', icon: 'shield', isSpecial: false },
     { title: 'Productos Premium', description: 'Utilizamos marcas como Iv San Bernard e Hydra para resultados excepcionales', icon: 'sparkles', isSpecial: false },
@@ -92,7 +107,7 @@ export function WhatIsSpaSection() {
                   transition={{ delay: 0.4 + idx * 0.2, duration: 0.8 }}
                   viewport={{ once: true }}
                 >
-                  {p.text}
+                  {p}
                 </motion.p>
               ))}
             </div>
@@ -114,11 +129,10 @@ export function WhatIsSpaSection() {
                   viewport={{ once: true }}
                 >
                   <div
-                    className={`p-4 rounded-2xl border transition-all duration-300 ${
-                      benefit.isSpecial
+                    className={`p-4 rounded-2xl border transition-all duration-300 ${benefit.isSpecial
                         ? "border-brand-yellow/20 group-hover:border-brand-yellow/40 group-hover:shadow-lg group-hover:bg-gradient-to-r group-hover:from-brand-yellow/5 group-hover:to-brand-pink/5"
                         : "border-transparent"
-                    }`}
+                      }`}
                   >
                     <div className="flex items-start space-x-4">
                       <motion.div

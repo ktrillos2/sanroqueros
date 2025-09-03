@@ -1,37 +1,120 @@
 "use client"
 
+import { useEffect, useMemo, useState } from "react"
 import { motion } from "framer-motion"
 import Image from "next/image"
 import { Award, Shield, Star, CheckCircle } from "lucide-react"
 
-export function CertificationsSection() {
-  const certifications = [
-    {
-      title: "6° Premios PetIndustry 2025",
-      subtitle: "Mejor Spa y Peluquería en Bogotá",
-      description: "Reconocimiento a la excelencia en servicios de grooming y bienestar para mascotas",
-      image:
-        "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Imagen%20de%20WhatsApp%202025-08-19%20a%20las%2020.59.39_b7909fcc.jpg-S4pE6tzjqA5zJ55EkoNaDJCZeAKZXB.jpeg",
-      color: "from-yellow-400 to-amber-500",
-      icon: Award,
-    },
-    {
-      title: "Fear Free Certified",
-      subtitle: "Certificación en Bienestar Animal",
-      description: "Técnicas especializadas para reducir el estrés y la ansiedad en las mascotas",
-      image:
-        "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/FF%20Corporate%20Logo%20-%20Small-JV6BzWkwIhTWZcGFyOtbBrsQEtytoc.png",
-      color: "from-blue-400 to-cyan-500",
-      icon: Shield,
-    },
-  ]
+type MediaRef = { url?: string }
+type Rich = any
+type CertificationItem = {
+  title: string
+  subtitle?: string
+  description?: Rich
+  color?: string
+  icon?: "award" | "shield" | "star" | "checkCircle"
+  link?: string
+  logo?: MediaRef | string
+}
+type CertificationsData = {
+  title?: { left?: string; yellow?: string }
+  badge?: string
+  intro?: Rich
+  certifications?: CertificationItem[]
+  achievements?: { text: string }[]
+}
 
-  const achievements = [
-    "Técnicas libres de estrés certificadas",
-    "Personal especializado y capacitado",
-    "Ambiente 100% libre de jaulas",
-    "Productos premium certificados",
+const iconMap = {
+  award: Award,
+  shield: Shield,
+  star: Star,
+  checkCircle: CheckCircle,
+} as const
+
+const getMediaUrl = (m?: MediaRef | string) => {
+  if (!m) return undefined
+  if (typeof m === 'string') return m
+  return m.url
+}
+
+function extractRichParagraphs(rich?: Rich): string[] {
+  if (!rich) return []
+  // Caso Payload Lexical { root: { children: [...] } }
+  if (rich?.root?.children && Array.isArray(rich.root.children)) {
+    const paras: string[] = []
+    for (const node of rich.root.children) {
+      if (node?.type === 'paragraph' && Array.isArray(node.children)) {
+        const t = node.children.map((c: any) => c?.text || '').join('')
+        if (t.trim()) paras.push(t)
+      }
+    }
+    if (paras.length) return paras
+  }
+  // Caso arreglo simple con children[].text (fallback)
+  if (Array.isArray(rich)) {
+    const paras: string[] = []
+    for (const n of rich) {
+      if (Array.isArray(n?.children)) {
+        const t = n.children.map((c: any) => c?.text || '').join('')
+        if (t.trim()) paras.push(t)
+      } else if (typeof n?.text === 'string' && n.text.trim()) {
+        paras.push(n.text)
+      }
+    }
+    return paras
+  }
+  // Texto plano
+  if (typeof rich === 'string') return [rich]
+  return []
+}
+
+export function CertificationsSection() {
+  const [data, setData] = useState<CertificationsData | null>(null)
+
+  useEffect(() => {
+    let mounted = true
+      ; (async () => {
+        try {
+          const res = await fetch('/api/certifications', { cache: 'no-store' })
+          const json = res.ok ? await res.json() : null
+          if (!mounted) return
+          setData(json)
+        } catch {
+          if (!mounted) return
+          setData(null)
+        }
+      })()
+    return () => { mounted = false }
+  }, [])
+
+  const titleLeft = data?.title?.left ?? 'Nuestras'
+  const titleYellow = data?.title?.yellow ?? 'Certificaciones'
+  const badge = data?.badge ?? 'Certificaciones de Excelencia'
+  const introParas = useMemo(() => extractRichParagraphs(data?.intro), [data?.intro])
+  const certs: CertificationItem[] = data?.certifications?.length ? data.certifications! : [
+    {
+      title: '6° Premios PetIndustry 2025',
+      subtitle: 'Mejor Spa y Peluquería en Bogotá',
+      description: [{ children: [{ text: 'Reconocimiento a la excelencia en servicios de grooming y bienestar para mascotas' }] }],
+      color: 'from-yellow-400 to-amber-500',
+      icon: 'award',
+      logo: undefined,
+    },
+    {
+      title: 'Fear Free Certified',
+      subtitle: 'Certificación en Bienestar Animal',
+      description: [{ children: [{ text: 'Técnicas especializadas para reducir el estrés y la ansiedad en las mascotas' }] }],
+      color: 'from-blue-400 to-cyan-500',
+      icon: 'shield',
+      logo: undefined,
+    },
   ]
+  const achievements = (data?.achievements?.map(a => a.text) ?? [
+    'Técnicas libres de estrés certificadas',
+    'Personal especializado y capacitado',
+    'Ambiente 100% libre de jaulas',
+    'Productos premium certificados',
+  ])
 
   return (
     <section className="py-20 bg-gradient-to-br from-gray-50 to-white relative overflow-hidden">
@@ -57,23 +140,30 @@ export function CertificationsSection() {
             transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
           >
             <Star className="w-4 h-4" />
-            Certificaciones de Excelencia
+            {badge}
           </motion.div>
 
           <h2 className="moonglade text-4xl lg:text-5xl font-bold text-brand-black mb-4">
-            Nuestras <span className="text-brand-yellow">Certificaciones</span>
+            {titleLeft} <span className="text-brand-yellow">{titleYellow}</span>
           </h2>
 
-          <p className="font-helvetica text-lg text-gray-600 max-w-2xl mx-auto">
-            Respaldados por las certificaciones más prestigiosas de la industria pet, garantizamos el más alto nivel de
-            calidad y bienestar para tu mascota.
-          </p>
+          <div className="font-helvetica text-lg text-gray-600 max-w-2xl mx-auto space-y-4">
+            {introParas.length
+              ? introParas.map((t, i) => (
+                <p key={i}>{t}</p>
+              ))
+              : (
+                <p>
+                  Respaldados por las certificaciones más prestigiosas de la industria pet, garantizamos el más alto nivel de calidad y bienestar para tu mascota.
+                </p>
+              )}
+          </div>
         </motion.div>
 
         {/* Certifications Grid */}
         <div className="mb-16">
           <div className="grid lg:grid-cols-2 gap-8">
-            {certifications.map((cert, index) => (
+            {certs.map((cert, index) => (
               <motion.div
                 key={cert.title}
                 className="group relative"
@@ -97,7 +187,7 @@ export function CertificationsSection() {
                     >
                       <div className="w-32 h-32 rounded-2xl overflow-hidden bg-white p-2 shadow-none">
                         <Image
-                          src={cert.image || "/placeholder.svg"}
+                          src={getMediaUrl(cert.logo) || "/placeholder.svg"}
                           alt={cert.title}
                           width={128}
                           height={128}
@@ -109,17 +199,27 @@ export function CertificationsSection() {
                     {/* Text Content */}
                     <div className="space-y-4">
                       <div className="flex items-center justify-center gap-2 mb-2">
-                        <cert.icon className={`w-6 h-6 bg-gradient-to-r ${cert.color} bg-clip-text text-transparent`} />
+                        {(() => {
+                          const key = (cert.icon ?? 'award') as keyof typeof iconMap
+                          const Icon = iconMap[key]
+                          return <Icon className={`w-6 h-6 bg-gradient-to-r ${cert.color} bg-clip-text text-transparent`} />
+                        })()}
                         <h3 className="text-xl font-bold text-brand-black">{cert.title}</h3>
                       </div>
 
-                      <p
-                        className={`font-helvetica text-lg font-semibold bg-gradient-to-r ${cert.color} bg-clip-text text-transparent`}
-                      >
-                        {cert.subtitle}
-                      </p>
+                      {cert.subtitle && (
+                        <p
+                          className={`font-helvetica text-lg font-semibold bg-gradient-to-r ${cert.color} bg-clip-text text-transparent`}
+                        >
+                          {cert.subtitle}
+                        </p>
+                      )}
 
-                      <p className="font-helvetica text-gray-600 leading-relaxed">{cert.description}</p>
+                      <div className="font-helvetica text-gray-600 leading-relaxed space-y-3">
+                        {extractRichParagraphs(cert.description).map((t, i) => (
+                          <p key={i}>{t}</p>
+                        ))}
+                      </div>
                     </div>
                   </div>
 

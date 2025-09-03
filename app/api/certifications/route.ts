@@ -7,9 +7,9 @@ export const dynamic = 'force-dynamic'
 export async function GET() {
     try {
         const payload = await getPayload({ config })
-        const data = await (payload as any).findGlobal({ slug: 'whatIsSpa' as any, depth: 1 })
+        const data = await (payload as any).findGlobal({ slug: 'certifications' as any, depth: 1 })
         return NextResponse.json(data, { status: 200 })
     } catch (e) {
-        return NextResponse.json({ error: 'failed-to-load-what-is-spa' }, { status: 500 })
+        return NextResponse.json({ error: 'failed-to-load-certifications' }, { status: 500 })
     }
 }

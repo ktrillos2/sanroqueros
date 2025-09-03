@@ -32,17 +32,17 @@ export function HeroSection() {
 
   useEffect(() => {
     let mounted = true
-    ;(async () => {
-      try {
-        const res = await fetch('/api/home-hero', { cache: 'no-store' })
-        const json = res.ok ? await res.json() : null
-        if (!mounted) return
-        setData(json)
-      } catch {
-        if (!mounted) return
-        setData(null)
-      }
-    })()
+      ; (async () => {
+        try {
+          const res = await fetch('/api/home-hero', { cache: 'no-store' })
+          const json = res.ok ? await res.json() : null
+          if (!mounted) return
+          setData(json)
+        } catch {
+          if (!mounted) return
+          setData(null)
+        }
+      })()
     return () => { mounted = false }
   }, [])
 
@@ -67,11 +67,11 @@ export function HeroSection() {
   const getMediaUrl = (m?: MediaRef | string) => {
     if (!m) return undefined
     if (typeof m === 'string') return m
-    return  m.url
+    return m.url
   }
 
-  const catUrl =  getMediaUrl((data as any)?.images?.cat) ||'/images/ragdoll-cat.jpg'
-  const kittenUrl =  getMediaUrl((data as any)?.images?.kitten) ||'/images/kitten-cover.png'
+  const catUrl = getMediaUrl((data as any)?.images?.cat) || '/images/ragdoll-cat.jpg'
+  const kittenUrl = getMediaUrl((data as any)?.images?.kitten) || '/images/kitten-cover.png'
   return (
     <section className="relative min-h-screen bg-brand-black overflow-hidden">
       <div className="absolute inset-0">
@@ -92,9 +92,8 @@ export function HeroSection() {
           {floatingDots.map(({ i, left, top, xOffset, duration, delay, colorIdx }) => (
             <motion.div
               key={i}
-              className={`absolute w-1.5 h-1.5 rounded-full ${
-                colorIdx === 0 ? "bg-brand-yellow/20" : colorIdx === 1 ? "bg-brand-pink/20" : "bg-brand-blue/20"
-              }`}
+              className={`absolute w-1.5 h-1.5 rounded-full ${colorIdx === 0 ? "bg-brand-yellow/20" : colorIdx === 1 ? "bg-brand-pink/20" : "bg-brand-blue/20"
+                }`}
               style={{ left, top }}
               animate={{
                 y: [0, -20, 0],
@@ -203,7 +202,7 @@ export function HeroSection() {
                 className="border-white text-white hover:bg-white hover:text-black font-helvetica text-lg px-8 py-4 bg-transparent"
                 asChild
               >
-                <Link href={secondaryHref??'#'}>{secondaryLabel}</Link>
+                <Link href={secondaryHref ?? '#'}>{secondaryLabel}</Link>
               </Button>
             </motion.div>
           </motion.div>
