@@ -105,7 +105,7 @@ export function HeroSection() {
                 transition={{ delay: 0.2, duration: 0.8 }}
               >
                 El Mejor <span className="text-brand-yellow">Spa</span> para{" "}
-                <span className="text-brand-pink">Perros y Gatos</span>
+                <span className="text-brand-pink">Woofies y Michis</span>
               </motion.h1>
 
               <motion.p

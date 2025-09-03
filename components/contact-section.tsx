@@ -44,7 +44,7 @@ Me gustaría agendar una cita para mi mascota.`
   }
 
   const directWhatsAppUrl =
-    "https://wa.me/573154433109?text=Hola,%20vengo%20desde%20la%20web.%20Me%20gustaría%20agendar%20una%20cita%20para%20mi%20mascota."
+    "https://wa.me/573154433109?text=Hola,%20vengo%20desde%20la%20web.%20Me%20gustaría%20agendar%20una%20cita%20para%20mi%20Sanroquero."
 
   return (
     <section id="contacto" className="py-20 bg-brand-black">

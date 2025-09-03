@@ -141,10 +141,10 @@ export default function GatosPage() {
           <div className="text-center text-white space-y-6 animate-fade-in">
             <h1 className="font-heading text-4xl md:text-6xl font-bold leading-tight">
               Servicios Especializados para{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-pink-600">Gatos</span>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-pink-600">Michi</span>
             </h1>
             <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto">
-              Cuidado especializado para felinos con técnicas Fear Free y ambiente libre de estrés
+              Cuidado especializado para michis con técnicas Fear Free y ambiente libre de estrés
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button
@@ -229,7 +229,7 @@ export default function GatosPage() {
         <div className="container mx-auto px-4">
       <div className="text-center mb-10 md:mb-16">
             <h2 className="font-heading text-4xl lg:text-5xl font-bold text-white mb-6 animate-fade-in">
-              ¿No sabes qué tipo de manto es tu gato?
+              ¿No sabes qué tipo de manto es tu michi?
             </h2>
             <p className="text-lg text-gray-300 max-w-3xl mx-auto">
               Selecciona la raza de tu mascota y te ayudaremos a identificar su tipo de manto para recomendarte el mejor
@@ -242,16 +242,16 @@ export default function GatosPage() {
               <CardHeader className="text-center bg-gray-800/50 text-white py-4">
                 <CardTitle className="font-heading text-xl font-bold">🔍 Identificador de Tipo de Manto</CardTitle>
                 <CardDescription className="text-gray-300 text-base">
-                  Encuentra la raza de tu gato y conoce su tipo de manto
+                  Encuentra la raza de tu michi y conoce su tipo de manto
                 </CardDescription>
               </CardHeader>
 
               <CardContent className="p-4 md:p-8 bg-gray-900/50">
                 <div>
-                  <label className="block text-lg font-bold text-white mb-4">Selecciona la raza de tu gato:</label>
+                  <label className="block text-lg font-bold text-white mb-4">Selecciona la raza de tu michi:</label>
                   <Select onValueChange={handleBreedSelect}>
                     <SelectTrigger className="w-full h-12 text-base bg-gray-700 border-[#88D3EE] text-white data-[placeholder]:text-white">
-                      <SelectValue placeholder="🔍 Busca y selecciona la raza de tu gato..." />
+                      <SelectValue placeholder="🔍 Busca y selecciona la raza de tu michi..." />
                     </SelectTrigger>
                     <SelectContent className="bg-gray-800 border-[#88D3EE] max-h-60">
                       {Object.entries(catBreeds).map(([coatType, breeds]) =>
@@ -291,8 +291,8 @@ export default function GatosPage() {
                           <div className="bg-[#000] md:bg-transparent rounded-xl md:rounded-none p-4 md:p-0 border border-[#FFE550]/30 md:border-0">
                             <p className="text-gray-300 text-base leading-relaxed">
                               {coatType === "Manto Corto"
-                                ? "🐱 Tu gato tiene pelo corto que requiere cuidados específicos para mantener su brillo natural y textura suave."
-                                : "🐱 Tu gato tiene pelo medio/largo que necesita cuidados especiales para evitar nudos, mantener su suavidad y volumen natural."}
+                                ? "🐱 Tu michi tiene pelo corto que requiere cuidados específicos para mantener su brillo natural y textura suave."
+                                : "🐱 Tu michi tiene pelo medio/largo que necesita cuidados especiales para evitar nudos, mantener su suavidad y volumen natural."}
                             </p>
                           </div>
                         </div>
@@ -355,7 +355,7 @@ export default function GatosPage() {
                   </thead>
                   <tbody>
                     <tr className="bg-gray-700/50">
-                      <td className="px-6 py-4 font-bold capitalize text-lg text-[#88D3EE]">Gatos</td>
+                      <td className="px-6 py-4 font-bold capitalize text-lg text-[#88D3EE]">Michi</td>
                       <td className="px-6 py-4 text-center font-bold text-lg">$109k</td>
                       <td className="px-6 py-4 text-center font-bold text-lg">$119k</td>
                       <td className="px-6 py-4 text-center font-bold text-[#FFE550] text-lg">$140k</td>
@@ -386,7 +386,7 @@ export default function GatosPage() {
                   </thead>
                   <tbody>
                     <tr className="bg-gray-700/50">
-                      <td className="px-6 py-4 font-bold capitalize text-lg text-[#FFB1BE]">Gatos</td>
+                      <td className="px-6 py-4 font-bold capitalize text-lg text-[#FFB1BE]">Michi</td>
                       <td className="px-6 py-4 text-center font-bold text-lg">$128k</td>
                       <td className="px-6 py-4 text-center font-bold text-lg">$144k</td>
                       <td className="px-6 py-4 text-center font-bold text-[#FFE550] text-lg">$166k</td>
