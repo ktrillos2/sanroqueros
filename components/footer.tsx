@@ -18,14 +18,16 @@ export function Footer() {
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Logo and Description */}
           <div className="lg:col-span-2">
-      <Link href="/" className="inline-block mb-4">
-              <Image
-        src="/images/sanroque-logo-white.png"
-                alt="SANROQUE"
-                width={180}
-                height={48}
-                className="h-12 w-auto"
-              />
+            <Link href="/" className="inline-block mb-4">
+              <div className="relative w-[180px] h-12">
+                <Image
+                  src="/images/sanroque-logo-white.png"
+                  alt="SANROQUE"
+                  fill
+                  sizes="180px"
+                  className="object-contain"
+                />
+              </div>
             </Link>
             <p className="text-gray-300 mb-6 max-w-md">
               El mejor spa y peluquería para perros y gatos en Bogotá. Experiencia premium con productos de alta gama y

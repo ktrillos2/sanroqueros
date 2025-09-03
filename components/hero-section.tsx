@@ -18,6 +18,17 @@ type HomeHero = {
 
 export function HeroSection() {
   const [data, setData] = useState<HomeHero | null>(null)
+  // Evitar desajustes de hidratación: no usar Math.random() en render.
+  // Precalculamos valores deterministas basados en el índice.
+  const floatingDots = Array.from({ length: 8 }, (_, i) => {
+    const left = `${(i * 13) % 100}%`
+    const top = `${(i * 29) % 100}%`
+    const xOffset = ((i * 7) % 10) - 5
+    const duration = 4 + ((i * 3) % 3) // 4..6s
+    const delay = (i % 5) * 0.3
+    const colorIdx = i % 3
+    return { i, left, top, xOffset, duration, delay, colorIdx }
+  })
 
   useEffect(() => {
     let mounted = true
@@ -78,25 +89,22 @@ export function HeroSection() {
         />
 
         <div className="absolute inset-0">
-          {[...Array(8)].map((_, i) => (
+          {floatingDots.map(({ i, left, top, xOffset, duration, delay, colorIdx }) => (
             <motion.div
               key={i}
               className={`absolute w-1.5 h-1.5 rounded-full ${
-                i % 3 === 0 ? "bg-brand-yellow/20" : i % 3 === 1 ? "bg-brand-pink/20" : "bg-brand-blue/20"
+                colorIdx === 0 ? "bg-brand-yellow/20" : colorIdx === 1 ? "bg-brand-pink/20" : "bg-brand-blue/20"
               }`}
-              style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-              }}
+              style={{ left, top }}
               animate={{
                 y: [0, -20, 0],
-                x: [0, Math.random() * 10 - 5, 0],
+                x: [0, xOffset, 0],
                 opacity: [0.2, 0.4, 0.2],
               }}
               transition={{
-                duration: 4 + Math.random() * 2,
+                duration,
                 repeat: Number.POSITIVE_INFINITY,
-                delay: Math.random() * 2,
+                delay,
                 ease: "easeInOut",
               }}
             />
@@ -222,12 +230,13 @@ export function HeroSection() {
                   ease: "easeInOut",
                 }}
               >
-                <div className="relative">
+                <div className="relative w-[400px] h-auto">
                   <Image
                     src={catUrl}
                     alt="Hermoso gato Ragdoll en SANROQUE"
                     width={400}
                     height={400}
+                    style={{ height: 'auto' }}
                     className="rounded-2xl shadow-2xl"
                     priority
                   />
@@ -251,12 +260,13 @@ export function HeroSection() {
                   delay: 2,
                 }}
               >
-                <div className="relative">
+                <div className="relative w-auto h-[200px]">
                   <Image
                     src={kittenUrl}
                     alt="Adorable gatito en SANROQUE"
                     width={300}
                     height={200}
+                    style={{ width: 'auto' }}
                     className="rounded-2xl shadow-2xl"
                   />
                   {/* Glowing border effect */}

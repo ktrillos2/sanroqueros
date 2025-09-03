@@ -17,6 +17,8 @@ const helveticaNeue = Inter({
 })
 
 export const metadata: Metadata = {
+  // Base para generar URLs absolutas en metadatos
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
   title: "SANROQUE - Spa y Peluquería para Mascotas | Bogotá",
   description:
     "El mejor spa y peluquería para perros y gatos en Bogotá. Servicios profesionales con productos premium Hydra by Pet Society e Iv San Bernard.",

@@ -104,13 +104,15 @@ export function MichiFriendlySection() {
                 animate={{ y: [0, -10, 0] }}
                 transition={{ duration: 3, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
               >
-                <Image
-                  src="/images/ragdoll-cat.jpg"
-                  alt="Gato Ragdoll relajado en SANROQUE"
-                  width={350}
-                  height={350}
-                  className="rounded-2xl shadow-2xl"
-                />
+                <div className="relative w-[350px] h-[350px]">
+                  <Image
+                    src="/images/ragdoll-cat.jpg"
+                    alt="Gato Ragdoll relajado en SANROQUE"
+                    fill
+                    sizes="(max-width: 1024px) 50vw, 350px"
+                    className="object-cover rounded-2xl shadow-2xl"
+                  />
+                </div>
               </motion.div>
 
               {/* Yorkshire Terriers image */}
@@ -119,13 +121,15 @@ export function MichiFriendlySection() {
                 animate={{ y: [0, -15, 0] }}
                 transition={{ duration: 4, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut", delay: 1 }}
               >
-                <Image
-                  src="/images/yorkshire-terriers.png"
-                  alt="Yorkshire Terriers en SANROQUE"
-                  width={300}
-                  height={300}
-                  className="rounded-2xl shadow-2xl"
-                />
+                <div className="relative w-[300px] h-[300px]">
+                  <Image
+                    src="/images/yorkshire-terriers.png"
+                    alt="Yorkshire Terriers en SANROQUE"
+                    fill
+                    sizes="(max-width: 1024px) 50vw, 300px"
+                    className="object-cover rounded-2xl shadow-2xl"
+                  />
+                </div>
               </motion.div>
 
               {/* Floating elements */}

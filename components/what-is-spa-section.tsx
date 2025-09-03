@@ -146,13 +146,13 @@ export function WhatIsSpaSection() {
                   ease: "easeInOut",
                 }}
               >
-                <div className="relative">
+                <div className="relative w-[400px] h-[400px]">
                   <Image
                     src="/images/happy-dog-bath.png"
                     alt="Perro feliz durante su spa en SANROQUE"
-                    width={400}
-                    height={400}
-                    className="rounded-2xl shadow-2xl"
+                    fill
+                    sizes="(max-width: 1024px) 50vw, 400px"
+                    className="object-cover rounded-2xl shadow-2xl"
                   />
                   <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-brand-yellow/10 to-brand-pink/10 blur-sm -z-10 scale-105" />
                 </div>
@@ -171,13 +171,13 @@ export function WhatIsSpaSection() {
                   delay: 2,
                 }}
               >
-                <div className="relative">
+                <div className="relative w-[300px] h-[200px]">
                   <Image
                     src="/images/spa-reception.png"
                     alt="Recepción profesional de SANROQUE"
-                    width={300}
-                    height={200}
-                    className="rounded-2xl shadow-2xl"
+                    fill
+                    sizes="(max-width: 1024px) 50vw, 300px"
+                    className="object-cover rounded-2xl shadow-2xl"
                   />
                   <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-brand-blue/10 to-brand-yellow/10 blur-sm -z-10 scale-105" />
                 </div>
