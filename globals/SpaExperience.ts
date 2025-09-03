@@ -37,9 +37,37 @@ const SpaExperienceGlobal: GlobalConfig = {
             label: 'Video',
             type: 'group',
             fields: [
-                { name: 'url', label: 'URL de video (YouTube/Vimeo)', type: 'text' },
+                {
+                    name: 'sourceType',
+                    label: 'Fuente del video',
+                    type: 'radio',
+                    defaultValue: 'youtube',
+                    options: [
+                        { label: 'YouTube', value: 'youtube' },
+                        { label: 'Archivo subido', value: 'upload' },
+                    ],
+                    admin: { layout: 'horizontal' },
+                },
+                {
+                    name: 'youtubeUrl',
+                    label: 'URL de YouTube',
+                    type: 'text',
+                    admin: {
+                        condition: (data: any, siblingData: any) => siblingData?.sourceType === 'youtube',
+                        description: 'Ej: https://www.youtube.com/watch?v=VIDEO_ID',
+                    },
+                },
+                {
+                    name: 'file',
+                    label: 'Archivo de video',
+                    type: 'upload',
+                    relationTo: 'media',
+                    admin: {
+                        condition: (data: any, siblingData: any) => siblingData?.sourceType === 'upload',
+                    },
+                },
                 { name: 'caption', label: 'Leyenda', type: 'text' },
-            ]
+            ],
         },
         {
             name: 'experiences',

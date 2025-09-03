@@ -71,7 +71,10 @@ export const Media: CollectionConfig = {
     }],
   },
   upload: {
-    mimeTypes: ['image/png', 'image/jpeg', 'image/webp', 'image/svg+xml'],
+    mimeTypes: [
+      'image/png', 'image/jpeg', 'image/webp', 'image/svg+xml',
+      'video/mp4', 'video/webm', 'video/ogg'
+    ],
     adminThumbnail: 'thumbnail',
     imageSizes: [
       {

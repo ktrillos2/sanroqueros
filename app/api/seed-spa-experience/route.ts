@@ -27,7 +27,7 @@ export async function GET(req: NextRequest) {
                 ]
             }
         },
-        video: { url: '', caption: 'Experiencia Spa 360° - Detrás de cámaras' },
+        video: { sourceType: 'youtube', youtubeUrl: '', file: null, caption: 'Experiencia Spa 360° - Detrás de cámaras' },
         experiences: [
             { title: 'Baños Terapéuticos', image: null, description: { root: { type: 'root', format: '', indent: 0, version: 1, direction: 'ltr', children: [{ type: 'paragraph', format: '', indent: 0, version: 1, direction: 'ltr', children: [{ type: 'text', text: 'Experiencia relajante con productos premium', detail: 0, format: 0, mode: 'normal', style: '', version: 1 }] }] } } },
             { title: 'Masajes Especializados', image: null, description: { root: { type: 'root', format: '', indent: 0, version: 1, direction: 'ltr', children: [{ type: 'paragraph', format: '', indent: 0, version: 1, direction: 'ltr', children: [{ type: 'text', text: 'Técnicas profesionales para el bienestar', detail: 0, format: 0, mode: 'normal', style: '', version: 1 }] }] } } },

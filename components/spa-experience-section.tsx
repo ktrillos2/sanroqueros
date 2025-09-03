@@ -9,7 +9,8 @@ import { Play, Sparkles } from "lucide-react"
 type MediaRef = { url?: string }
 type Rich = any
 type ExpItem = { title: string; image?: MediaRef | string; description?: Rich }
-type SpaData = { title?: { left?: string; yellow?: string }; intro?: Rich; video?: { url?: string; caption?: string }; experiences?: ExpItem[] }
+type Video = { sourceType?: 'youtube' | 'upload'; youtubeUrl?: string; file?: MediaRef | string; caption?: string }
+type SpaData = { title?: { left?: string; yellow?: string }; intro?: Rich; video?: Video; experiences?: ExpItem[] }
 
 const getMediaUrl = (m?: MediaRef | string) => typeof m === 'string' ? m : m?.url
 
@@ -39,6 +40,26 @@ function extractRichParagraphs(rich?: Rich): string[] {
   }
   if (typeof rich === 'string') return [rich]
   return []
+}
+
+function toYouTubeEmbed(url?: string): string | null {
+  if (!url) return null
+  try {
+    const u = new URL(url)
+    // youtu.be/<id>
+    if (u.hostname.includes('youtu.be')) {
+      const id = u.pathname.replace('/', '')
+      return id ? `https://www.youtube.com/embed/${id}` : null
+    }
+    // www.youtube.com/watch?v=<id>
+    if (u.hostname.includes('youtube.com')) {
+      const id = u.searchParams.get('v')
+      if (id) return `https://www.youtube.com/embed/${id}`
+      // also support /embed/<id>
+      if (u.pathname.startsWith('/embed/')) return url
+    }
+  } catch { }
+  return null
 }
 
 export function SpaExperienceSection() {
@@ -84,26 +105,65 @@ export function SpaExperienceSection() {
             )}
           </div>
 
-          <motion.div
-            className="aspect-video bg-gradient-to-br from-brand-black to-gray-800 rounded-2xl flex items-center justify-center text-white text-lg mb-12 max-w-4xl mx-auto shadow-2xl relative overflow-hidden"
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            viewport={{ once: true }}
-            whileHover={{ scale: 1.02 }}
-          >
-            <div className="absolute inset-0 bg-gradient-to-r from-brand-yellow/10 via-transparent to-brand-pink/10 animate-pulse"></div>
-            <div className="text-center relative z-10">
+          {(() => {
+            const v = data?.video
+            const fileUrl = getMediaUrl(v?.file)
+            const yt = toYouTubeEmbed(v?.youtubeUrl)
+            if (v?.sourceType === 'youtube' && yt) {
+              return (
+                <motion.div
+                  className="aspect-video rounded-2xl overflow-hidden mb-12 max-w-4xl mx-auto shadow-2xl bg-black"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.6, delay: 0.1 }}
+                  viewport={{ once: true }}
+                >
+                  <iframe
+                    src={yt}
+                    title="YouTube video player"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen
+                    className="w-full h-full"
+                  />
+                </motion.div>
+              )
+            }
+            if (v?.sourceType === 'upload' && fileUrl) {
+              return (
+                <motion.div
+                  className="aspect-video rounded-2xl overflow-hidden mb-12 max-w-4xl mx-auto shadow-2xl bg-black"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.6, delay: 0.1 }}
+                  viewport={{ once: true }}
+                >
+                  <video className="w-full h-full" src={fileUrl} controls preload="metadata" />
+                </motion.div>
+              )
+            }
+            return (
               <motion.div
-                animate={{ scale: [1, 1.1, 1] }}
-                transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
+                className="aspect-video bg-gradient-to-br from-brand-black to-gray-800 rounded-2xl flex items-center justify-center text-white text-lg mb-12 max-w-4xl mx-auto shadow-2xl relative overflow-hidden"
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                viewport={{ once: true }}
+                whileHover={{ scale: 1.02 }}
               >
-                <Play className="w-16 h-16 mx-auto mb-4 text-brand-yellow" />
+                <div className="absolute inset-0 bg-gradient-to-r from-brand-yellow/10 via-transparent to-brand-pink/10 animate-pulse"></div>
+                <div className="text-center relative z-10">
+                  <motion.div
+                    animate={{ scale: [1, 1.1, 1] }}
+                    transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
+                  >
+                    <Play className="w-16 h-16 mx-auto mb-4 text-brand-yellow" />
+                  </motion.div>
+                  <p className="moonglade text-xl">Video próximamente</p>
+                  <p className="font-helvetica text-sm text-gray-400 mt-2">{data?.video?.caption ?? 'Experiencia Spa 360° - Detrás de cámaras'}</p>
+                </div>
               </motion.div>
-              <p className="moonglade text-xl">{data?.video?.url ? 'Ver video' : 'Video próximamente'}</p>
-              <p className="font-helvetica text-sm text-gray-400 mt-2">{data?.video?.caption ?? 'Experiencia Spa 360° - Detrás de cámaras'}</p>
-            </div>
-          </motion.div>
+            )
+          })()}
         </motion.div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
