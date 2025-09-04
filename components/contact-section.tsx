@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -11,6 +11,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { MessageCircle, Send, MapPin, Clock, Phone } from "lucide-react"
 
 export function ContactSection() {
+  const [section, setSection] = useState<{ title?: string; highlight?: string; description?: string; services?: { label: string; value: string }[]; whyUs?: { text: string }[] }>({})
+  const [site, setSite] = useState<any>(null)
+
   const [formData, setFormData] = useState({
     nombre: "",
     telefono: "",
@@ -19,9 +22,34 @@ export function ContactSection() {
     mensaje: "",
   })
 
+  useEffect(() => {
+    let mounted = true
+    ;(async () => {
+      try {
+        const [secRes, siteRes] = await Promise.all([
+          fetch('/api/whatsapp-appointment', { cache: 'no-store' }),
+          fetch('/api/site-settings', { cache: 'no-store' }),
+        ])
+        const sec = secRes.ok ? await secRes.json() : null
+        const site = siteRes.ok ? await siteRes.json() : null
+        if (!mounted) return
+        setSection(sec || {})
+        setSite(site?.data || null)
+      } catch {
+        if (!mounted) return
+      }
+    })()
+    return () => { mounted = false }
+  }, [])
+
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
   }
+
+  const principalWhatsapp = useMemo(() => {
+    const arr = site?.whatsapps || []
+    return arr.find((w: any) => w.principal) || arr[0]
+  }, [site])
 
   const handleWhatsAppSubmit = () => {
     const { nombre, telefono, mascota, servicio, mensaje } = formData
@@ -39,12 +67,14 @@ ${mensaje ? `💬 Mensaje: ${mensaje}` : ""}
 
 Me gustaría agendar una cita para mi mascota.`
 
-    const whatsappUrl = `https://wa.me/573154433109?text=${encodeURIComponent(whatsappMessage)}`
+    const numero = principalWhatsapp?.numero || '573154433109'
+    const whatsappUrl = `https://wa.me/${numero}?text=${encodeURIComponent(whatsappMessage)}`
     window.open(whatsappUrl, "_blank")
   }
-
-  const directWhatsAppUrl =
-    "https://wa.me/573154433109?text=Hola,%20vengo%20desde%20la%20web.%20Me%20gustaría%20agendar%20una%20cita%20para%20mi%20Sanroquero."
+  const defaultMsg = site?.mensajeWhatsAppPorDefecto || 'Hola, vengo desde la web. Me gustaría agendar una cita para mi mascota.'
+  const directWhatsAppUrl = principalWhatsapp?.numero
+    ? `https://wa.me/${principalWhatsapp.numero}?text=${encodeURIComponent(defaultMsg)}`
+    : undefined
 
   return (
     <section id="contacto" className="py-20 bg-brand-black">
@@ -57,10 +87,10 @@ Me gustaría agendar una cita para mi mascota.`
           viewport={{ once: true }}
         >
           <h2 className="font-heading text-4xl lg:text-5xl font-bold text-white mb-4">
-            ¿Agenda tu cita por <span className="text-brand-yellow">WhatsApp</span>?
+            {(section.title || '¿Agenda tu cita por ')}<span className="text-brand-yellow">{section.highlight || 'WhatsApp'}</span>{section.title?.endsWith('?') ? '' : '?'}
           </h2>
           <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-            Déjanos tus datos o escríbenos directo. Respondemos rápido.
+            {section.description || 'Déjanos tus datos o escríbenos directo. Respondemos rápido.'}
           </p>
         </motion.div>
 
@@ -129,11 +159,9 @@ Me gustaría agendar una cita para mi mascota.`
                         <SelectValue placeholder="Selecciona un servicio" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="spa-completo">Spa Completo</SelectItem>
-                        <SelectItem value="bano-basico">Baño Básico</SelectItem>
-                        <SelectItem value="ozonoterapia">Ozonoterapia</SelectItem>
-                        <SelectItem value="masajes">Masajes Terapéuticos</SelectItem>
-                        <SelectItem value="consulta">Solo consulta</SelectItem>
+                        {(section.services || []).map((s) => (
+                          <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
@@ -195,9 +223,8 @@ Me gustaría agendar una cita para mi mascota.`
                   <div>
                     <h4 className="font-semibold mb-1">Ubicación</h4>
                     <p className="text-gray-300">
-                      Bogotá, Colombia
-                      <br />
-                      (Ubicación exacta por WhatsApp)
+                      {site?.ubicacion?.ciudadPais || 'Bogotá, Colombia'}
+                      {site?.ubicacion?.direccion ? (<><br />{site.ubicacion.direccion}</>) : (<><br />(Ubicación exacta por WhatsApp)</>)}
                     </p>
                   </div>
                 </div>
@@ -206,11 +233,11 @@ Me gustaría agendar una cita para mi mascota.`
                   <Clock className="w-6 h-6 text-brand-yellow mt-1 flex-shrink-0" />
                   <div>
                     <h4 className="font-semibold mb-1">Horarios</h4>
-                    <p className="text-gray-300">
-                      Lunes a Sábado: 8:00 AM - 6:00 PM
-                      <br />
-                      Domingos: 9:00 AM - 4:00 PM
-                    </p>
+                    <div className="text-gray-300 space-y-1">
+                      {(site?.horarios || []).map((h: any, i: number) => (
+                        <p key={i}>{h.dia}: {h.abre} - {h.cierra} {h.nota ? `(${h.nota})` : ''}</p>
+                      ))}
+                    </div>
                   </div>
                 </div>
 
@@ -218,11 +245,15 @@ Me gustaría agendar una cita para mi mascota.`
                   <Phone className="w-6 h-6 text-brand-yellow mt-1 flex-shrink-0" />
                   <div>
                     <h4 className="font-semibold mb-1">WhatsApp</h4>
-                    <p className="text-gray-300">
-                      +57 315 443 3109
-                      <br />
-                      <span className="text-sm text-gray-400">Respuesta rápida garantizada</span>
-                    </p>
+                    <div className="text-gray-300 space-y-1">
+                      {(site?.whatsapps || []).map((w: any, i: number) => (
+                        <p key={i}>
+                          {w.mostrar || w.numero}
+                          {w.principal ? ' (Principal)' : ''}
+                        </p>
+                      ))}
+                      <span className="text-sm text-gray-400 block">Respuesta rápida garantizada</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -232,22 +263,12 @@ Me gustaría agendar una cita para mi mascota.`
             <div className="bg-white/5 backdrop-blur-sm rounded-lg p-6 border border-gray-700">
               <h4 className="font-heading text-xl font-bold text-white mb-4">¿Por qué elegirnos?</h4>
               <ul className="space-y-3 text-gray-300">
-                <li className="flex items-center space-x-3">
-                  <div className="w-2 h-2 bg-brand-yellow rounded-full"></div>
-                  <span>Productos premium importados</span>
-                </li>
-                <li className="flex items-center space-x-3">
-                  <div className="w-2 h-2 bg-brand-yellow rounded-full"></div>
-                  <span>Técnicas Fear Free certificadas</span>
-                </li>
-                <li className="flex items-center space-x-3">
-                  <div className="w-2 h-2 bg-brand-yellow rounded-full"></div>
-                  <span>Atención personalizada para perros y gatos</span>
-                </li>
-                <li className="flex items-center space-x-3">
-                  <div className="w-2 h-2 bg-brand-yellow rounded-full"></div>
-                  <span>Reconocidos como el mejor spa</span>
-                </li>
+                {(section.whyUs || []).map((i, idx) => (
+                  <li key={idx} className="flex items-center space-x-3">
+                    <div className="w-2 h-2 bg-brand-yellow rounded-full"></div>
+                    <span>{i.text}</span>
+                  </li>
+                ))}
               </ul>
             </div>
           </motion.div>
