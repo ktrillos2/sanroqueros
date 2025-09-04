@@ -3,7 +3,6 @@
 export const dynamic = 'force-dynamic'
 
 import { Header } from "@/components/header"
-import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Calendar, Clock, ArrowRight, ExternalLink, User, Eye } from "lucide-react"
@@ -354,7 +353,6 @@ export default function BlogPage() {
         </div>
       </section>
 
-      <Footer />
     </main>
   )
 }

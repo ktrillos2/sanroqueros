@@ -5,6 +5,7 @@ import { moonglade as moongladeLocal } from "@/app/fonts/moonglade"
 import "./globals.css"
 import { ConditionalWhatsapp } from "@/components/conditional-whatsapp"
 import GlobalFetchLoader from "@/components/global-fetch-loader"
+import { Footer } from "@/components/footer"
 
 // Use local Moonglade font files (Light 300, Regular 400, Bold 700)
 const moonglade = moongladeLocal
@@ -83,6 +84,8 @@ export default function RootLayout({
         <GlobalFetchLoader />
         {children}
         <ConditionalWhatsapp />
+  {/* Footer global */}
+  <Footer />
       </body>
     </html>
   )

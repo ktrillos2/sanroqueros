@@ -1,7 +1,6 @@
 "use client"
 
 import { Header } from "@/components/header"
-import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -400,7 +399,6 @@ export default function GatosPage() {
         </div>
       </section>
 
-      <Footer />
     </main>
   )
 }

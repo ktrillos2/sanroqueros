@@ -1,5 +1,4 @@
 import { Header } from "@/components/header"
-import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Calendar, Clock, User, ArrowLeft, Share2, Eye } from "lucide-react"
@@ -110,8 +109,6 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
       </section>
 
   {/* TODO: relacionados (opcional) */}
-
-      <Footer />
     </main>
   )
 }

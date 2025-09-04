@@ -24,6 +24,7 @@ import ClientsGlobal from './globals/Clients'
 import StoreLocationGlobal from './globals/StoreLocation'
 import BlogSectionGlobal from './globals/BlogSection'
 import WhatsAppAppointmentGlobal from './globals/WhatsAppAppointment'
+import FooterGlobal from './globals/Footer'
 import { es } from '@payloadcms/translations/languages/es'
 // Nota: Payload v3 no expone admin.i18n en el config de forma estable.
 // Usaremos una inyección ligera de script para forzar 'es' en el admin.
@@ -57,7 +58,7 @@ export default buildConfig({
   i18n: {
     supportedLanguages: { es },
   },
-  globals: [SiteSettings, HeaderGlobal, HomeHeroGlobal, WhatIsSpaGlobal, CertificationsGlobal, ProductsCollaborationsGlobal, SpaExperienceGlobal, MichiFriendlyGlobal, GalleryGlobal, TestimonialsGlobal, StoreLocationGlobal, BlogSectionGlobal, WhatsAppAppointmentGlobal],
+  globals: [SiteSettings, HeaderGlobal, HomeHeroGlobal, WhatIsSpaGlobal, CertificationsGlobal, ProductsCollaborationsGlobal, SpaExperienceGlobal, MichiFriendlyGlobal, GalleryGlobal, TestimonialsGlobal, StoreLocationGlobal, BlogSectionGlobal, WhatsAppAppointmentGlobal, FooterGlobal],
   editor: lexicalEditor({
     features: ({ defaultFeatures }) => [
       ...defaultFeatures,

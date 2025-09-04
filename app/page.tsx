@@ -11,7 +11,6 @@ import { ClientsSection } from "@/components/clients-section"
 import { StoreLocationSection } from "@/components/store-location-section"
 import { BlogTeaserSection } from "@/components/blog-teaser-section"
 import { ContactSection } from "@/components/contact-section"
-import { Footer } from "@/components/footer"
 
 export default function HomePage() {
   return (
@@ -64,7 +63,6 @@ export default function HomePage() {
         <ContactSection />
       </div>
 
-      <Footer />
     </main>
   )
 }
