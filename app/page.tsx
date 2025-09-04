@@ -49,10 +49,6 @@ export default function HomePage() {
         <TestimonialsSection />
       </div>
 
-      <div className="h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
-      <div className="bg-white">
-        <ClientsSection />
-      </div>
 
       <div className="h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
       <div className="bg-brand-yellow">
