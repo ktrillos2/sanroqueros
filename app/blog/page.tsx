@@ -7,77 +7,37 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Calendar, Clock, ArrowRight, ExternalLink, User, Eye } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
-import { useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 
-const blogPosts = [
-  {
-    id: 1,
-    slug: "cuidado-basico-perros-gatos",
-    title: "Guía Completa: Cuidado Básico para Perros y Gatos",
-    excerpt:
-      "Descubre los fundamentos esenciales para mantener a tu mascota feliz y saludable. Desde alimentación hasta ejercicio diario.",
-    image: "/placeholder.svg?height=300&width=500",
-    author: "Dr. María González",
-    date: "2025-01-15",
-    readTime: "8 min",
-    category: "Cuidado Básico",
-    views: 1250,
-    featured: true,
-  },
-  {
-    id: 2,
-    slug: "beneficios-grooming-profesional",
-    title: "5 Beneficios del Grooming Profesional que No Conocías",
-    excerpt: "El grooming va más allá de la estética. Conoce cómo puede mejorar la salud y bienestar de tu mascota.",
-    image: "/placeholder.svg?height=300&width=500",
-    author: "Ana Rodríguez",
-    date: "2025-01-10",
-    readTime: "6 min",
-    category: "Grooming",
-    views: 890,
-    featured: false,
-  },
-  {
-    id: 3,
-    slug: "productos-hydra-diferencia",
-    title: "¿Por Qué los Productos Hydra Marcan la Diferencia?",
-    excerpt:
-      "Conoce la línea de productos premium que utilizamos en nuestros servicios Superstar y sus beneficios únicos.",
-    image: "/placeholder.svg?height=300&width=500",
-    author: "Carlos Mendoza",
-    date: "2025-01-05",
-    readTime: "5 min",
-    category: "Productos",
-    views: 654,
-    featured: false,
-  },
-  {
-    id: 4,
-    slug: "ambiente-libre-jaulas-importancia",
-    title: "La Importancia de un Ambiente Libre de Jaulas",
-    excerpt: "Descubre por qué nuestro enfoque sin jaulas reduce el estrés y mejora la experiencia de tu mascota.",
-    image: "/placeholder.svg?height=300&width=500",
-    author: "Dr. Luis Herrera",
-    date: "2024-12-28",
-    readTime: "7 min",
-    category: "Bienestar",
-    views: 1100,
-    featured: false,
-  },
-  {
-    id: 5,
-    slug: "preparar-mascota-primera-visita",
-    title: "Cómo Preparar a tu Mascota para su Primera Visita al Spa",
-    excerpt: "Tips prácticos para que la primera experiencia de tu mascota en nuestro spa sea perfecta y sin estrés.",
-    image: "/placeholder.svg?height=300&width=500",
-    author: "Sofia Vargas",
-    date: "2024-12-20",
-    readTime: "4 min",
-    category: "Consejos",
-    views: 780,
-    featured: false,
-  },
-]
+type Post = {
+  id?: string
+  slug: string
+  title: string
+  excerpt: string
+  author?: string
+  date: string
+  readTime?: string
+  category: string
+  views?: number
+  featured?: boolean
+  mainImage?: { file?: any; imageUrl?: string; alt?: string }
+}
+
+const usePosts = () => {
+  const [posts, setPosts] = useState<Post[]>([])
+  useEffect(() => {
+    ;(async () => {
+      try {
+        const res = await fetch('/api/blog', { cache: 'no-store' })
+        const data = res.ok ? await res.json() : []
+        setPosts(data)
+      } catch {
+        setPosts([])
+      }
+    })()
+  }, [])
+  return posts
+}
 
 const externalMentions = [
   {
@@ -110,12 +70,18 @@ const categories = ["Todos", "Cuidado Básico", "Grooming", "Productos", "Bienes
 
 export default function BlogPage() {
   const [selectedCategory, setSelectedCategory] = useState("Todos")
+  const posts = usePosts()
+
+  const categories = useMemo(() => {
+    const set = new Set<string>(['Todos'])
+    posts.forEach(p => set.add(p.category))
+    return Array.from(set)
+  }, [posts])
 
   const filteredPosts =
-    selectedCategory === "Todos" ? blogPosts : blogPosts.filter((post) => post.category === selectedCategory)
+    selectedCategory === "Todos" ? posts : posts.filter((post) => post.category === selectedCategory)
 
-  const featuredPost = blogPosts.find((post) => post.featured)
-  const regularPosts = blogPosts.filter((post) => !post.featured)
+  const featuredPost = posts.find((post) => post.featured)
 
   return (
     <main className="min-h-screen bg-black">
@@ -186,7 +152,7 @@ export default function BlogPage() {
                 <div className="md:w-1/2">
                   <div className="relative h-64 md:h-full">
                     <Image
-                      src={featuredPost.image || "/placeholder.svg"}
+                      src={featuredPost.mainImage?.file?.url || featuredPost.mainImage?.imageUrl || "/placeholder.svg"}
                       alt={featuredPost.title}
                       fill
                       className="object-cover group-hover:scale-105 transition-transform duration-300"
@@ -260,7 +226,7 @@ export default function BlogPage() {
               >
                 <div className="relative h-48">
                   <Image
-                    src={post.image || "/placeholder.svg"}
+                    src={post.mainImage?.file?.url || post.mainImage?.imageUrl || "/placeholder.svg"}
                     alt={post.title}
                     fill
                     className="object-cover group-hover:scale-105 transition-transform duration-300"
