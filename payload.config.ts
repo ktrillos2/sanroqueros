@@ -1,7 +1,7 @@
 // storage-adapter-import-placeholder
 import { mongooseAdapter } from '@payloadcms/db-mongodb'
 import { payloadCloudPlugin } from '@payloadcms/payload-cloud'
-import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import { lexicalEditor, UploadFeature } from '@payloadcms/richtext-lexical'
 import path from 'path'
 import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
@@ -22,6 +22,7 @@ import GalleryGlobal from './globals/Gallery'
 import TestimonialsGlobal from './globals/Testimonials'
 import ClientsGlobal from './globals/Clients'
 import StoreLocationGlobal from './globals/StoreLocation'
+import BlogSectionGlobal from './globals/BlogSection'
 import { es } from '@payloadcms/translations/languages/es'
 // Nota: Payload v3 no expone admin.i18n en el config de forma estable.
 // Usaremos una inyección ligera de script para forzar 'es' en el admin.
@@ -55,8 +56,47 @@ export default buildConfig({
   i18n: {
     supportedLanguages: { es },
   },
-  globals: [SiteSettings, HeaderGlobal, HomeHeroGlobal, WhatIsSpaGlobal, CertificationsGlobal, ProductsCollaborationsGlobal, SpaExperienceGlobal, MichiFriendlyGlobal, GalleryGlobal, TestimonialsGlobal, StoreLocationGlobal],
-  editor: lexicalEditor(),
+  globals: [SiteSettings, HeaderGlobal, HomeHeroGlobal, WhatIsSpaGlobal, CertificationsGlobal, ProductsCollaborationsGlobal, SpaExperienceGlobal, MichiFriendlyGlobal, GalleryGlobal, TestimonialsGlobal, StoreLocationGlobal, BlogSectionGlobal],
+  editor: lexicalEditor({
+    features: ({ defaultFeatures }) => [
+      ...defaultFeatures,
+      UploadFeature({
+        collections: {
+          media: {
+            fields: [
+              { name: 'caption', type: 'text', label: 'Pie de foto', required: false },
+              {
+                name: 'widthPercent',
+                type: 'select',
+                label: 'Ancho',
+                defaultValue: '100',
+                options: [
+                  { label: '25%', value: '25' },
+                  { label: '33%', value: '33' },
+                  { label: '50%', value: '50' },
+                  { label: '66%', value: '66' },
+                  { label: '75%', value: '75' },
+                  { label: '100%', value: '100' },
+                ],
+              },
+              { name: 'heightPx', type: 'number', label: 'Alto (px, opcional)', required: false },
+              {
+                name: 'align',
+                type: 'select',
+                label: 'Alineación',
+                defaultValue: 'center',
+                options: [
+                  { label: 'Izquierda', value: 'left' },
+                  { label: 'Centro', value: 'center' },
+                  { label: 'Derecha', value: 'right' },
+                ],
+              },
+            ],
+          },
+        },
+      }),
+    ],
+  }),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
