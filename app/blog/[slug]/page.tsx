@@ -2,20 +2,27 @@ import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Calendar, Clock, User, ArrowLeft, Share2, Heart, MessageCircle, Eye } from "lucide-react"
+import { Calendar, Clock, User, ArrowLeft, Share2, Eye } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { notFound } from "next/navigation"
 import { RichText } from "@/components/rich-text"
+import { getPayload } from "payload"
+import config from "@/payload.config"
 
 async function getPost(slug: string) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/blog/${slug}`, { cache: 'no-store' })
-  if (!res.ok) return null
-  return res.json()
+  try {
+    const payload = await getPayload({ config })
+    const result = await (payload as any).find({ collection: 'posts', where: { slug: { equals: slug } }, limit: 1, depth: 1 })
+    return result?.docs?.[0] ?? null
+  } catch {
+    return null
+  }
 }
 
-export default async function BlogPostPage({ params }: { params: { slug: string } }) {
-  const post = await getPost(params.slug)
+export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const post = await getPost(slug)
   if (!post) notFound()
 
   return (
@@ -67,14 +74,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
                 </div>
 
                 <div className="flex items-center gap-4">
-                  <Button size="sm" variant="ghost" className="text-gray-400 hover:text-red-400">
-                    <Heart className="w-4 h-4 mr-2" />
-                    {blogPost.likes}
-                  </Button>
-                  <Button size="sm" variant="ghost" className="text-gray-400 hover:text-blue-400">
-                    <MessageCircle className="w-4 h-4 mr-2" />
-                    {blogPost.comments}
-                  </Button>
+                  {/* Acciones sociales opcionales */}
                   <Button size="sm" variant="ghost" className="text-gray-400 hover:text-brand-yellow">
                     <Share2 className="w-4 h-4" />
                   </Button>
