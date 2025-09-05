@@ -71,6 +71,7 @@ export const Media: CollectionConfig = {
     }],
   },
   upload: {
+  staticDir: 'media',
     mimeTypes: [
       'image/png', 'image/jpeg', 'image/webp', 'image/svg+xml',
       'video/mp4', 'video/webm', 'video/ogg'
