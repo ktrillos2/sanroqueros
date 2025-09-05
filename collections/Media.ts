@@ -2,7 +2,7 @@ import type { CollectionConfig } from 'payload'
 import sharp from 'sharp'
 import path from 'path'
 import { promises as fs } from 'fs'
-import { put } from '@vercel/blob'
+import { v2 as cloudinary } from 'cloudinary'
 
 export const Media: CollectionConfig = {
   slug: 'media',
@@ -81,11 +81,12 @@ export const Media: CollectionConfig = {
         try {
           const staticDir = process.env.VERCEL === '1' ? '/tmp/media' : 'media'
           const originalPath = path.resolve(`${staticDir}/${doc.filename}`)
-          const token = process.env.BLOB_READ_WRITE_TOKEN
-          if (!token) {
-            req.payload.logger?.warn?.('BLOB_READ_WRITE_TOKEN ausente; no se subirá a Vercel Blob.')
+          const { CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET } = process.env as Record<string, string | undefined>
+          if (!CLOUDINARY_CLOUD_NAME || !CLOUDINARY_API_KEY || !CLOUDINARY_API_SECRET) {
+            req.payload.logger?.warn?.('Cloudinary no configurado; falta CLOUDINARY_CLOUD_NAME/API_KEY/API_SECRET')
             return doc
           }
+          cloudinary.config({ cloud_name: CLOUDINARY_CLOUD_NAME, api_key: CLOUDINARY_API_KEY, api_secret: CLOUDINARY_API_SECRET, secure: true })
 
           // Helpers de reintento
           const wait = (ms: number) => new Promise(res => setTimeout(res, ms))
@@ -102,25 +103,17 @@ export const Media: CollectionConfig = {
               }
             }
           }
-          const putWithRetry = async (key: string, data: Buffer, tries = 3) => {
-            let attempt = 0
-            let delay = 200
-            while (true) {
-              try {
-                return await put(key, data, { access: 'public', token })
-              } catch (e: any) {
-                if (attempt++ >= tries - 1) throw e
-                await wait(delay)
-                delay = Math.min(delay * 2, 1500)
-              }
-            }
-          }
-
           const buffer = await readFileWithRetry(originalPath)
-          const keyBase = `media/${doc.filename}`
-          const uploaded = await putWithRetry(keyBase, buffer)
+          const folder = process.env.CLOUDINARY_FOLDER || 'media'
+          const uploaded = await new Promise<any>((resolve, reject) => {
+            const stream = cloudinary.uploader.upload_stream(
+              { folder, use_filename: true, unique_filename: true, overwrite: false, resource_type: 'auto' },
+              (err, result) => (err ? reject(err) : resolve(result))
+            )
+            stream.end(buffer)
+          })
 
-          const newData: any = { url: uploaded.url }
+          const newData: any = { url: uploaded.secure_url || uploaded.url }
 
           if (doc.sizes && typeof doc.sizes === 'object') {
             newData.sizes = {}
@@ -129,9 +122,14 @@ export const Media: CollectionConfig = {
               const sizePath = path.resolve(`${staticDir}/${sizeData.filename}`)
               try {
                 const sizeBuf = await readFileWithRetry(sizePath)
-                const sizeKey = `media/${sizeData.filename}`
-                const up = await putWithRetry(sizeKey, sizeBuf)
-                newData.sizes[sizeName] = { ...sizeData, url: up.url }
+                const up = await new Promise<any>((resolve, reject) => {
+                  const stream = cloudinary.uploader.upload_stream(
+                    { folder, use_filename: true, unique_filename: true, overwrite: false, resource_type: 'auto' },
+                    (err, result) => (err ? reject(err) : resolve(result))
+                  )
+                  stream.end(sizeBuf)
+                })
+                newData.sizes[sizeName] = { ...sizeData, url: up.secure_url || up.url }
               } catch { /* ignore */ }
             }
           }
@@ -145,7 +143,7 @@ export const Media: CollectionConfig = {
           })
           return updated
         } catch (err) {
-          req.payload.logger?.error?.(`Error subiendo a Vercel Blob: ${err instanceof Error ? err.message : String(err)}`)
+          req.payload.logger?.error?.(`Error subiendo a Cloudinary: ${err instanceof Error ? err.message : String(err)}`)
           return doc
         }
       },

@@ -34,7 +34,7 @@ import { es } from '@payloadcms/translations/languages/es'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
-// Storage: sin plugin externo. Local en dev; en prod usaremos Vercel Blob vía hooks en la colección Media.
+// Storage: sin plugin externo. Local en dev; en prod se sube a Cloudinary vía hooks en la colección Media.
 
 export default buildConfig({
   serverURL:
@@ -118,6 +118,6 @@ export default buildConfig({
   sharp,
   plugins: [
     payloadCloudPlugin(),
-  // Sin plugin de storage: ver hooks en la colección Media para Vercel Blob en producción
+  // Sin plugin de storage: ver hooks en la colección Media para Cloudinary en producción
   ],
 })
