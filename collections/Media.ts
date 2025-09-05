@@ -2,7 +2,7 @@ import type { CollectionConfig } from 'payload'
 import sharp from 'sharp'
 import path from 'path'
 import { promises as fs } from 'fs'
-import { v2 as cloudinary } from 'cloudinary'
+import { put } from '@vercel/blob'
 
 export const Media: CollectionConfig = {
   slug: 'media',
@@ -81,13 +81,10 @@ export const Media: CollectionConfig = {
       async ({ doc, req, operation }: any) => {
         const BLOB_BASE = 'https://elkmig7hcsojxkiy.public.blob.vercel-storage.com'
 
-        // Si ya tenemos blobUrl correcta, no reprocesar
+        // Si ya tenemos blobUrl con nuestra base, no reprocesar
         if (doc?.blobUrl && typeof doc.blobUrl === 'string' && doc.blobUrl.startsWith(`${BLOB_BASE}/`)) {
           return doc
         }
-
-        // Solo procesar en creación del archivo
-        if (operation !== 'create') return doc
 
         // Necesitamos el archivo físico
         if (!doc?.filename) return doc
