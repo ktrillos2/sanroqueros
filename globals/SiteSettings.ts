@@ -24,6 +24,16 @@ export const SiteSettings: GlobalConfig = {
       defaultValue: 'SANROQUE',
     },
     {
+      name: 'favicon',
+      label: 'Favicon del sitio',
+      type: 'upload',
+      relationTo: 'media',
+      admin: {
+        description:
+          'Sube un favicon (PNG 32x32 recomendado, también puedes usar SVG). Se usará en toda la web.',
+      },
+    },
+    {
       type: 'group',
       name: 'logos',
       label: 'Logos',

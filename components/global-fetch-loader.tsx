@@ -24,6 +24,8 @@ export default function GlobalFetchLoader() {
 
     const [count, setCount] = useState(0)
     const [visible, setVisible] = useState(false)
+    // Bandera para saber si en este ciclo de navegación ya hubo requests trackeadas
+    const hadTrackedRef = useRef(false)
     const hideTimer = useRef<number | null>(null)
     const origFetch = useRef<typeof window.fetch | null>(null)
 
@@ -42,6 +44,7 @@ export default function GlobalFetchLoader() {
                 setCount((c) => c + 1)
                 // Mostramos inmediatamente si entra una petición
                 setVisible(true)
+                hadTrackedRef.current = true
             }
             try {
                 const res = await origFetch.current!(...args as Parameters<typeof fetch>)
@@ -80,13 +83,20 @@ export default function GlobalFetchLoader() {
         }
     }, [count])
 
-    // Al cargar por primera vez, si no hay peticiones, ocultar tras un breve tiempo
+    // Mostrar el loader al cambiar de ruta (incluye la primera carga),
+    // y mantenerlo hasta que terminen las peticiones trackeadas o un fallback breve si no hay peticiones.
     useEffect(() => {
-        const t = window.setTimeout(() => {
-            if (count === 0) setVisible(false)
-        }, 800)
-        return () => window.clearTimeout(t)
-    }, [])
+        if (pathname?.startsWith('/admin')) return
+        // Nueva navegación: mostramos inmediatamente
+        setVisible(true)
+        hadTrackedRef.current = false
+        // Fallback: si no se detecta ninguna petición trackeada, ocultar pasado un tiempo prudente
+        const fallback = window.setTimeout(() => {
+            if (!hadTrackedRef.current && count === 0) setVisible(false)
+        }, 900)
+        return () => window.clearTimeout(fallback)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [pathname])
 
     if (!visible) return null
     return <BrandLoader />

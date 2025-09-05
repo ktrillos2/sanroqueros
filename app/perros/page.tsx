@@ -5,146 +5,76 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Heart, Crown, CheckCircle, Sparkles, Leaf } from "lucide-react"
+import { CheckCircle } from "lucide-react"
 import Link from "next/link"
-import { useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 
 export default function PerrosPage() {
   const [selectedBreed, setSelectedBreed] = useState("")
   const [coatType, setCoatType] = useState("")
+  const [cms, setCms] = useState<any>(null)
 
-  const breedsByCoat = {
-    corto: {
-      minis: ["Chihuahua", "Pinscher"],
-      pequeños: ["Pug", "Boston Terrier", "Beagle", "Bulldog Francés", "Jack Russell", "Teckel"],
-      medianos: [
-        "Bulldog Inglés",
-        "Basset Hound",
-        "Pitbull",
-        "Bull Terrier",
-        "Pastor Ganadero Australiano",
-        "Stanford Terrier",
-        "Basset Hound",
-      ],
-      grandes: ["Labrador", "Boxer", "Weimaraner", "Pointer", "Dalmata", "Pointer", "Doberman"],
-      gigantes: ["Pastor Alemán", "Gran Danés", "Rhodesian", "Braco", "Rottweiler", "Fila Brasilero"],
-    },
-    medioLargo: {
-      minis: ["Yorkshire Mini", "Maltés Toy", "Caniche Toy", "Bichón Boloñés"],
-      pequeños: [
-        "Shih Tzu",
-        "Schnauzer",
-        "Maltés",
-        "Poodle",
-        "Yorkie",
-        "Pomerania",
-        "Bichón",
-        "Lasha Apso",
-        "Westie",
-        "Scottish Terrier",
-        "Fox Terrier",
-      ],
-      medianos: ["Cocker", "Springer Spaniel", "Border Collie", "Pastor Australiano", "Shetland", "Shiba Inu"],
-      grandes: [
-        "Golden Retriever",
-        "Samoyedo",
-        "Airdale Terrier",
-        "Chow Chow",
-        "Akita",
-        "Australian Labradoodle",
-        "Husky",
-        "Akita",
-      ],
-      gigantes: [
-        "Terranova",
-        "San Bernardo",
-        "Alaskan Malamute",
-        "Pastor Alemán Pelo Largo",
-        "Bernés de la Montaña",
-        "Pastor Ovejero Inglés",
-      ],
-    },
-  }
+  useEffect(() => {
+    let mounted = true
+    ;(async () => {
+      try {
+        const res = await fetch('/api/dogs-page', { cache: 'no-store' })
+        const json = res.ok ? await res.json() : null
+        if (!mounted) return
+        setCms(json?.data || null)
+      } catch {}
+    })()
+    return () => { mounted = false }
+  }, [])
 
-  const pricingData = {
-    corto: {
-      minis: { sanroquero: 65, rockstar: 76, superstar: 97, shanti: 157 },
-      pequeños: { sanroquero: 78, rockstar: 88, superstar: 110, shanti: 170 },
-      medianos: { sanroquero: 91, rockstar: 101, superstar: 122, shanti: 183 },
-      grandes: { sanroquero: 103, rockstar: 117, superstar: 143, shanti: 206 },
-      gigantes: { sanroquero: 116, rockstar: 130, superstar: 155, shanti: 229 },
-    },
-    medioLargo: {
-      minis: { sanroquero: 84, rockstar: 94, superstar: 116, shanti: 175 },
-      pequeños: { sanroquero: 97, rockstar: 106, superstar: 129, shanti: 188 },
-      medianos: { sanroquero: 110, rockstar: 125, superstar: 145, shanti: 201 },
-      grandes: { sanroquero: 129, rockstar: 157, superstar: 176, shanti: 232 },
-      gigantes: {
-        sanroquero: 218,
-        rockstar: 246,
-        superstar: 265,
-        shanti: 308,
+  // Derivar listas de razas desde el CMS
+  const breedsByCoat = useMemo(() => {
+    const d = cms?.breedLists
+    if (!d) return null as any
+    return {
+      corto: {
+        minis: (d?.corto?.minis || []).map((x: any) => x.value),
+        pequeños: (d?.corto?.pequenos || d?.corto?.pequeños || []).map((x: any) => x.value),
+        medianos: (d?.corto?.medianos || []).map((x: any) => x.value),
+        grandes: (d?.corto?.grandes || []).map((x: any) => x.value),
+        gigantes: (d?.corto?.gigantes || []).map((x: any) => x.value),
       },
-    },
-  }
+      medioLargo: {
+        minis: (d?.medioLargo?.minis || []).map((x: any) => x.value),
+        pequeños: (d?.medioLargo?.pequenos || d?.medioLargo?.pequeños || []).map((x: any) => x.value),
+        medianos: (d?.medioLargo?.medianos || []).map((x: any) => x.value),
+        grandes: (d?.medioLargo?.grandes || []).map((x: any) => x.value),
+        gigantes: (d?.medioLargo?.gigantes || []).map((x: any) => x.value),
+      },
+    }
+  }, [cms])
 
-  const services = [
-    {
-      id: "sanroquero",
-      title: "SanRoquero",
-      description: "Servicio básico con productos de calidad",
-      icon: Heart,
-      features: ["3 baños completos", "Productos básicos de calidad", "Secado profesional", "Corte de uñas incluido"],
-      color: "from-blue-500 to-blue-600",
-      shadowColor: "shadow-blue-500/50",
-    },
-    {
-      id: "rockstar",
-      title: "Rockstar",
-      description: "Servicio premium con productos selectos",
-      icon: Sparkles,
-      features: [
-        "3 baños especializados",
-        "Productos premium selectos (no todos Hydra)",
-        "Tratamiento desenredante",
-        "Limpieza de oídos",
-      ],
-      color: "from-purple-500 to-purple-600",
-      shadowColor: "shadow-purple-500/50",
-    },
-    {
-      id: "superstar",
-      title: "Superstar",
-      description: "Servicio de lujo con productos Hydra",
-      icon: Crown,
-      features: [
-        "4 baños + mascarilla Hydra",
-        "TODOS los productos Hydra",
-        "Tratamiento hidratante profundo",
-        "Aromaterapia canina",
-      ],
-      color: "from-yellow-500 to-yellow-600",
-      shadowColor: "shadow-yellow-500/50",
-    },
-    {
-      id: "shanti",
-      title: "Shanti Pet Spa",
-      description: "Experiencia spa con productos Iv San Bernard",
-      icon: Leaf,
-      features: ["3 baños terapéuticos", "SOLO productos Iv San Bernard", "Masaje relajante", "Ambiente zen completo"],
-      color: "from-green-500 to-green-600",
-      shadowColor: "shadow-green-500/50",
-      isPopular: true,
-    },
-  ]
+  // Mapa de precios desde CMS
+  const priceMap = useMemo(() => {
+    const rows: any[] = cms?.priceTable || []
+    const map: Record<string, Record<string, { sanroquero: number; rockstar: number; superstar: number; shanti: number }>> = {}
+    for (const r of rows) {
+      const coat = String(r.coatType || '')
+      const sizeKey = String(r.size || '')
+      if (!coat || !sizeKey) continue
+      map[coat] ||= {}
+      map[coat][sizeKey.normalize('NFD').replace(/\p{Diacritic}/gu, '')] = {
+        sanroquero: Number(r.sanroquero ?? 0),
+        rockstar: Number(r.rockstar ?? 0),
+        superstar: Number(r.superstar ?? 0),
+        shanti: Number(r.shanti ?? 0),
+      }
+    }
+    return map
+  }, [cms])
 
   const handleBreedSelect = (breed: string) => {
     setSelectedBreed(breed)
-
+    if (!breedsByCoat) return
     let foundCoatType = ""
-    Object.entries(breedsByCoat).forEach(([coat, categories]) => {
-      Object.values(categories).forEach((breeds) => {
-        if (breeds.includes(breed)) {
+    Object.entries(breedsByCoat as any).forEach(([coat, categories]: any) => {
+      Object.values(categories).forEach((breeds: any) => {
+        if (Array.isArray(breeds) && breeds.includes(breed)) {
           foundCoatType = coat
         }
       })
@@ -153,10 +83,11 @@ export default function PerrosPage() {
   }
 
   const getBreedSize = (breed: string) => {
-    for (const [coat, categories] of Object.entries(breedsByCoat)) {
-      for (const [size, breeds] of Object.entries(categories)) {
-        if (breeds.includes(breed)) {
-          return size
+    if (!breedsByCoat) return ""
+    for (const categories of Object.values(breedsByCoat as any)) {
+      for (const [size, breeds] of Object.entries(categories as any)) {
+        if (Array.isArray(breeds) && (breeds as string[]).includes(breed)) {
+          return size as string
         }
       }
     }
@@ -165,18 +96,17 @@ export default function PerrosPage() {
 
   const getAllBreeds = () => {
     const allBreeds: string[] = []
-    Object.values(breedsByCoat).forEach((categories) => {
-      Object.values(categories).forEach((breeds) => {
-        allBreeds.push(...breeds)
+    if (!breedsByCoat) return allBreeds
+    Object.values(breedsByCoat as any).forEach((categories: any) => {
+      Object.values(categories).forEach((breeds: any) => {
+        if (Array.isArray(breeds)) allBreeds.push(...breeds)
       })
     })
-    return allBreeds.sort()
+    // Eliminar duplicados y ordenar
+    return Array.from(new Set(allBreeds)).sort()
   }
 
-  const getFilteredBreeds = () => {
-    const allBreeds = getAllBreeds()
-    return allBreeds
-  }
+  const getFilteredBreeds = () => getAllBreeds()
 
   const getCoatTypeImage = (type: string) => {
     if (type === "corto") {
@@ -217,18 +147,19 @@ export default function PerrosPage() {
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center max-w-4xl mx-auto">
             <div className="space-y-6 animate-fade-in">
-              <Badge className="font-bold px-4 py-2 text-sm">🏆 Certificados Fear Free</Badge>
+              <Badge className={`font-bold px-4 py-2 text-sm ${cms?.hero?.badgeTextColor === 'black' ? 'text-black bg-[#FFE550]' : ''}`}>
+                {cms?.hero?.badgeText}
+              </Badge>
 
               <h1 className="font-heading text-3xl lg:text-5xl font-bold leading-tight text-white">
-                Grooming para{" "}
+                {cms?.hero?.titlePrefix}{" "}
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FFE550] to-[#FFB1BE] animate-pulse">
-                  Woofie
+                  {cms?.hero?.highlight}
                 </span>
               </h1>
 
               <p className="text-base text-gray-300 max-w-3xl mx-auto leading-relaxed">
-                4 niveles de servicio diseñados para el bienestar y belleza de tu mejor amigo. Desde cuidado básico
-                hasta experiencias de lujo con productos premium.
+                {cms?.hero?.subtitle}
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center pt-6">
@@ -237,7 +168,7 @@ export default function PerrosPage() {
                   className="bg-gradient-to-r from-[#FFE550] to-[#FFB1BE] hover:from-[#FFE550]/90 hover:to-[#FFB1BE]/90 text-black font-bold text-sm px-6 py-3 transform hover:scale-105 transition-all duration-300 shadow-2xl"
                   asChild
                 >
-                  <Link href="#servicios">✨ Ver Servicios</Link>
+                  <Link href={cms?.hero?.primaryCtaHref || '#servicios'}>{cms?.hero?.primaryCtaLabel}</Link>
                 </Button>
                 <Button
                   size="lg"
@@ -245,7 +176,7 @@ export default function PerrosPage() {
                   className="border-2 border-[#88D3EE] text-[#88D3EE] hover:bg-[#88D3EE] hover:text-black bg-transparent font-bold text-sm px-6 py-3 transform hover:scale-105 transition-all duration-300"
                   asChild
                 >
-                  <Link href="#identificar-manto">🔍 Identificar Manto</Link>
+                  <Link href={cms?.hero?.secondaryCtaHref || '#identificar-manto'}>{cms?.hero?.secondaryCtaLabel}</Link>
                 </Button>
               </div>
             </div>
@@ -263,10 +194,10 @@ export default function PerrosPage() {
           </div>
 
       <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
-            {services.map((service) => (
+  {(cms?.services || []).map((service: any) => (
               <Card
                 key={service.id}
-        className={`relative bg-gray-900 border-gray-800 text-white hover:scale-105 transition-all duration-300 hover:${service.shadowColor} hover:shadow-2xl pt-6 ${
+  className={`relative bg-gray-900 border-gray-800 text-white hover:scale-105 transition-all duration-300 hover:${service.shadowClass || 'shadow-blue-500/50'} hover:shadow-2xl pt-6 ${
                   service.isPopular ? "ring-2 ring-yellow-500" : ""
                 }`}
               >
@@ -278,9 +209,10 @@ export default function PerrosPage() {
 
                 <CardHeader className="text-center pb-4">
                   <div
-                    className={`w-16 h-16 bg-gradient-to-r ${service.color} rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg`}
+                    className={`w-16 h-16 bg-gradient-to-r ${service.colorClass || 'from-blue-500 to-blue-600'} rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg`}
                   >
-                    <service.icon className="w-8 h-8 text-white" />
+                    {/* Icono fijo por ahora; opcional: mapear Heart/Sparkles/Crown/Leaf a componentes */}
+                    <CheckCircle className="w-8 h-8 text-white" />
                   </div>
                   <CardTitle className="font-heading text-xl text-white">{service.title}</CardTitle>
                   <p className="text-gray-400 text-sm">{service.description}</p>
@@ -288,22 +220,19 @@ export default function PerrosPage() {
 
                 <CardContent className="flex-1 flex flex-col">
                   <ul className="space-y-2 text-sm text-gray-300 mb-6 flex-1">
-                    {service.features.map((feature, idx) => (
+          {(service.features || []).map((feature: any, idx: number) => (
                       <li key={idx} className="flex items-start space-x-2">
                         <div className="w-1.5 h-1.5 bg-yellow-400 rounded-full mt-2 flex-shrink-0"></div>
-                        <span>{feature}</span>
+            <span>{typeof feature === 'string' ? feature : feature.value}</span>
                       </li>
                     ))}
                   </ul>
 
                   <Button
-                    className={`w-full bg-gradient-to-r ${service.color} hover:opacity-90 text-white font-semibold mt-auto`}
+                    className={`w-full bg-gradient-to-r ${service.color || 'from-blue-500 to-blue-600'} hover:opacity-90 text-white font-semibold mt-auto`}
                     asChild
                   >
-                    <Link
-                      href="https://wa.me/573154433109?text=Hola,%20me%20gustaría%20información%20sobre%20el%20servicio%20"
-                      target="_blank"
-                    >
+                    <Link href={service.ctaHref} target="_blank">
                       Más Información
                     </Link>
                   </Button>
@@ -386,8 +315,8 @@ export default function PerrosPage() {
 
                         {(() => {
                           const size = getBreedSize(selectedBreed)
-                          const prices =
-                            pricingData[coatType as keyof typeof pricingData]?.[size as keyof typeof pricingData.corto]
+                          const norm = (size || '').normalize('NFD').replace(/\p{Diacritic}/gu, '')
+                          const prices: any = (priceMap as any)?.[coatType]?.[norm]
 
                           return prices ? (
                             <div className="min-w-0 bg-gradient-to-r from-gray-800 to-gray-700 rounded-2xl p-6 shadow-2xl border border-[#88D3EE]/30">
@@ -437,71 +366,77 @@ export default function PerrosPage() {
           </div>
 
       <div className="space-y-10 md:space-y-16">
-            <div className="animate-fade-in">
-        <div className="text-center mb-6 md:mb-8">
-                <Badge className="mb-6 font-bold shadow-2xl text-lg px-4 py-2 text-black">
-                  🔹 Manto Corto / Pelo Corto
-                </Badge>
-              </div>
-
-              <div className="overflow-x-auto scrollbar-white">
-                <table className="w-full bg-gray-800 text-white rounded-2xl overflow-hidden shadow-2xl border-2 border-[#88D3EE]">
-                  <thead className="bg-gradient-to-r from-[#88D3EE] to-[#88D3EE]/80">
-                    <tr>
-                      <th className="px-6 py-6 text-left font-bold text-xl text-white">Categoría</th>
-                      <th className="px-6 py-6 text-center font-bold text-xl text-white">SanRoquero</th>
-                      <th className="px-6 py-6 text-center font-bold text-xl text-white">Rockstar</th>
-                      <th className="px-6 py-6 text-center font-bold text-xl text-white">Superstar</th>
-                      <th className="px-6 py-6 text-center font-bold text-xl text-white">Shanti Spa</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {Object.entries(pricingData.corto).map(([category, prices], index) => (
-                      <tr key={category} className={index % 2 === 0 ? "bg-gray-700/50" : "bg-gray-800/50"}>
-                        <td className="px-6 py-4 font-bold capitalize text-lg text-[#88D3EE]">{category}</td>
-                        <td className="px-6 py-4 text-center font-bold text-lg">${prices.sanroquero}k</td>
-                        <td className="px-6 py-4 text-center font-bold text-lg">${prices.rockstar}k</td>
-                        <td className="px-6 py-4 text-center font-bold text-[#FFE550] text-lg">${prices.superstar}k</td>
-                        <td className="px-6 py-4 text-center font-bold text-[#88D3EE] text-lg">${prices.shanti}k</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            <div className="animate-fade-in">
-              <div className="text-center mb-6 md:mb-8">
-                <Badge className="mb-6 font-bold shadow-2xl py-2 px-4 text-lg text-black">
-                  🔸 Manto Medio y Largo
-                </Badge>
-              </div>
-
-              <div className="overflow-x-auto scrollbar-white">
-                <table className="w-full bg-gray-800 text-white rounded-2xl overflow-hidden shadow-2xl border-2 border-[#FFB1BE]">
-                  <thead className="bg-gradient-to-r from-[#FFB1BE] to-[#FFB1BE]/80">
-                    <tr>
-                      <th className="px-6 py-6 text-left font-bold text-xl text-white">Categoría</th>
-                      <th className="px-6 py-6 text-center font-bold text-xl text-white">SanRoquero</th>
-                      <th className="px-6 py-6 text-center font-bold text-xl text-white">Rockstar</th>
-                      <th className="px-6 py-6 text-center font-bold text-xl text-white">Superstar</th>
-                      <th className="px-6 py-6 text-center font-bold text-xl text-white">Shanti Spa</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {Object.entries(pricingData.medioLargo).map(([category, prices], index) => (
-                      <tr key={category} className={index % 2 === 0 ? "bg-gray-700/50" : "bg-gray-800/50"}>
-                        <td className="px-6 py-4 font-bold capitalize text-lg text-[#FFB1BE]">{category}</td>
-                        <td className="px-6 py-4 text-center font-bold text-lg">${prices.sanroquero}k</td>
-                        <td className="px-6 py-4 text-center font-bold text-lg">${prices.rockstar}k</td>
-                        <td className="px-6 py-4 text-center font-bold text-[#FFE550] text-lg">${prices.superstar}k</td>
-                        <td className="px-6 py-4 text-center font-bold text-[#88D3EE] text-lg">${prices.shanti}k</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
+            {(() => {
+              const rows: any[] = cms?.priceTable || []
+              const corto = rows.filter(r => r.coatType === 'corto')
+              const largo = rows.filter(r => r.coatType === 'medioLargo')
+              return (
+                <>
+                  {corto.length > 0 && (
+                    <div className="animate-fade-in">
+                      <div className="text-center mb-6 md:mb-8">
+                        <Badge className="mb-6 font-bold shadow-2xl text-lg px-4 py-2 text-black">🔹 Manto Corto / Pelo Corto</Badge>
+                      </div>
+                      <div className="overflow-x-auto scrollbar-white">
+                        <table className="w-full bg-gray-800 text-white rounded-2xl overflow-hidden shadow-2xl border-2 border-[#88D3EE]">
+                          <thead className="bg-gradient-to-r from-[#88D3EE] to-[#88D3EE]/80">
+                            <tr>
+                              <th className="px-6 py-6 text-left font-bold text-xl text-white">Categoría</th>
+                              <th className="px-6 py-6 text-center font-bold text-xl text-white">SanRoquero</th>
+                              <th className="px-6 py-6 text-center font-bold text-xl text-white">Rockstar</th>
+                              <th className="px-6 py-6 text-center font-bold text-xl text-white">Superstar</th>
+                              <th className="px-6 py-6 text-center font-bold text-xl text-white">Shanti Spa</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {corto.map((r: any, index: number) => (
+                              <tr key={`corto-${index}`} className={index % 2 === 0 ? 'bg-gray-700/50' : 'bg-gray-800/50'}>
+                                <td className="px-6 py-4 font-bold capitalize text-lg text-[#88D3EE]">{r.size}</td>
+                                <td className="px-6 py-4 text-center font-bold text-lg">${r.sanroquero}k</td>
+                                <td className="px-6 py-4 text-center font-bold text-lg">${r.rockstar}k</td>
+                                <td className="px-6 py-4 text-center font-bold text-[#FFE550] text-lg">${r.superstar}k</td>
+                                <td className="px-6 py-4 text-center font-bold text-[#88D3EE] text-lg">${r.shanti}k</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  )}
+                  {largo.length > 0 && (
+                    <div className="animate-fade-in">
+                      <div className="text-center mb-6 md:mb-8">
+                        <Badge className="mb-6 font-bold shadow-2xl py-2 px-4 text-lg text-black">🔸 Manto Medio y Largo</Badge>
+                      </div>
+                      <div className="overflow-x-auto scrollbar-white">
+                        <table className="w-full bg-gray-800 text-white rounded-2xl overflow-hidden shadow-2xl border-2 border-[#FFB1BE]">
+                          <thead className="bg-gradient-to-r from-[#FFB1BE] to-[#FFB1BE]/80">
+                            <tr>
+                              <th className="px-6 py-6 text-left font-bold text-xl text-white">Categoría</th>
+                              <th className="px-6 py-6 text-center font-bold text-xl text-white">SanRoquero</th>
+                              <th className="px-6 py-6 text-center font-bold text-xl text-white">Rockstar</th>
+                              <th className="px-6 py-6 text-center font-bold text-xl text-white">Superstar</th>
+                              <th className="px-6 py-6 text-center font-bold text-xl text-white">Shanti Spa</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {largo.map((r: any, index: number) => (
+                              <tr key={`largo-${index}`} className={index % 2 === 0 ? 'bg-gray-700/50' : 'bg-gray-800/50'}>
+                                <td className="px-6 py-4 font-bold capitalize text-lg text-[#FFB1BE]">{r.size}</td>
+                                <td className="px-6 py-4 text-center font-bold text-lg">${r.sanroquero}k</td>
+                                <td className="px-6 py-4 text-center font-bold text-lg">${r.rockstar}k</td>
+                                <td className="px-6 py-4 text-center font-bold text-[#FFE550] text-lg">${r.superstar}k</td>
+                                <td className="px-6 py-4 text-center font-bold text-[#88D3EE] text-lg">${r.shanti}k</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  )}
+                </>
+              )
+            })()}
           </div>
         </div>
       </section>

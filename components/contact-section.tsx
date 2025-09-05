@@ -21,6 +21,7 @@ export function ContactSection() {
     servicio: "",
     mensaje: "",
   })
+  const [errors, setErrors] = useState<{ nombre?: string; telefono?: string; mascota?: string }>({})
 
   useEffect(() => {
     let mounted = true
@@ -44,6 +45,8 @@ export function ContactSection() {
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
+    // Limpiar error del campo al escribir
+    setErrors((prev) => (prev[field as keyof typeof prev] ? { ...prev, [field]: undefined } : prev))
   }
 
   const principalWhatsapp = useMemo(() => {
@@ -54,8 +57,16 @@ export function ContactSection() {
   const handleWhatsAppSubmit = () => {
     const { nombre, telefono, mascota, servicio, mensaje } = formData
 
-    if (!nombre || !telefono || !mascota) {
-      alert("Por favor completa los campos obligatorios: Nombre, Teléfono y Mascota")
+    const newErrors: typeof errors = {}
+    if (!nombre.trim()) newErrors.nombre = "Este campo es obligatorio"
+    if (!telefono.trim()) newErrors.telefono = "Este campo es obligatorio"
+    if (!mascota.trim()) newErrors.mascota = "Este campo es obligatorio"
+    setErrors(newErrors)
+    if (Object.keys(newErrors).length > 0) {
+      const firstKey = Object.keys(newErrors)[0]
+      // Enfocar primer campo con error
+      const el = document.getElementById(firstKey)
+      el?.focus()
       return
     }
 
@@ -120,8 +131,10 @@ Me gustaría agendar una cita para mi mascota.`
                       placeholder="Tu nombre completo"
                       value={formData.nombre}
                       onChange={(e) => handleInputChange("nombre", e.target.value)}
-                      className="bg-white/10 border-gray-600 text-white placeholder:text-gray-400"
+                      aria-invalid={!!errors.nombre}
+                      className={`bg-white/10 text-white placeholder:text-gray-400 ${errors.nombre ? 'border-red-500 focus-visible:ring-red-500' : 'border-gray-600'}`}
                     />
+                    {errors.nombre && (<p className="text-red-400 text-sm">{errors.nombre}</p>)}
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="telefono" className="text-white">
@@ -132,8 +145,10 @@ Me gustaría agendar una cita para mi mascota.`
                       placeholder="Tu número de WhatsApp"
                       value={formData.telefono}
                       onChange={(e) => handleInputChange("telefono", e.target.value)}
-                      className="bg-white/10 border-gray-600 text-white placeholder:text-gray-400"
+                      aria-invalid={!!errors.telefono}
+                      className={`bg-white/10 text-white placeholder:text-gray-400 ${errors.telefono ? 'border-red-500 focus-visible:ring-red-500' : 'border-gray-600'}`}
                     />
+                    {errors.telefono && (<p className="text-red-400 text-sm">{errors.telefono}</p>)}
                   </div>
                 </div>
 
@@ -147,8 +162,10 @@ Me gustaría agendar una cita para mi mascota.`
                       placeholder="Nombre y raza de tu mascota"
                       value={formData.mascota}
                       onChange={(e) => handleInputChange("mascota", e.target.value)}
-                      className="bg-white/10 border-gray-600 text-white placeholder:text-gray-400"
+                      aria-invalid={!!errors.mascota}
+                      className={`bg-white/10 text-white placeholder:text-gray-400 ${errors.mascota ? 'border-red-500 focus-visible:ring-red-500' : 'border-gray-600'}`}
                     />
+                    {errors.mascota && (<p className="text-red-400 text-sm">{errors.mascota}</p>)}
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="servicio" className="text-white">
@@ -183,23 +200,12 @@ Me gustaría agendar una cita para mi mascota.`
                 <div className="space-y-4">
                   <Button
                     onClick={handleWhatsAppSubmit}
-                    className="w-full bg-brand-yellow hover:bg-yellow-400 text-white hover:cursor-pointer hover:text-black font-semibold text-lg py-3"
-                    size="lg"
-                  >
-                    <Send className="mr-2 w-5 h-5" />
-                    Enviar por WhatsApp
-                  </Button>
-
-                  <Button
-                    asChild
                     variant="outline"
-                    className="w-full border-green-500 text-green-400 hover:bg-green-500 hover:text-white bg-transparent"
+                    className="w-full border-green-500 text-green-500 hover:bg-green-500 hover:text-white bg-transparent font-semibold text-lg py-3"
                     size="lg"
                   >
-                    <a href={directWhatsAppUrl} target="_blank" rel="noopener noreferrer">
-                      <MessageCircle className="mr-2 w-5 h-5" />
-                      Abrir Chat Directo
-                    </a>
+                    <MessageCircle className="mr-2 w-5 h-5" />
+                    Enviar por WhatsApp
                   </Button>
                 </div>
               </CardContent>

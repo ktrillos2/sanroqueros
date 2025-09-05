@@ -1,13 +1,15 @@
 import { Header } from "@/components/header"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Calendar, Clock, User, ArrowLeft, Share2, Eye } from "lucide-react"
+import { Calendar, Clock, ArrowLeft, Eye } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { notFound } from "next/navigation"
+import type { Metadata } from "next"
 import { RichText } from "@/components/rich-text"
 import { getPayload } from "payload"
 import config from "@/payload.config"
+import { ShareButton } from "@/components/share-button"
 
 async function getPost(slug: string) {
   try {
@@ -31,7 +33,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
       <section className="pt-32 pb-8 bg-black">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
-            <Button variant="ghost" asChild className="text-gray-400 hover:text-white mb-6">
+            <Button variant="ghost" asChild className="text-gray-400 hover:text-black bg-transparent hover:bg-white/90 transition-colors mb-6">
               <Link href="/blog">
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Volver al Blog
@@ -63,9 +65,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
               <div className="flex items-center justify-between py-4 border-t border-b border-gray-800">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-brand-yellow rounded-full flex items-center justify-center">
-                    <User className="w-6 h-6 text-black" />
-                  </div>
+                  {/* Avatar oculto, solo texto del autor */}
                   <div>
                     <p className="text-white font-semibold">{post.author}</p>
                     <p className="text-gray-400 text-sm">Especialista en Cuidado Animal</p>
@@ -73,10 +73,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                 </div>
 
                 <div className="flex items-center gap-4">
-                  {/* Acciones sociales opcionales */}
-                  <Button size="sm" variant="ghost" className="text-gray-400 hover:text-brand-yellow">
-                    <Share2 className="w-4 h-4" />
-                  </Button>
+                  <ShareButton title={post.title} />
                 </div>
               </div>
             </div>
@@ -111,4 +108,39 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   {/* TODO: relacionados (opcional) */}
     </main>
   )
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params
+  const post = await getPost(slug)
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+
+  const mediaUrl = (src: any): string | undefined => {
+    const filename = src?.file?.url || src?.imageUrl || src?.url || src?.filename
+    if (!filename) return undefined
+    if (String(filename).startsWith('http')) return filename
+    return new URL(String(filename).startsWith('/') ? filename : `/media/${filename}`, baseUrl).toString()
+  }
+
+  const title = post?.title ? `${post.title} | SANROQUE` : 'Blog | SANROQUE'
+  const description = post?.excerpt || 'Contenido del blog de SANROQUE'
+  const og = mediaUrl(post?.mainImage)
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url: `${baseUrl}/blog/${slug}`,
+      type: 'article',
+      images: og ? [{ url: og, width: 1200, height: 630, alt: post?.title || 'SANROQUE' }] : undefined,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: og ? [og] : undefined,
+    },
+  }
 }

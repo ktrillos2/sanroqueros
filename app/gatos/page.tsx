@@ -5,96 +5,58 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
-import { Heart, Sparkles, Crown, Leaf, CheckCircle } from "lucide-react"
+import { CheckCircle } from "lucide-react"
 import Link from "next/link"
-import { useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 
 export default function GatosPage() {
   const [selectedBreed, setSelectedBreed] = useState("")
   const [coatType, setCoatType] = useState("")
+  const [cms, setCms] = useState<any>(null)
 
-  const catBreeds = {
-    "Manto Corto": ["Siamés", "Bengalí", "British Short Hair", "Fold Escocés", "Azul Ruso", "Savannah", "Bombay"],
-    "Manto Medio y Largo": ["Persa", "Ragdoll", "Bosque de Noruega", "Angora", "Himalayo"],
-  }
+  useEffect(() => {
+    let mounted = true
+    ;(async () => {
+      try {
+        const res = await fetch('/api/cats-page', { cache: 'no-store' })
+        const json = res.ok ? await res.json() : null
+        if (!mounted) return
+        setCms(json?.data || null)
+      } catch {}
+    })()
+    return () => { mounted = false }
+  }, [])
 
-  const services = [
-    {
-      id: "sanroquero",
-      title: "SanRoquero",
-      description: "Servicio básico con productos de calidad",
-      icon: Heart,
-      features: ["3 baños completos", "Productos básicos de calidad", "Secado profesional", "Corte de uñas incluido"],
-      color: "from-pink-500 to-pink-600",
-      shadowColor: "shadow-pink-500/50",
-    },
-    {
-      id: "rockstar",
-      title: "Rockstar",
-      description: "Servicio premium con productos selectos",
-      icon: Sparkles,
-      features: [
-        "3 baños especializados",
-        "Productos premium selectos",
-        "Tratamiento desenredante",
-        "Limpieza de oídos",
-      ],
-      color: "from-purple-500 to-purple-600",
-      shadowColor: "shadow-purple-500/50",
-    },
-    {
-      id: "superstar",
-      title: "Superstar",
-      description: "Servicio de lujo con productos Hydra",
-      icon: Crown,
-      features: [
-        "3 baños + mascarilla Hydra",
-        "Todos los productos Hydra",
-        "Tratamiento hidratante profundo",
-        "Aromaterapia felina",
-      ],
-      color: "from-yellow-500 to-yellow-600",
-      shadowColor: "shadow-yellow-500/50",
-    },
-    {
-      id: "shanti",
-      title: "Shanti Pet Spa",
-      description: "Experiencia spa con productos Iv San Bernard",
-      icon: Leaf,
-      features: [
-        "3 baños terapéuticos",
-        "Productos Iv San Bernard exclusivos",
-        "Masaje relajante",
-        "Ambiente zen completo",
-      ],
-      color: "from-green-500 to-green-600",
-      shadowColor: "shadow-green-500/50",
-      isPopular: true,
-    },
-  ]
+  const catBreeds = useMemo(() => {
+    if (cms?.breedLists?.length) {
+      return cms.breedLists.reduce((acc: any, row: any) => { acc[row.coatType] = (row.breeds || []).map((b: any) => b.value); return acc }, {})
+    }
+    return { "Manto Corto": [], "Manto Medio y Largo": [] }
+  }, [cms])
 
-  const priceData = {
-    "Manto Corto": {
-      SanRoquero: "$109",
-      Rockstar: "$119",
-      Superstar: "$140",
-      "Shanti Pet Spa": "$200",
-    },
-    "Manto Medio y Largo": {
-      SanRoquero: "$128",
-      Rockstar: "$144",
-      Superstar: "$166",
-      "Shanti Pet Spa": "$225",
-    },
-  }
+  // servicios solo desde CMS
+
+  const priceRows = useMemo(() => {
+    const rows: any[] = cms?.priceRows || []
+    const map: Record<string, any> = {}
+    for (const r of rows) {
+      map[r.coatType] = {
+        SanRoquero: r.SanRoquero,
+        Rockstar: r.Rockstar,
+        Superstar: r.Superstar,
+        Shanti: r.Shanti,
+      }
+    }
+    return map
+  }, [cms])
 
   const handleBreedSelect = (breed: string) => {
     setSelectedBreed(breed)
 
     // Determine coat type based on breed
-    if (catBreeds["Manto Corto"].includes(breed)) {
+  if ((catBreeds["Manto Corto"] || []).includes(breed)) {
       setCoatType("Manto Corto")
-    } else if (catBreeds["Manto Medio y Largo"].includes(breed)) {
+  } else if ((catBreeds["Manto Medio y Largo"] || []).includes(breed)) {
       setCoatType("Manto Medio y Largo")
     }
   }
@@ -139,90 +101,77 @@ export default function GatosPage() {
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center text-white space-y-6 animate-fade-in">
             <h1 className="font-heading text-4xl md:text-6xl font-bold leading-tight">
-              Servicios Especializados para{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-pink-600">Michi</span>
+              {cms?.hero?.title}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-pink-600">{cms?.hero?.highlight}</span>
             </h1>
             <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto">
-              Cuidado especializado para michis con técnicas Fear Free y ambiente libre de estrés
+              {cms?.hero?.subtitle}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button
-                size="lg"
-                className="bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white font-semibold shadow-lg hover:shadow-pink-500/25 transition-all duration-300"
-                asChild
-              >
-                <Link
-                  href="https://wa.me/573154433109?text=Hola,%20me%20gustaría%20agendar%20una%20cita%20para%20mi%20gato."
-                  target="_blank"
+              {cms?.hero?.ctaHref && cms?.hero?.ctaLabel ? (
+                <Button
+                  size="lg"
+                  className="bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white font-semibold shadow-lg hover:shadow-pink-500/25 transition-all duration-300"
+                  asChild
                 >
-                  Agendar Cita
-                </Link>
-              </Button>
+                  <Link href={cms.hero.ctaHref} target="_blank">{cms.hero.ctaLabel}</Link>
+                </Button>
+              ) : null}
             </div>
           </div>
         </div>
       </section>
 
     <section className="py-12 md:py-16 bg-black">
-        <div className="container mx-auto px-4">
-      <div className="text-center mb-10 md:mb-16">
-            <h2 className="font-heading text-3xl md:text-4xl font-bold text-white mb-4">Nuestros Servicios</h2>
-            <p className="text-lg text-gray-400 max-w-3xl mx-auto">
-              Servicios especializados para el cuidado felino con los mejores productos y técnicas
-            </p>
-          </div>
-
-      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
-            {services.map((service) => (
-              <Card
-                key={service.id}
-        className={`relative bg-gray-900 border-gray-800 text-white hover:scale-105 transition-all duration-300 hover:${service.shadowColor} hover:shadow-2xl pt-6 ${
-                  service.isPopular ? "ring-2 ring-yellow-500" : ""
-                }`}
-              >
-                {service.isPopular && (
-                  <Badge className="text-black absolute -top-2 -right-2 font-semibold px-3 py-1 rounded-full text-xs">
-                    Más Popular
-                  </Badge>
-                )}
-
-                <CardHeader className="text-center pb-4">
-                  <div
-                    className={`w-16 h-16 bg-gradient-to-r ${service.color} rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg`}
-                  >
-                    <service.icon className="w-8 h-8 text-white" />
-                  </div>
-                  <CardTitle className="font-heading text-xl text-white">{service.title}</CardTitle>
-                  <p className="text-gray-400 text-sm">{service.description}</p>
-                </CardHeader>
-
-                <CardContent className="flex-1 flex flex-col">
-                  <ul className="space-y-2 text-sm text-gray-300 mb-6 flex-1">
-                    {service.features.map((feature, idx) => (
-                      <li key={idx} className="flex items-start space-x-2">
-                        <div className="w-1.5 h-1.5 bg-pink-400 rounded-full mt-2 flex-shrink-0"></div>
-                        <span>{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  <Button
-                    className={`w-full bg-gradient-to-r ${service.color} hover:opacity-90 text-white font-semibold mt-auto`}
-                    asChild
-                  >
-                    <Link
-                      href="https://wa.me/573154433109?text=Hola,%20me%20gustaría%20información%20sobre%20el%20servicio%20"
-                      target="_blank"
-                    >
-                      Más Información
-                    </Link>
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+      <div className="container mx-auto px-4">
+        <div className="text-center mb-10 md:mb-16">
+          <h2 className="font-heading text-3xl md:text-4xl font-bold text-white mb-4">Nuestros Servicios</h2>
+          <p className="text-lg text-gray-400 max-w-3xl mx-auto">
+            Servicios especializados para el cuidado felino con los mejores productos y técnicas
+          </p>
         </div>
-      </section>
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
+          {(cms?.services || []).map((service: any) => (
+            <Card
+              key={service.id}
+              className={`relative bg-gray-900 border-gray-800 text-white hover:scale-105 transition-all duration-300 hover:${service.shadowClass || 'shadow-pink-500/50'} hover:shadow-2xl pt-6 ${service.isPopular ? 'ring-2 ring-yellow-500' : ''}`}
+            >
+              {service.isPopular && (
+                <Badge className="text-black absolute -top-2 -right-2 font-semibold px-3 py-1 rounded-full text-xs">
+                  Más Popular
+                </Badge>
+              )}
+
+              <CardHeader className="text-center pb-4">
+                <div className={`w-16 h-16 bg-gradient-to-r ${service.colorClass || 'from-pink-500 to-pink-600'} rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg`}>
+                  <CheckCircle className="w-8 h-8 text-white" />
+                </div>
+                <CardTitle className="font-heading text-xl text-white">{service.title}</CardTitle>
+                <p className="text-gray-400 text-sm">{service.description}</p>
+              </CardHeader>
+
+              <CardContent className="flex-1 flex flex-col">
+                <ul className="space-y-2 text-sm text-gray-300 mb-6 flex-1">
+                  {(service.features || []).map((feature: any, idx: number) => (
+                    <li key={idx} className="flex items-start space-x-2">
+                      <div className="w-1.5 h-1.5 bg-pink-400 rounded-full mt-2 flex-shrink-0"></div>
+                      <span>{typeof feature === 'string' ? feature : feature.value}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                {service?.ctaHref ? (
+                  <Button className={`w-full bg-gradient-to-r ${service.colorClass || 'from-pink-500 to-pink-600'} hover:opacity-90 text-white font-semibold mt-auto`} asChild>
+                    <Link href={service.ctaHref} target="_blank">Más Información</Link>
+                  </Button>
+                ) : null}
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    </section>
 
     <section id="identificar-manto" className="py-12 md:py-16 bg-gradient-to-br from-gray-900 to-black">
         <div className="container mx-auto px-4">
@@ -254,7 +203,7 @@ export default function GatosPage() {
                     </SelectTrigger>
                     <SelectContent className="bg-gray-800 border-[#88D3EE] max-h-60">
                       {Object.entries(catBreeds).map(([coatType, breeds]) =>
-                        breeds.map((breed) => (
+                        (breeds as string[]).map((breed: string) => (
                           <SelectItem key={breed} value={breed} className="text-base text-white hover:bg-[#88D3EE]/20">
                             {breed}
                           </SelectItem>
@@ -301,13 +250,13 @@ export default function GatosPage() {
                             💰 Precios para {selectedBreed}:
                           </h4>
                           <div className="grid grid-cols-1 gap-3">
-                            {Object.entries(priceData[coatType as keyof typeof priceData]).map(([service, price]) => (
+              {Object.entries(priceRows[coatType] || {}).map(([service, price]) => (
                               <div
                                 key={service}
                                 className="flex justify-between items-center bg-[#000] rounded-lg p-3 border border-[#88D3EE]/20"
                               >
                                 <span className="text-[#88D3EE] font-semibold text-sm">{service}:</span>
-                                <span className="font-bold text-white text-base">{price}k</span>
+                <span className="font-bold text-white text-base">${Number(price)}k</span>
                               </div>
                             ))}
                           </div>
@@ -334,67 +283,73 @@ export default function GatosPage() {
           </div>
 
       <div className="space-y-10 md:space-y-16">
-            <div className="animate-fade-in">
-        <div className="text-center mb-6 md:mb-8">
-                <Badge className="mb-6 font-bold shadow-2xl text-lg px-4 py-2 text-black">
-                  🔹 Manto Corto / Pelo Corto
-                </Badge>
-              </div>
-
-              <div className="overflow-x-auto scrollbar-white">
-                <table className="w-full bg-gray-800 text-white rounded-2xl overflow-hidden shadow-2xl border-2 border-[#88D3EE]">
-                  <thead className="bg-gradient-to-r from-[#88D3EE] to-[#88D3EE]/80">
-                    <tr>
-                      <th className="px-6 py-6 text-left font-bold text-xl text-white">Categoría</th>
-                      <th className="px-6 py-6 text-center font-bold text-xl text-white">SanRoquero</th>
-                      <th className="px-6 py-6 text-center font-bold text-xl text-white">Rockstar</th>
-                      <th className="px-6 py-6 text-center font-bold text-xl text-white">Superstar</th>
-                      <th className="px-6 py-6 text-center font-bold text-xl text-white">Shanti Spa</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr className="bg-gray-700/50">
-                      <td className="px-6 py-4 font-bold capitalize text-lg text-[#88D3EE]">Michi</td>
-                      <td className="px-6 py-4 text-center font-bold text-lg">$109k</td>
-                      <td className="px-6 py-4 text-center font-bold text-lg">$119k</td>
-                      <td className="px-6 py-4 text-center font-bold text-[#FFE550] text-lg">$140k</td>
-                      <td className="px-6 py-4 text-center font-bold text-[#88D3EE] text-lg">$200k</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            <div className="animate-fade-in">
-              <div className="text-center mb-6 md:mb-8">
-                <Badge className="mb-6 font-bold shadow-2xl py-2 px-4 text-lg text-black">
-                  🔸 Manto Medio y Largo
-                </Badge>
-              </div>
-
-              <div className="overflow-x-auto scrollbar-white">
-                <table className="w-full bg-gray-800 text-white rounded-2xl overflow-hidden shadow-2xl border-2 border-[#FFB1BE]">
-                  <thead className="bg-gradient-to-r from-[#FFB1BE] to-[#FFB1BE]/80">
-                    <tr>
-                      <th className="px-6 py-6 text-left font-bold text-xl text-white">Categoría</th>
-                      <th className="px-6 py-6 text-center font-bold text-xl text-white">SanRoquero</th>
-                      <th className="px-6 py-6 text-center font-bold text-xl text-white">Rockstar</th>
-                      <th className="px-6 py-6 text-center font-bold text-xl text-white">Superstar</th>
-                      <th className="px-6 py-6 text-center font-bold text-xl text-white">Shanti Spa</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr className="bg-gray-700/50">
-                      <td className="px-6 py-4 font-bold capitalize text-lg text-[#FFB1BE]">Michi</td>
-                      <td className="px-6 py-4 text-center font-bold text-lg">$128k</td>
-                      <td className="px-6 py-4 text-center font-bold text-lg">$144k</td>
-                      <td className="px-6 py-4 text-center font-bold text-[#FFE550] text-lg">$166k</td>
-                      <td className="px-6 py-4 text-center font-bold text-[#FFB1BE] text-lg">$225k</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
+            {(() => {
+              const rows: any[] = cms?.priceRows || []
+              const corto = rows.find(r => r.coatType === 'Manto Corto')
+              const largo = rows.find(r => r.coatType === 'Manto Medio y Largo')
+              return (
+                <>
+                  {corto && (
+                    <div className="animate-fade-in">
+                      <div className="text-center mb-6 md:mb-8">
+                        <Badge className="mb-6 font-bold shadow-2xl text-lg px-4 py-2 text-black">🔹 Manto Corto / Pelo Corto</Badge>
+                      </div>
+                      <div className="overflow-x-auto scrollbar-white">
+                        <table className="w-full bg-gray-800 text-white rounded-2xl overflow-hidden shadow-2xl border-2 border-[#88D3EE]">
+                          <thead className="bg-gradient-to-r from-[#88D3EE] to-[#88D3EE]/80">
+                            <tr>
+                              <th className="px-6 py-6 text-left font-bold text-xl text-white">Categoría</th>
+                              <th className="px-6 py-6 text-center font-bold text-xl text-white">SanRoquero</th>
+                              <th className="px-6 py-6 text-center font-bold text-xl text-white">Rockstar</th>
+                              <th className="px-6 py-6 text-center font-bold text-xl text-white">Superstar</th>
+                              <th className="px-6 py-6 text-center font-bold text-xl text-white">Shanti Spa</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr className='bg-gray-700/50'>
+                              <td className='px-6 py-4 font-bold capitalize text-lg text-[#88D3EE]'>{corto.coatType}</td>
+                              <td className='px-6 py-4 text-center font-bold text-lg'>${corto.SanRoquero}k</td>
+                              <td className='px-6 py-4 text-center font-bold text-lg'>${corto.Rockstar}k</td>
+                              <td className='px-6 py-4 text-center font-bold text-[#FFE550] text-lg'>${corto.Superstar}k</td>
+                              <td className='px-6 py-4 text-center font-bold text-[#88D3EE] text-lg'>${corto.Shanti}k</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  )}
+                  {largo && (
+                    <div className="animate-fade-in">
+                      <div className="text-center mb-6 md:mb-8">
+                        <Badge className="mb-6 font-bold shadow-2xl py-2 px-4 text-lg text-black">🔸 Manto Medio y Largo</Badge>
+                      </div>
+                      <div className="overflow-x-auto scrollbar-white">
+                        <table className="w-full bg-gray-800 text-white rounded-2xl overflow-hidden shadow-2xl border-2 border-[#FFB1BE]">
+                          <thead className="bg-gradient-to-r from-[#FFB1BE] to-[#FFB1BE]/80">
+                            <tr>
+                              <th className="px-6 py-6 text-left font-bold text-xl text-white">Categoría</th>
+                              <th className="px-6 py-6 text-center font-bold text-xl text-white">SanRoquero</th>
+                              <th className="px-6 py-6 text-center font-bold text-xl text-white">Rockstar</th>
+                              <th className="px-6 py-6 text-center font-bold text-xl text-white">Superstar</th>
+                              <th className="px-6 py-6 text-center font-bold text-xl text-white">Shanti Spa</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr className='bg-gray-700/50'>
+                              <td className='px-6 py-4 font-bold capitalize text-lg text-[#FFB1BE]'>{largo.coatType}</td>
+                              <td className='px-6 py-4 text-center font-bold text-lg'>${largo.SanRoquero}k</td>
+                              <td className='px-6 py-4 text-center font-bold text-lg'>${largo.Rockstar}k</td>
+                              <td className='px-6 py-4 text-center font-bold text-[#FFE550] text-lg'>${largo.Superstar}k</td>
+                              <td className='px-6 py-4 text-center font-bold text-[#FFB1BE] text-lg'>${largo.Shanti}k</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  )}
+                </>
+              )
+            })()}
           </div>
         </div>
       </section>

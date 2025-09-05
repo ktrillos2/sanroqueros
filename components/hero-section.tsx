@@ -187,7 +187,7 @@ export function HeroSection() {
             >
               <Button variant="outline"
                 size="lg"
-                className="bg-brand-yellow hover:bg-yellow-400 font-helvetica font-semibold text-lg px-8 py-4 text-white"
+                className=" hover:bg-yellow-400 font-helvetica font-semibold text-lg px-8 py-4 text-black"
                 asChild
               >
                 <Link href={primaryHref ?? "#"}>
