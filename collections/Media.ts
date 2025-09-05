@@ -55,11 +55,12 @@ export const Media: CollectionConfig = {
   hooks: {
     beforeChange: [
       async ({ data = {}, req, originalDoc, operation }: any) => {
-        const debugOn = process.env.DEBUG_BLOB_UPLOAD === 'true'
+  const debugOn = process.env.DEBUG_BLOB_UPLOAD !== 'false'
         const log = (msg: string, extra?: any) => {
           if (!debugOn) return
+          // Usar console.warn para que aparezca en los logs de Vercel
           try {
-            req?.payload?.logger?.info?.(`[BlobUpload][beforeChange] ${msg}${extra ? ' ' + JSON.stringify(extra) : ''}`)
+            console.warn(`[BlobUpload][beforeChange] ${msg}`, extra ?? '')
           } catch {}
         }
         log('enter', { operation })
@@ -128,7 +129,7 @@ export const Media: CollectionConfig = {
           return { ...data, blobUrl: url, url }
         } catch (e: any) {
           const msg = e instanceof Error ? e.message : String(e)
-          req?.payload?.logger?.error?.(`[BlobUpload][beforeChange] error ${msg}`)
+          console.warn('[BlobUpload][beforeChange] error', msg)
           return data
         }
       },
@@ -159,11 +160,12 @@ export const Media: CollectionConfig = {
     }],
     afterChange: [
       async ({ doc, req, operation }: any) => {
-        const debugOn = process.env.DEBUG_BLOB_UPLOAD === 'true'
+  const debugOn = process.env.DEBUG_BLOB_UPLOAD !== 'false'
         const log = (msg: string, extra?: any) => {
           if (!debugOn) return
+          // Usar console.warn para que aparezca en los logs de Vercel
           try {
-            req?.payload?.logger?.info?.(`[BlobUpload][afterChange] ${msg}${extra ? ' ' + JSON.stringify(extra) : ''}`)
+            console.warn(`[BlobUpload][afterChange] ${msg}`, extra ?? '')
           } catch {}
         }
         log('enter', { operation, id: doc?.id, filename: doc?.filename })
@@ -291,7 +293,7 @@ export const Media: CollectionConfig = {
 
           // Solo log de error para diagnóstico
           const msg = err instanceof Error ? err.message : String(err)
-          req.payload.logger?.error?.(`[BlobUpload][afterChange] error ${msg}`)
+          console.warn('[BlobUpload][afterChange] error', msg)
 
           return doc
         }
