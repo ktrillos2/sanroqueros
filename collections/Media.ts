@@ -2,7 +2,7 @@ import type { CollectionConfig } from 'payload'
 import sharp from 'sharp'
 import path from 'path'
 import { promises as fs } from 'fs'
-import { put } from '@vercel/blob'
+import { v2 as cloudinary } from 'cloudinary'
 
 export const Media: CollectionConfig = {
   slug: 'media',
@@ -93,6 +93,7 @@ export const Media: CollectionConfig = {
         if (!doc?.filename) return doc
 
         try {
+
           const token = process.env.BLOB_READ_WRITE_TOKEN
           if (!token) return doc
 
@@ -112,6 +113,7 @@ export const Media: CollectionConfig = {
           const customUrl = `${BLOB_BASE}/media/${doc.filename}`
           const newData: any = { blobUrl: customUrl, url: customUrl }
 
+
           // Si existen tamaños, subir y setear sus URLs también
           if (doc.sizes && typeof doc.sizes === 'object') {
             newData.sizes = {}
@@ -119,11 +121,13 @@ export const Media: CollectionConfig = {
               if (!sizeData?.filename) continue
               const sizePath = path.resolve(`${staticDir}/${sizeData.filename}`)
               try {
+
                 const sizeBuf = await fs.readFile(sizePath)
                 const sizeKey = `media/${sizeData.filename}`
                 await put(sizeKey, sizeBuf, { access: 'public', token, allowOverwrite: true })
                 newData.sizes[sizeName] = { ...sizeData, url: `${BLOB_BASE}/media/${sizeData.filename}` }
               } catch {}
+
             }
           }
 
@@ -149,8 +153,10 @@ export const Media: CollectionConfig = {
 
           return updated
         } catch (err) {
+
           // Solo log de error para diagnóstico
           req.payload.logger?.error?.(`Error subiendo a Vercel Blob: ${err instanceof Error ? err.message : String(err)}`)
+
           return doc
         }
       },
