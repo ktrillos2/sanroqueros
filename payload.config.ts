@@ -1,5 +1,5 @@
 // storage-adapter-import-placeholder
-import { mongooseAdapter } from '@payloadcms/db-mongodb'
+import { sqliteAdapter } from '@payloadcms/db-sqlite'
 import { payloadCloudPlugin } from '@payloadcms/payload-cloud'
 import { lexicalEditor, UploadFeature } from '@payloadcms/richtext-lexical'
 import path from 'path'
@@ -103,9 +103,13 @@ export default buildConfig({
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
-  db: mongooseAdapter({
-    url: process.env.DATABASE_URI || '',
-  }),
+  db: sqliteAdapter({
+    // Para Turso, use las variables TURSO_DATABASE_URL y TURSO_AUTH_TOKEN
+    // Ej: TURSO_DATABASE_URL=libsql://<db>.turso.io
+    //     TURSO_AUTH_TOKEN=...
+    url: process.env.TURSO_DATABASE_URL || 'file:./payload.sqlite',
+    authToken: process.env.TURSO_AUTH_TOKEN,
+  } as any),
   sharp,
   plugins: [
     payloadCloudPlugin(),
