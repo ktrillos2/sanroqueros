@@ -8,13 +8,14 @@ type Props = {
 
 export default function PreviewCell({ data, rowData }: Props) {
   const doc = rowData || data || {}
-  const BLOB_BASE = 'https://elkmig7hcsojxkiy.public.blob.vercel-storage.com'
+  // Base pública del Blob para el cliente (incluye media/ y termina en /)
+  const BLOB_BASE = (process.env.NEXT_PUBLIC_BLOB_BASE_URL || 'https://meczemzmsls6z3o1.public.blob.vercel-storage.com/media/').replace(/\/+$/, '/')
 
   // Construye una URL de Blob a partir de filename (u otro filename de size)
   const buildBlobUrl = (filename?: string): string | undefined => {
     if (!filename) return undefined
     // Asegurar codificación de espacios y caracteres especiales
-    return `${BLOB_BASE}/media/${encodeURIComponent(filename)}`
+  return `${BLOB_BASE}${encodeURIComponent(filename)}`
   }
 
   // Priorizar siempre blobUrl; si no existe, intentar sizes.thumbnail, luego url general; por último dataURI
@@ -32,7 +33,7 @@ export default function PreviewCell({ data, rowData }: Props) {
   if (!url) {
     // Si hay url local o antigua, reconstruir con filename cuando sea posible
     if (doc?.url) {
-      if (typeof doc.url === 'string' && doc.url.startsWith(`${BLOB_BASE}/`)) {
+  if (typeof doc.url === 'string' && doc.url.startsWith(BLOB_BASE)) {
         url = doc.url
       } else {
         url = buildBlobUrl(doc?.filename)

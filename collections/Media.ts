@@ -67,7 +67,8 @@ export const Media: CollectionConfig = {
         // Subir a Vercel Blob ANTES de guardar para que blobUrl/url queden persistidos en el primer write
         // y evitar depender del FS luego (serverless).
         try {
-          const BLOB_BASE = 'https://elkmig7hcsojxkiy.public.blob.vercel-storage.com'
+          // Base pública del Blob, incluyendo la subcarpeta media/ y terminando con '/'
+          const BLOB_BASE = (process.env.BLOB_BASE_URL || 'https://meczemzmsls6z3o1.public.blob.vercel-storage.com/media/').replace(/\/+$/, '/')
           const token = process.env.BLOB_READ_WRITE_TOKEN
           if (!token) {
             log('skip: missing BLOB_READ_WRITE_TOKEN')
@@ -75,7 +76,7 @@ export const Media: CollectionConfig = {
           }
 
           // Si ya viene seteado (e.g., actualización sin cambiar archivo), no reprocesar
-          if (data?.blobUrl && typeof data.blobUrl === 'string' && data.blobUrl.startsWith(`${BLOB_BASE}/`)) {
+          if (data?.blobUrl && typeof data.blobUrl === 'string' && data.blobUrl.startsWith(BLOB_BASE)) {
             log('skip: blobUrl already set in data', { blobUrl: data.blobUrl })
             return data
           }
@@ -124,7 +125,7 @@ export const Media: CollectionConfig = {
           await put(key, buffer, { access: 'public', token, allowOverwrite: true })
           log('put success', { key })
 
-          const url = `${BLOB_BASE}/${key}`
+          const url = `${BLOB_BASE}${filename}`
           log('return data with blob url', { url })
           return { ...data, blobUrl: url, url }
         } catch (e: any) {
@@ -169,10 +170,11 @@ export const Media: CollectionConfig = {
           } catch {}
         }
         log('enter', { operation, id: doc?.id, filename: doc?.filename })
-        const BLOB_BASE = 'https://elkmig7hcsojxkiy.public.blob.vercel-storage.com'
+  // Base pública del Blob, incluyendo la subcarpeta media/ y terminando con '/'
+  const BLOB_BASE = (process.env.BLOB_BASE_URL || 'https://meczemzmsls6z3o1.public.blob.vercel-storage.com/media/').replace(/\/+$/, '/')
 
         // Si ya tenemos blobUrl con nuestra base, no reprocesar
-        if (doc?.blobUrl && typeof doc.blobUrl === 'string' && doc.blobUrl.startsWith(`${BLOB_BASE}/`)) {
+  if (doc?.blobUrl && typeof doc.blobUrl === 'string' && doc.blobUrl.startsWith(BLOB_BASE)) {
           log('skip: doc.blobUrl already set', { blobUrl: doc.blobUrl })
           return doc
         }
@@ -227,7 +229,7 @@ export const Media: CollectionConfig = {
           log('put success original', { keyBase })
 
           // Construir URL final y preparar datos a guardar
-          const customUrl = `${BLOB_BASE}/media/${doc.filename}`
+          const customUrl = `${BLOB_BASE}${doc.filename}`
           const newData: any = { blobUrl: customUrl, url: customUrl }
           log('prepared newData', { customUrl })
 
@@ -257,7 +259,7 @@ export const Media: CollectionConfig = {
                 const sizeKey = `media/${sizeData.filename}`
                 await put(sizeKey, sizeBuf, { access: 'public', token, allowOverwrite: true })
                 log('put success size', { sizeName, sizeKey })
-                newData.sizes[sizeName] = { ...sizeData, url: `${BLOB_BASE}/media/${sizeData.filename}` }
+                newData.sizes[sizeName] = { ...sizeData, url: `${BLOB_BASE}${sizeData.filename}` }
               } catch {}
 
             }
@@ -301,8 +303,8 @@ export const Media: CollectionConfig = {
     ],
     afterRead: [
       async ({ doc }: any) => {
-        const BLOB_BASE = 'https://elkmig7hcsojxkiy.public.blob.vercel-storage.com'
-        if (doc?.blobUrl && (!doc.url || typeof doc.url !== 'string' || !doc.url.startsWith(`${BLOB_BASE}/`))) {
+  const BLOB_BASE = (process.env.BLOB_BASE_URL || 'https://meczemzmsls6z3o1.public.blob.vercel-storage.com/media/').replace(/\/+$/, '/')
+  if (doc?.blobUrl && (!doc.url || typeof doc.url !== 'string' || !doc.url.startsWith(BLOB_BASE))) {
           doc.url = doc.blobUrl
         }
         // Normalizar espacios sin codificar
