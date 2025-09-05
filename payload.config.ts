@@ -109,13 +109,9 @@ export default buildConfig({
   db: sqliteAdapter({
     // Para Turso/libSQL se debe pasar el cliente como objeto.
     // Si no hay variables, hacemos fallback a un archivo local.
-    client: process.env.TURSO_DATABASE_URL
-      ? {
-          url: process.env.TURSO_DATABASE_URL,
-          authToken: process.env.TURSO_AUTH_TOKEN,
-        }
-      : {
-          url: 'file:./payload.sqlite',
+    client:  {
+          url: 'libsql://sanroqueros-ktrillos2.aws-us-east-1.turso.io',
+          authToken: 'eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJpYXQiOjE3NTcwMzgwMDEsImlkIjoiN2FhNjE1NDctMzlkNy00ODljLWIwNzMtZjk3Y2ZmZjlkZWEzIiwicmlkIjoiNzExOWRmYzAtNTE4Ny00NDQyLWIzZGQtMzNlNTYxYTc5M2E5In0.zwvJyOE2SiQQv1H_IcHx0qhGuRFCm_fGghgPQTuWQslxHhEW5XBx9bEMhiJUbVVamWsARAQ7PCPXcXkJtoHLCA',
         },
   } as any),
   sharp,
