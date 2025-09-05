@@ -97,8 +97,19 @@ export const Media: CollectionConfig = {
           const staticDir = '/tmp/media'
           const originalPath = path.resolve(`${staticDir}/${doc.filename}`)
 
-          // Leer el archivo y subirlo a Vercel Blob
-          const buffer = await fs.readFile(originalPath)
+          // Leer el archivo; si falla en Vercel, intentar descargarlo desde la API de Payload
+          let buffer: Buffer
+          try {
+            buffer = await fs.readFile(originalPath)
+          } catch {
+            const base = (req?.payload?.config as any)?.serverURL as string | undefined
+            if (!base) return doc
+            const fileURL = `${base.replace(/\/$/, '')}/api/media/file/${encodeURIComponent(doc.filename)}`
+            const res = await fetch(fileURL)
+            if (!res.ok) return doc
+            const ab = await res.arrayBuffer()
+            buffer = Buffer.from(ab)
+          }
           const keyBase = `media/${doc.filename}`
           await put(keyBase, buffer, {
             access: 'public',
@@ -118,8 +129,18 @@ export const Media: CollectionConfig = {
               if (!sizeData?.filename) continue
               const sizePath = path.resolve(`${staticDir}/${sizeData.filename}`)
               try {
-
-                const sizeBuf = await fs.readFile(sizePath)
+                let sizeBuf: Buffer
+                try {
+                  sizeBuf = await fs.readFile(sizePath)
+                } catch {
+                  const base = (req?.payload?.config as any)?.serverURL as string | undefined
+                  if (!base) throw new Error('no-base-url')
+                  const sizeURL = `${base.replace(/\/$/, '')}/api/media/file/${encodeURIComponent(sizeData.filename)}`
+                  const res = await fetch(sizeURL)
+                  if (!res.ok) throw new Error('fetch-failed')
+                  const ab = await res.arrayBuffer()
+                  sizeBuf = Buffer.from(ab)
+                }
                 const sizeKey = `media/${sizeData.filename}`
                 await put(sizeKey, sizeBuf, { access: 'public', token, allowOverwrite: true })
                 newData.sizes[sizeName] = { ...sizeData, url: `${BLOB_BASE}/media/${sizeData.filename}` }
