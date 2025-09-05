@@ -14,8 +14,8 @@
   "dependencies": {
     "@emotion/is-prop-valid": "latest",
     "@hookform/resolvers": "^3.10.0",
-    "@libsql/client": "^0.15.14",
-    "@payloadcms/db-mongodb": "^3.54.0",
+  "@libsql/client": "0.14.0",
+    "@libsql/linux-x64-gnu": "^0.1.34",
     "@payloadcms/db-sqlite": "^3.54.0",
     "@payloadcms/next": "^3.54.0",
     "@payloadcms/payload-cloud": "^3.54.0",

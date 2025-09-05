@@ -73,6 +73,10 @@ export const metadata: Metadata = {
   },
 }
 
+// Fuerza renderizado dinámico para evitar consultas a la BD durante el prerender
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export default function RootLayout({
   children,
 }: Readonly<{

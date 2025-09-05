@@ -104,11 +104,16 @@ export default buildConfig({
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
   db: sqliteAdapter({
-    // Para Turso, use las variables TURSO_DATABASE_URL y TURSO_AUTH_TOKEN
-    // Ej: TURSO_DATABASE_URL=libsql://<db>.turso.io
-    //     TURSO_AUTH_TOKEN=...
-    url: process.env.TURSO_DATABASE_URL || 'file:./payload.sqlite',
-    authToken: process.env.TURSO_AUTH_TOKEN,
+    // Para Turso/libSQL se debe pasar el cliente como objeto.
+    // Si no hay variables, hacemos fallback a un archivo local.
+    client: process.env.TURSO_DATABASE_URL
+      ? {
+          url: process.env.TURSO_DATABASE_URL,
+          authToken: process.env.TURSO_AUTH_TOKEN,
+        }
+      : {
+          url: 'file:./payload.sqlite',
+        },
   } as any),
   sharp,
   plugins: [
