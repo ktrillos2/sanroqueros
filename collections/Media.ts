@@ -87,9 +87,38 @@ export const Media: CollectionConfig = {
             return doc
           }
 
-          const buffer = await fs.readFile(originalPath)
+          // Helpers de reintento
+          const wait = (ms: number) => new Promise(res => setTimeout(res, ms))
+          const readFileWithRetry = async (p: string, tries = 5) => {
+            let attempt = 0
+            let delay = 100
+            while (true) {
+              try {
+                return await fs.readFile(p)
+              } catch (e: any) {
+                if (attempt++ >= tries - 1) throw e
+                await wait(delay)
+                delay = Math.min(delay * 2, 1000)
+              }
+            }
+          }
+          const putWithRetry = async (key: string, data: Buffer, tries = 3) => {
+            let attempt = 0
+            let delay = 200
+            while (true) {
+              try {
+                return await put(key, data, { access: 'public', token })
+              } catch (e: any) {
+                if (attempt++ >= tries - 1) throw e
+                await wait(delay)
+                delay = Math.min(delay * 2, 1500)
+              }
+            }
+          }
+
+          const buffer = await readFileWithRetry(originalPath)
           const keyBase = `media/${doc.filename}`
-          const uploaded = await put(keyBase, buffer, { access: 'public', token })
+          const uploaded = await putWithRetry(keyBase, buffer)
 
           const newData: any = { url: uploaded.url }
 
@@ -99,9 +128,9 @@ export const Media: CollectionConfig = {
               if (!sizeData?.filename) continue
               const sizePath = path.resolve(`${staticDir}/${sizeData.filename}`)
               try {
-                const sizeBuf = await fs.readFile(sizePath)
+                const sizeBuf = await readFileWithRetry(sizePath)
                 const sizeKey = `media/${sizeData.filename}`
-                const up = await put(sizeKey, sizeBuf, { access: 'public', token })
+                const up = await putWithRetry(sizeKey, sizeBuf)
                 newData.sizes[sizeName] = { ...sizeData, url: up.url }
               } catch { /* ignore */ }
             }
