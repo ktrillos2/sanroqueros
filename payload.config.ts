@@ -1,5 +1,5 @@
 import { sqliteAdapter } from '@payloadcms/db-sqlite'
-import { payloadCloudPlugin } from '@payloadcms/payload-cloud'
+// import { payloadCloudPlugin } from '@payloadcms/payload-cloud'
 import { lexicalEditor, UploadFeature } from '@payloadcms/richtext-lexical'
 import path from 'path'
 import { buildConfig } from 'payload'
@@ -117,7 +117,7 @@ export default buildConfig({
   } as any),
   sharp,
   plugins: [
-    payloadCloudPlugin(),
+    // payloadCloudPlugin(), // Comentado para usar Vercel Blob en su lugar
   // Sin plugin de storage: ver hooks en la colección Media para Vercel Blob en producción
   ],
 })

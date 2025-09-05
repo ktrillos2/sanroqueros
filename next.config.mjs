@@ -26,6 +26,17 @@ const nextConfig = {
       allowedOrigins,
     },
   },
+  serverExternalPackages: [
+    '@aws-sdk/client-s3',
+    '@aws-sdk/s3-request-presigner',
+  ],
+  webpack: (config) => {
+    config.externals = [...(config.externals || []), {
+      '@aws-sdk/client-s3': '@aws-sdk/client-s3',
+      '@aws-sdk/s3-request-presigner': '@aws-sdk/s3-request-presigner',
+    }]
+    return config
+  },
   eslint: {
     ignoreDuringBuilds: true,
   },
