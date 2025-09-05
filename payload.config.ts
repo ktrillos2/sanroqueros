@@ -1,4 +1,5 @@
 // storage-adapter-import-placeholder
+import { s3Storage } from '@payloadcms/storage-s3'
 import { sqliteAdapter } from '@payloadcms/db-sqlite'
 import { payloadCloudPlugin } from '@payloadcms/payload-cloud'
 import { lexicalEditor, UploadFeature } from '@payloadcms/richtext-lexical'
@@ -118,5 +119,29 @@ export default buildConfig({
   plugins: [
     payloadCloudPlugin(),
     // storage-adapter-placeholder
+    ...(process.env.S3_BUCKET && (process.env.AWS_ACCESS_KEY_ID || process.env.R2_ACCESS_KEY_ID)
+      ? [
+          s3Storage({
+            collections: {
+              media: {
+                bucket: process.env.S3_BUCKET as string,
+                prefix: 'media',
+                acl: 'public-read' as any,
+                config: {
+                  // Soporta AWS S3, R2 (Cloudflare) o MinIO vía endpoint
+                  region: process.env.S3_REGION,
+                  endpoint: process.env.S3_ENDPOINT,
+                  credentials: {
+                    accessKeyId:
+                      (process.env.AWS_ACCESS_KEY_ID || process.env.R2_ACCESS_KEY_ID) as string,
+                    secretAccessKey:
+                      (process.env.AWS_SECRET_ACCESS_KEY || process.env.R2_SECRET_ACCESS_KEY) as string,
+                  },
+                },
+              },
+            },
+          }),
+        ]
+      : []),
   ],
 })

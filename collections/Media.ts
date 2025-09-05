@@ -17,10 +17,10 @@ export const Media: CollectionConfig = {
   access: {
     // Listar/consultar medios desde Admin o público
     read: () => true,
-    // En desarrollo, permitir subir/editar/borrar sin exigir sesión (para evitar bloqueos por proxys)
-    create: () => process.env.NODE_ENV !== 'production',
-    update: () => process.env.NODE_ENV !== 'production',
-    delete: () => process.env.NODE_ENV !== 'production',
+  // En producción, exigir usuario autenticado
+  create: ({ req }) => !!req?.user,
+  update: ({ req }) => !!req?.user,
+  delete: ({ req }) => !!req?.user,
   },
   fields: [
     {

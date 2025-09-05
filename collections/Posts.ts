@@ -5,10 +5,10 @@ export const Posts: CollectionConfig = {
   labels: { singular: 'Post', plural: 'Posts' },
   admin: { useAsTitle: 'title', defaultColumns: ['title', 'category', 'date', 'featured'] },
   access: {
-    read: () => true,
-    create: () => process.env.NODE_ENV !== 'production',
-    update: () => process.env.NODE_ENV !== 'production',
-    delete: () => process.env.NODE_ENV !== 'production',
+  read: () => true,
+  create: ({ req }) => !!req?.user, // permitir a usuarios autenticados en prod
+  update: ({ req }) => !!req?.user,
+  delete: ({ req }) => !!req?.user,
   },
   fields: [
     { name: 'title', type: 'text', label: 'Título', required: true },
