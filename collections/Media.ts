@@ -12,7 +12,7 @@ export const Media: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'alt',
-    defaultColumns: ['alt', 'updatedAt', 'miniatura'],
+  defaultColumns: ['alt', 'blobUrl', 'updatedAt', 'miniatura'],
     components: {
       // Otros componentes del admin pueden ir aquí si se requieren
     },
@@ -29,13 +29,18 @@ export const Media: CollectionConfig = {
     {
       name: 'alt',
       type: 'text',
-      required: true,
       label: 'Texto alternativo',
+      required: true,
+    },
+    {
+  name: 'blobUrl',
+      type: 'text',
+  label: 'URL de Vercel Blob',
       admin: {
-        description: 'Describe la imagen para accesibilidad y SEO.',
+        readOnly: true,
+        description: 'URL generada automáticamente por Vercel Blob',
       },
     },
-
     {
       name: 'miniatura',
       label: 'Miniatura',
@@ -73,67 +78,60 @@ export const Media: CollectionConfig = {
       return { ...data, alt: clean || 'Imagen sin título' }
     }],
     afterChange: [
-      async ({ doc, req }: any) => {
-        const isProd = process.env.VERCEL === '1' || process.env.NODE_ENV === 'production'
-        if (!isProd) return doc
-        if (typeof doc?.url === 'string' && /^https?:\/\//.test(doc.url)) return doc
+      async ({ doc, req, operation }: any) => {
+        const BLOB_BASE = 'https://elkmig7hcsojxkiy.public.blob.vercel-storage.com'
+
+        // Si ya tenemos blobUrl correcta, no reprocesar
+        if (doc?.blobUrl && typeof doc.blobUrl === 'string' && doc.blobUrl.startsWith(`${BLOB_BASE}/`)) {
+          return doc
+        }
+
+        // Solo procesar en creación del archivo
+        if (operation !== 'create') return doc
+
+        // Necesitamos el archivo físico
+        if (!doc?.filename) return doc
 
         try {
-          const staticDir = process.env.VERCEL === '1' ? '/tmp/media' : 'media'
-          const originalPath = path.resolve(`${staticDir}/${doc.filename}`)
-          const { CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET } = process.env as Record<string, string | undefined>
-          if (!CLOUDINARY_CLOUD_NAME || !CLOUDINARY_API_KEY || !CLOUDINARY_API_SECRET) {
-            req.payload.logger?.warn?.('Cloudinary no configurado; falta CLOUDINARY_CLOUD_NAME/API_KEY/API_SECRET')
-            return doc
-          }
-          cloudinary.config({ cloud_name: CLOUDINARY_CLOUD_NAME, api_key: CLOUDINARY_API_KEY, api_secret: CLOUDINARY_API_SECRET, secure: true })
 
-          // Helpers de reintento
-          const wait = (ms: number) => new Promise(res => setTimeout(res, ms))
-          const readFileWithRetry = async (p: string, tries = 5) => {
-            let attempt = 0
-            let delay = 100
-            while (true) {
-              try {
-                return await fs.readFile(p)
-              } catch (e: any) {
-                if (attempt++ >= tries - 1) throw e
-                await wait(delay)
-                delay = Math.min(delay * 2, 1000)
-              }
-            }
-          }
-          const buffer = await readFileWithRetry(originalPath)
-          const folder = process.env.CLOUDINARY_FOLDER || 'media'
-          const uploaded = await new Promise<any>((resolve, reject) => {
-            const stream = cloudinary.uploader.upload_stream(
-              { folder, use_filename: true, unique_filename: true, overwrite: false, resource_type: 'auto' },
-              (err, result) => (err ? reject(err) : resolve(result))
-            )
-            stream.end(buffer)
+          const token = process.env.BLOB_READ_WRITE_TOKEN
+          if (!token) return doc
+
+          const staticDir = '/tmp/media'
+          const originalPath = path.resolve(`${staticDir}/${doc.filename}`)
+
+          // Leer el archivo y subirlo a Vercel Blob
+          const buffer = await fs.readFile(originalPath)
+          const keyBase = `media/${doc.filename}`
+          await put(keyBase, buffer, {
+            access: 'public',
+            token,
+            allowOverwrite: true,
           })
 
-          const newData: any = { url: uploaded.secure_url || uploaded.url }
+          // Construir URL final y preparar datos a guardar
+          const customUrl = `${BLOB_BASE}/media/${doc.filename}`
+          const newData: any = { blobUrl: customUrl, url: customUrl }
 
+
+          // Si existen tamaños, subir y setear sus URLs también
           if (doc.sizes && typeof doc.sizes === 'object') {
             newData.sizes = {}
             for (const [sizeName, sizeData] of Object.entries<any>(doc.sizes)) {
               if (!sizeData?.filename) continue
               const sizePath = path.resolve(`${staticDir}/${sizeData.filename}`)
               try {
-                const sizeBuf = await readFileWithRetry(sizePath)
-                const up = await new Promise<any>((resolve, reject) => {
-                  const stream = cloudinary.uploader.upload_stream(
-                    { folder, use_filename: true, unique_filename: true, overwrite: false, resource_type: 'auto' },
-                    (err, result) => (err ? reject(err) : resolve(result))
-                  )
-                  stream.end(sizeBuf)
-                })
-                newData.sizes[sizeName] = { ...sizeData, url: up.secure_url || up.url }
-              } catch { /* ignore */ }
+
+                const sizeBuf = await fs.readFile(sizePath)
+                const sizeKey = `media/${sizeData.filename}`
+                await put(sizeKey, sizeBuf, { access: 'public', token, allowOverwrite: true })
+                newData.sizes[sizeName] = { ...sizeData, url: `${BLOB_BASE}/media/${sizeData.filename}` }
+              } catch {}
+
             }
           }
 
+          // Persistir blobUrl en el documento (esto disparará afterChange otra vez, pero saldrá por la guarda inicial)
           const updated = await req.payload.update({
             collection: 'media',
             id: doc.id,
@@ -141,29 +139,57 @@ export const Media: CollectionConfig = {
             depth: 0,
             overrideAccess: true,
           })
+
+          // Limpiar archivos temporales; errores de cleanup se ignoran
+          try {
+            await fs.unlink(originalPath)
+            if (doc.sizes && typeof doc.sizes === 'object') {
+              for (const sizeData of Object.values<any>(doc.sizes)) {
+                if (!sizeData?.filename) continue
+                try { await fs.unlink(path.resolve(`${staticDir}/${sizeData.filename}`)) } catch {}
+              }
+            }
+          } catch {}
+
           return updated
         } catch (err) {
-          req.payload.logger?.error?.(`Error subiendo a Cloudinary: ${err instanceof Error ? err.message : String(err)}`)
+
+          // Solo log de error para diagnóstico
+          req.payload.logger?.error?.(`Error subiendo a Vercel Blob: ${err instanceof Error ? err.message : String(err)}`)
+
           return doc
+        }
+      },
+    ],
+    afterRead: [
+      async ({ doc }: any) => {
+        const BLOB_BASE = 'https://elkmig7hcsojxkiy.public.blob.vercel-storage.com'
+        if (doc?.blobUrl && (!doc.url || typeof doc.url !== 'string' || !doc.url.startsWith(`${BLOB_BASE}/`))) {
+          doc.url = doc.blobUrl
+        }
+        // Normalizar espacios sin codificar
+        if (typeof doc.url === 'string') {
+          doc.url = doc.url.replace(/ /g, '%20')
+        }
+        return doc
+      },
+    ],
+    afterDelete: [
+      async ({ doc, req }: any) => {
+        // Opcional: eliminar de Vercel Blob cuando se elimina el documento
+        // Por ahora solo logueamos, ya que Vercel Blob no tiene problema con archivos huérfanos
+        if (doc?.url) {
+          req.payload.logger?.info?.(`Media eliminado: ${doc.url}`)
         }
       },
     ],
   },
   upload: {
-    // En Vercel escribir en '/tmp' (writable). En dev, carpeta local 'media'.
-    staticDir: process.env.VERCEL === '1' ? '/tmp/media' : 'media',
+  // Almacenamiento temporal (staging) solo en /tmp; no se sirven archivos locales
+  staticDir: '/tmp/media',
     mimeTypes: [
       'image/png', 'image/jpeg', 'image/webp', 'image/svg+xml',
       'video/mp4', 'video/webm', 'video/ogg'
-    ],
-    adminThumbnail: 'thumbnail',
-    imageSizes: [
-      {
-        name: 'thumbnail',
-        width: 320,
-        height: 320,
-        position: 'centre',
-      },
     ],
   },
 }
