@@ -34,7 +34,7 @@ import { es } from '@payloadcms/translations/languages/es'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
-// Almacenamiento local: sin S3. En producción (Vercel) el FS es efímero; usa local sólo si aceptas esa limitación.
+// Storage: sin plugin externo. Local en dev; en prod usaremos Vercel Blob vía hooks en la colección Media.
 
 export default buildConfig({
   serverURL:
@@ -118,6 +118,6 @@ export default buildConfig({
   sharp,
   plugins: [
     payloadCloudPlugin(),
-  // Sin plugin de almacenamiento: se usará filesystem local configurado en la colección Media
+  // Sin plugin de storage: ver hooks en la colección Media para Vercel Blob en producción
   ],
 })
