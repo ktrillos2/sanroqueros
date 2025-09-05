@@ -38,7 +38,11 @@ const dirname = path.dirname(filename)
 
 export default buildConfig({
   serverURL:
+    // 1) Producción: si definiste una URL pública explícita
     process.env.NEXT_PUBLIC_SITE_URL ||
+    // 2) Vercel: usar el dominio de despliegue
+    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined) ||
+    // 3) Codespaces: dominio forwarded
     (process.env.CODESPACE_NAME && process.env.GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN
       ? `https://${process.env.CODESPACE_NAME}-3000.${process.env.GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN}`
       : 'http://localhost:3000'),

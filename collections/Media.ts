@@ -53,6 +53,57 @@ export const Media: CollectionConfig = {
     },
   ],
   hooks: {
+    beforeChange: [
+      async ({ data = {}, req, originalDoc, operation }: any) => {
+        // Subir a Vercel Blob ANTES de guardar para que blobUrl/url queden persistidos en el primer write
+        // y evitar depender del FS luego (serverless).
+        try {
+          const BLOB_BASE = 'https://elkmig7hcsojxkiy.public.blob.vercel-storage.com'
+          const token = process.env.BLOB_READ_WRITE_TOKEN
+          if (!token) return data
+
+          // Si ya viene seteado (e.g., actualización sin cambiar archivo), no reprocesar
+          if (data?.blobUrl && typeof data.blobUrl === 'string' && data.blobUrl.startsWith(`${BLOB_BASE}/`)) {
+            return data
+          }
+
+          // Detectar archivo entrante (multer)
+          const fileFromReq = (req as any)?.file || (Array.isArray((req as any)?.files) ? (req as any).files[0] : (req as any)?.files?.file?.[0])
+
+          // Determinar filename a usar
+          const filename: string | undefined =
+            fileFromReq?.filename ||
+            data?.filename ||
+            originalDoc?.filename
+
+          if (!filename) return data
+
+          // Obtener el buffer
+          let buffer: Buffer | undefined
+          if (fileFromReq?.buffer && fileFromReq.buffer instanceof Buffer) {
+            buffer = fileFromReq.buffer
+          }
+
+          if (!buffer) {
+            // Fallback a leer del FS temporal si existe (mismo request)
+            const staticDir = '/tmp/media'
+            const p = path.resolve(`${staticDir}/${filename}`)
+            try { buffer = await fs.readFile(p) } catch { /* ignore */ }
+          }
+
+          if (!buffer) return data
+
+          // Subir a Blob
+          const key = `media/${filename}`
+          await put(key, buffer, { access: 'public', token, allowOverwrite: true })
+
+          const url = `${BLOB_BASE}/${key}`
+          return { ...data, blobUrl: url, url }
+        } catch {
+          return data
+        }
+      },
+    ],
     beforeValidate: [({ data = {}, req, operation }) => {
       // Si alt viene vacío o sin definir, lo derivamos del nombre del archivo
       const current = data?.alt?.toString().trim()
