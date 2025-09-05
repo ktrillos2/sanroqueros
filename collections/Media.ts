@@ -12,7 +12,7 @@ export const Media: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'alt',
-    defaultColumns: ['alt', 'url', 'updatedAt', 'miniatura'],
+  defaultColumns: ['alt', 'blobUrl', 'updatedAt', 'miniatura'],
     components: {
       // Otros componentes del admin pueden ir aquí si se requieren
     },
@@ -33,9 +33,9 @@ export const Media: CollectionConfig = {
       required: true,
     },
     {
-      name: 'url',
+  name: 'blobUrl',
       type: 'text',
-      label: 'URL de Vercel Blob',
+  label: 'URL de Vercel Blob',
       admin: {
         readOnly: true,
         description: 'URL generada automáticamente por Vercel Blob',
@@ -77,105 +77,42 @@ export const Media: CollectionConfig = {
 
       return { ...data, alt: clean || 'Imagen sin título' }
     }],
-    beforeChange: [
-      async ({ data, req, operation }: any) => {
-        // Solo procesar en operaciones de creación y actualización con archivos
-        if (operation !== 'create' && operation !== 'update') {
-          return data
-        }
-
-        // Verificar si hay un archivo siendo subido
-        const file = (req as any)?.file || (req as any)?.files?.file?.[0]
-        if (!file) {
-          return data
-        }
-
-        try {
-          const token = process.env.BLOB_READ_WRITE_TOKEN
-          if (!token) {
-            console.log('❌ BLOB_READ_WRITE_TOKEN ausente')
-            return data
-          }
-
-          console.log('🚀 Subiendo archivo a Vercel Blob:', file.originalname)
-
-          // Subir archivo a Vercel Blob directamente
-          const keyBase = `media/${file.originalname}`
-          const uploaded = await put(keyBase, file.buffer, { 
-            access: 'public', 
-            token: token 
-          })
-
-          console.log('✅ Archivo subido exitosamente a Blob')
-
-          // Construir URL personalizada
-          const customUrl = `https://elkmig7hcsojxkiy.public.blob.vercel-storage.com/media/${file.originalname}`
-          console.log('🔗 URL personalizada:', customUrl)
-
-          // Actualizar los datos con la URL personalizada
-          return {
-            ...data,
-            url: customUrl,
-            filename: file.originalname,
-          }
-        } catch (err) {
-          console.error('❌ Error subiendo a Vercel Blob:', err)
-          return data
-        }
-      },
-    ],
     afterChange: [
-      async ({ doc, req }: any) => {
-        // Verificar si ya tiene URL de Blob para evitar re-procesar
-        if (doc?.url && doc.url.includes('blob.vercel-storage.com')) {
-          console.log('📌 Ya tiene URL de Blob:', doc.url)
+      async ({ doc, req, operation }: any) => {
+        const BLOB_BASE = 'https://elkmig7hcsojxkiy.public.blob.vercel-storage.com'
+
+        // Si ya tenemos blobUrl correcta, no reprocesar
+        if (doc?.blobUrl && typeof doc.blobUrl === 'string' && doc.blobUrl.startsWith(`${BLOB_BASE}/`)) {
           return doc
         }
 
-        // Solo procesar si tenemos un archivo físico
-        if (!doc?.filename) {
-          console.log('❌ No hay filename en el documento')
-          return doc
-        }
+        // Solo procesar en creación del archivo
+        if (operation !== 'create') return doc
 
-        console.log('🚀 Iniciando subida a Vercel Blob para:', doc.filename)
+        // Necesitamos el archivo físico
+        if (!doc?.filename) return doc
 
         try {
           const token = process.env.BLOB_READ_WRITE_TOKEN
-          if (!token) {
-            console.log('❌ BLOB_READ_WRITE_TOKEN ausente')
-            req.payload.logger?.warn?.('BLOB_READ_WRITE_TOKEN ausente; no se subirá a Vercel Blob.')
-            return doc
-          }
+          if (!token) return doc
 
-          console.log('✅ Token encontrado:', token.substring(0, 20) + '...')
-
-          // Directorio donde Payload guardó temporalmente el archivo
-          const staticDir = process.env.VERCEL === '1' ? '/tmp/media' : 'media'
+          const staticDir = '/tmp/media'
           const originalPath = path.resolve(`${staticDir}/${doc.filename}`)
-          
-          console.log('📁 Leyendo archivo desde:', originalPath)
-          
+
           // Leer el archivo y subirlo a Vercel Blob
           const buffer = await fs.readFile(originalPath)
           const keyBase = `media/${doc.filename}`
-          
-          console.log('📤 Subiendo a Vercel Blob con key:', keyBase)
-          
-          const uploaded = await put(keyBase, buffer, { 
-            access: 'public', 
-            token: token 
+          await put(keyBase, buffer, {
+            access: 'public',
+            token,
+            allowOverwrite: true,
           })
 
-          console.log('✅ Archivo subido exitosamente:', uploaded.url)
+          // Construir URL final y preparar datos a guardar
+          const customUrl = `${BLOB_BASE}/media/${doc.filename}`
+          const newData: any = { blobUrl: customUrl, url: customUrl }
 
-          // Usar URL base personalizada para visualización
-          const customUrl = `https://elkmig7hcsojxkiy.public.blob.vercel-storage.com/media/${doc.filename}`
-          console.log('🔗 URL personalizada:', customUrl)
-
-          const newData: any = { url: customUrl }
-
-          // Procesar tamaños de imagen si existen
+          // Si existen tamaños, subir y setear sus URLs también
           if (doc.sizes && typeof doc.sizes === 'object') {
             newData.sizes = {}
             for (const [sizeName, sizeData] of Object.entries<any>(doc.sizes)) {
@@ -184,18 +121,13 @@ export const Media: CollectionConfig = {
               try {
                 const sizeBuf = await fs.readFile(sizePath)
                 const sizeKey = `media/${sizeData.filename}`
-                const up = await put(sizeKey, sizeBuf, { access: 'public', token })
-                
-                // Usar URL base personalizada para tamaños también
-                const customSizeUrl = `https://elkmig7hcsojxkiy.public.blob.vercel-storage.com/media/${sizeData.filename}`
-                newData.sizes[sizeName] = { ...sizeData, url: customSizeUrl }
-              } catch { 
-                // Ignorar errores en tamaños individuales
-              }
+                await put(sizeKey, sizeBuf, { access: 'public', token, allowOverwrite: true })
+                newData.sizes[sizeName] = { ...sizeData, url: `${BLOB_BASE}/media/${sizeData.filename}` }
+              } catch {}
             }
           }
 
-          // Actualizar el documento con las URLs de Blob
+          // Persistir blobUrl en el documento (esto disparará afterChange otra vez, pero saldrá por la guarda inicial)
           const updated = await req.payload.update({
             collection: 'media',
             id: doc.id,
@@ -204,36 +136,36 @@ export const Media: CollectionConfig = {
             overrideAccess: true,
           })
 
-          console.log('✅ Documento actualizado con URL:', updated.url)
-
-          // Limpiar archivos temporales después de subir a Blob
+          // Limpiar archivos temporales; errores de cleanup se ignoran
           try {
             await fs.unlink(originalPath)
-            console.log('🗑️ Archivo temporal eliminado:', originalPath)
-            
-            // Limpiar también los archivos de tamaños
             if (doc.sizes && typeof doc.sizes === 'object') {
-              for (const [sizeName, sizeData] of Object.entries<any>(doc.sizes)) {
-                if (sizeData?.filename) {
-                  try {
-                    const sizePath = path.resolve(`${staticDir}/${sizeData.filename}`)
-                    await fs.unlink(sizePath)
-                  } catch {
-                    // Ignorar errores al limpiar
-                  }
-                }
+              for (const sizeData of Object.values<any>(doc.sizes)) {
+                if (!sizeData?.filename) continue
+                try { await fs.unlink(path.resolve(`${staticDir}/${sizeData.filename}`)) } catch {}
               }
             }
-          } catch {
-            // Ignorar errores al limpiar archivos temporales
-          }
+          } catch {}
 
           return updated
         } catch (err) {
-          console.error('❌ Error subiendo a Vercel Blob:', err)
+          // Solo log de error para diagnóstico
           req.payload.logger?.error?.(`Error subiendo a Vercel Blob: ${err instanceof Error ? err.message : String(err)}`)
           return doc
         }
+      },
+    ],
+    afterRead: [
+      async ({ doc }: any) => {
+        const BLOB_BASE = 'https://elkmig7hcsojxkiy.public.blob.vercel-storage.com'
+        if (doc?.blobUrl && (!doc.url || typeof doc.url !== 'string' || !doc.url.startsWith(`${BLOB_BASE}/`))) {
+          doc.url = doc.blobUrl
+        }
+        // Normalizar espacios sin codificar
+        if (typeof doc.url === 'string') {
+          doc.url = doc.url.replace(/ /g, '%20')
+        }
+        return doc
       },
     ],
     afterDelete: [
@@ -247,8 +179,8 @@ export const Media: CollectionConfig = {
     ],
   },
   upload: {
-    // Almacenamiento temporal para procesamiento, luego subir a Blob
-    staticDir: '/tmp/media',
+  // Almacenamiento temporal (staging) solo en /tmp; no se sirven archivos locales
+  staticDir: '/tmp/media',
     mimeTypes: [
       'image/png', 'image/jpeg', 'image/webp', 'image/svg+xml',
       'video/mp4', 'video/webm', 'video/ogg'

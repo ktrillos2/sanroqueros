@@ -8,7 +8,47 @@ type Props = {
 
 export default function PreviewCell({ data, rowData }: Props) {
   const doc = rowData || data || {}
-  const url: string | undefined = doc.previewDataURI || doc?.sizes?.thumbnail?.url || doc?.url
+  const BLOB_BASE = 'https://elkmig7hcsojxkiy.public.blob.vercel-storage.com'
+
+  // Construye una URL de Blob a partir de filename (u otro filename de size)
+  const buildBlobUrl = (filename?: string): string | undefined => {
+    if (!filename) return undefined
+    // Asegurar codificación de espacios y caracteres especiales
+    return `${BLOB_BASE}/media/${encodeURIComponent(filename)}`
+  }
+
+  // Priorizar siempre blobUrl; si no existe, intentar sizes.thumbnail, luego url general; por último dataURI
+  let url: string | undefined = doc?.blobUrl
+
+  if (!url) {
+    const thumb = doc?.sizes?.thumbnail
+    if (thumb?.url) {
+      url = thumb.url
+    } else if (thumb?.filename) {
+      url = buildBlobUrl(thumb.filename)
+    }
+  }
+
+  if (!url) {
+    // Si hay url local o antigua, reconstruir con filename cuando sea posible
+    if (doc?.url) {
+      if (typeof doc.url === 'string' && doc.url.startsWith(`${BLOB_BASE}/`)) {
+        url = doc.url
+      } else {
+        url = buildBlobUrl(doc?.filename)
+      }
+    }
+  }
+
+  if (!url) {
+    url = doc?.previewDataURI
+  }
+
+  // Normalizar espacios por si blobUrl guardado contiene espacios sin codificar
+  if (typeof url === 'string') {
+    url = url.replace(/ /g, '%20')
+  }
+
   const alt: string = doc?.alt || doc?.filename || 'Imagen'
 
   return (
