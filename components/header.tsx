@@ -23,6 +23,16 @@ export function Header() {
 
   const [navItems, setNavItems] = useState<{ label: string; href: string }[]>([])
   const [cta, setCta] = useState<{ label: string; href: string } | null>(null)
+  const [siteName, setSiteName] = useState<string>("SANROQUE")
+  const [logoClaro, setLogoClaro] = useState<string | undefined>(undefined)
+  const [logoOscuro, setLogoOscuro] = useState<string | undefined>(undefined)
+  // Static fallbacks: prefer WebP, then PNG if it 404s
+  const fallbackLightWebp = "/images/sanroque-logo-black.webp"
+  const fallbackLightPng = "/images/sanroque-logo-black.png"
+  const fallbackDarkWebp = "/images/sanroque-logo-white.webp"
+  const fallbackDarkPng = "/images/sanroque-logo-white.png"
+  const [lightSrc, setLightSrc] = useState<string>(fallbackLightWebp)
+  const [darkSrc, setDarkSrc] = useState<string>(fallbackDarkWebp)
 
   useEffect(() => {
     let mounted = true
@@ -58,6 +68,36 @@ export function Header() {
     }
   }, [])
 
+  // Cargar logos/branding desde SiteSettings (Payload)
+  useEffect(() => {
+    let mounted = true
+    const getMediaUrl = (m: any): string | undefined => {
+      if (!m) return undefined
+      // Puede venir como objeto (con url/blobUrl/filename) o como string
+      const direct = typeof m === 'string' ? m : (m.url || m.blobUrl || m.filename)
+      if (!direct) return undefined
+      return String(direct)
+    }
+
+    ;(async () => {
+      try {
+        const res = await fetch('/api/site-settings', { cache: 'no-store' })
+        const json = res.ok ? await res.json() : null
+        const data = json?.data
+        if (!mounted || !data) return
+        setSiteName(data?.nombreComercial || 'SANROQUE')
+        const claro = getMediaUrl(data?.logos?.claro)
+        const oscuro = getMediaUrl(data?.logos?.oscuro)
+        setLogoClaro(claro)
+        setLogoOscuro(oscuro)
+      } catch {
+        // ignore
+      }
+    })()
+
+    return () => { mounted = false }
+  }, [])
+
   return (
     <AnimatePresence>
       <motion.header
@@ -73,12 +113,20 @@ export function Header() {
             {/* Logo */}
             <Link href="/" className="flex items-center">
               <Image
-                src={isScrolled ? "/images/sanroque-logo-black.png" : "/images/sanroque-logo-white.png"}
-                alt="SANROQUE"
+                src={isScrolled ? (logoClaro || lightSrc) : (logoOscuro || darkSrc)}
+                alt={siteName || "SANROQUE"}
                 width={150}
                 height={40}
                 className="h-8 w-auto"
                 priority
+                onError={() => {
+                  // Si falla el WebP fallback, cambia a PNG equivalente
+                  if (isScrolled) {
+                    if (lightSrc === fallbackLightWebp) setLightSrc(fallbackLightPng)
+                  } else {
+                    if (darkSrc === fallbackDarkWebp) setDarkSrc(fallbackDarkPng)
+                  }
+                }}
               />
             </Link>
 
