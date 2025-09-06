@@ -121,8 +121,21 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const blobBase = process.env.NEXT_PUBLIC_BLOB_BASE_URL || process.env.BLOB_BASE_URL
+  const blobOrigin = blobBase ? (() => {
+    try {
+      const u = new URL(blobBase)
+      return `${u.protocol}//${u.host}`
+    } catch {
+      return undefined
+    }
+  })() : undefined
   return (
     <html lang="es" className={`${moonglade.variable} ${helveticaNeue.variable}`}>
+      <head>
+        {/* Preconnect para acelerar la descarga de imágenes del Blob en LCP */}
+        {blobOrigin && <link rel="preconnect" href={blobOrigin} crossOrigin="anonymous" />}
+      </head>
       <body className="font-sans antialiased overflow-x-hidden">
         <GlobalFetchLoader />
   <Toaster />

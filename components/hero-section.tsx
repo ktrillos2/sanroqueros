@@ -238,6 +238,8 @@ export function HeroSection() {
                     style={{ height: 'auto' }}
                     className="rounded-2xl shadow-2xl"
                     priority
+                    fetchPriority="high"
+                    sizes="(min-width: 1024px) 400px, 60vw"
                   />
                   {/* Glowing border effect */}
                   <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-brand-yellow/20 to-brand-pink/20 blur-sm -z-10 scale-105" />
@@ -267,6 +269,8 @@ export function HeroSection() {
                     height={200}
                     style={{ width: 'auto' }}
                     className="rounded-2xl shadow-2xl"
+                    loading="lazy"
+                    sizes="(min-width: 1024px) 300px, 40vw"
                   />
                   {/* Glowing border effect */}
                   <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-brand-blue/20 to-brand-yellow/20 blur-sm -z-10 scale-105" />

@@ -1,5 +1,5 @@
 export function GET() {
-  const baseUrl = "https://sanroque.com"
+  const baseUrl = "https://www.sanroqueros.com"
 
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
