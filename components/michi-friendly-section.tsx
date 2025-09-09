@@ -72,7 +72,7 @@ export function MichiFriendlySection() {
   const introParas = useMemo(() => extractRichParagraphs(data?.intro), [data?.intro])
   const features = data?.features ?? []
   const mainUrl = getMediaUrl(data?.images?.main) || "/images/ragdoll-cat.jpg"
-  const secondaryUrl = getMediaUrl(data?.images?.secondary) || "/images/yorkshire-terriers.png"
+  const secondaryUrl = getMediaUrl(data?.images?.secondary) || "/images/yorkshire-terriers.webp"
 
   return (
     <section className="py-20 bg-brand-black relative overflow-hidden">

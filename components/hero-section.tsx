@@ -71,7 +71,7 @@ export function HeroSection() {
   }
 
   const catUrl = getMediaUrl((data as any)?.images?.cat) || '/images/ragdoll-cat.jpg'
-  const kittenUrl = getMediaUrl((data as any)?.images?.kitten) || '/images/kitten-cover.png'
+  const kittenUrl = getMediaUrl((data as any)?.images?.kitten) || '/images/kitten-cover.webp'
   return (
     <section className="relative min-h-screen bg-brand-black overflow-hidden">
       <div className="absolute inset-0">

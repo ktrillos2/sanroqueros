@@ -9,8 +9,8 @@ async function run() {
   const data = {
     businessName: 'SANROQUE',
     logos: {
-      light: '/images/sanroque-logo-black.png',
-      dark: '/images/sanroque-logo-white.png',
+      light: '/images/sanroque-logo-black.webp',
+      dark: '/images/sanroque-logo-white.webp',
     },
     whatsapps: [
       {

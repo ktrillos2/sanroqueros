@@ -9,7 +9,7 @@ export default function BrandLoader() {
             <div className="relative z-10 flex flex-col items-center gap-8">
                 <div className="relative w-56 h-16 animate-float">
                     <Image
-                        src="/images/sanroque-logo-white.png"
+                        src="/images/sanroque-logo-white.webp"
                         alt="SANROQUE"
                         fill
                         className="object-contain"

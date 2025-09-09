@@ -71,14 +71,14 @@ export function BlogTeaserSection() {
       category: "Salud",
       date: "Próximamente",
       description: "Descubre cómo este tratamiento puede mejorar la salud de tu mascota",
-      image: "/images/ozone-therapy.png",
+      image: "/images/ozone-therapy.webp",
     },
     {
       title: "Productos Premium: Hydra vs Iv San Bernard",
       category: "Productos",
       date: "Próximamente",
       description: "Comparativa detallada de nuestras líneas de productos estrella",
-      image: "/images/dog-bubble-bath.png",
+      image: "/images/dog-bubble-bath.webp",
     },
   ]
 

@@ -71,8 +71,8 @@ export function WhatIsSpaSection() {
     if (typeof m === 'string') return m
     return m.url
   }
-  const mainUrl = getMediaUrl((data as any)?.images?.main) || '/images/happy-dog-bath.png'
-  const secondaryUrl = getMediaUrl((data as any)?.images?.secondary) || '/images/spa-reception.png'
+  const mainUrl = getMediaUrl((data as any)?.images?.main) || '/images/happy-dog-bath.webp'
+  const secondaryUrl = getMediaUrl((data as any)?.images?.secondary) || '/images/spa-reception.webp'
 
   return (
     <section className="py-20 bg-white">

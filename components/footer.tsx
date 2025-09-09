@@ -43,7 +43,7 @@ export async function Footer() {
             <Link href="/" className="inline-block mb-4">
               <div className="relative w-[180px] h-12">
                 <Image
-                  src={siteSettings?.logos?.oscuro?.url || "/images/sanroque-logo-white.png"}
+                  src={siteSettings?.logos?.oscuro?.url || "/images/sanroque-logo-white.webp"}
                   alt={siteSettings?.nombreComercial || "SANROQUE"}
                   fill
                   sizes="180px"

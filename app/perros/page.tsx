@@ -110,11 +110,11 @@ export default function PerrosPage() {
 
   const getCoatTypeImage = (type: string) => {
     if (type === "corto") {
-      return "/perro-de-pelo-corto-feliz-grooming.png"
+      return "/perro-de-pelo-corto-feliz-grooming.webp"
     } else if (type === "medioLargo") {
-      return "/perro-de-pelo-largo-esponjoso-grooming.png"
+      return "/perro-de-pelo-largo-esponjoso-grooming.webp"
     }
-    return "/perro-generico-grooming.png"
+    return "/perro-generico-grooming.webp"
   }
 
   return (

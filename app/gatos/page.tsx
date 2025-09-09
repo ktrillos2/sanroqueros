@@ -63,11 +63,11 @@ export default function GatosPage() {
 
   const getCoatImage = (type: string) => {
     if (type === "Manto Corto") {
-      return "/gato-de-pelo-corto-feliz-grooming.png"
+      return "/gato-de-pelo-corto-feliz-grooming.webp"
     } else if (type === "Manto Medio y Largo") {
-      return "/gato-de-pelo-largo-esponjoso-grooming.png"
+      return "/gato-de-pelo-largo-esponjoso-grooming.webp"
     }
-    return "/gato-generico-grooming.png"
+    return "/gato-generico-grooming.webp"
   }
 
   return (

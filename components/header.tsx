@@ -28,9 +28,9 @@ export function Header() {
   const [logoOscuro, setLogoOscuro] = useState<string | undefined>(undefined)
   // Static fallbacks: prefer WebP, then PNG if it 404s
   const fallbackLightWebp = "/images/sanroque-logo-black.webp"
-  const fallbackLightPng = "/images/sanroque-logo-black.png"
+  const fallbackLightPng = "/images/sanroque-logo-black.webp"
   const fallbackDarkWebp = "/images/sanroque-logo-white.webp"
-  const fallbackDarkPng = "/images/sanroque-logo-white.png"
+  const fallbackDarkPng = "/images/sanroque-logo-white.webp"
   const [lightSrc, setLightSrc] = useState<string>(fallbackLightWebp)
   const [darkSrc, setDarkSrc] = useState<string>(fallbackDarkWebp)
 

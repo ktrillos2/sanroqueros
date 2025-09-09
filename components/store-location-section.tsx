@@ -79,7 +79,7 @@ export function StoreLocationSection() {
               <div className="space-y-4">
                 <div className="relative h-48 rounded-2xl overflow-hidden">
                   <Image
-                    src="/images/spa-reception.png"
+                    src="/images/spa-reception.webp"
                     alt="Recepción SANROQUE"
                     fill
                     className="object-cover hover:scale-105 transition-transform duration-500"
@@ -87,7 +87,7 @@ export function StoreLocationSection() {
                 </div>
                 <div className="relative h-32 rounded-2xl overflow-hidden">
                   <Image
-                    src="/images/two-dogs-spa.png"
+                    src="/images/two-dogs-spa.webp"
                     alt="Área de espera"
                     fill
                     className="object-cover hover:scale-105 transition-transform duration-500"
@@ -105,7 +105,7 @@ export function StoreLocationSection() {
                 </div>
                 <div className="relative h-48 rounded-2xl overflow-hidden">
                   <Image
-                    src="/images/happy-dog-bath.png"
+                    src="/images/happy-dog-bath.webp"
                     alt="Área de baño"
                     fill
                     className="object-cover hover:scale-105 transition-transform duration-500"
