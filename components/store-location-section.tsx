@@ -97,7 +97,7 @@ export function StoreLocationSection() {
               <div className="space-y-4">
                 <div className="relative h-32 rounded-2xl overflow-hidden">
                   <Image
-                    src="/images/beagle-reception.jpeg"
+                    src="/images/beagle-reception.webp"
                     alt="Área de atención"
                     fill
                     className="object-cover hover:scale-105 transition-transform duration-500"
