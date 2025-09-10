@@ -246,7 +246,7 @@ export function HeroSection() {
                 </div>
               </motion.div>
 
-              {/* Kitten image */}
+              {/* Kitten image (más pequeña y fija) */}
               <motion.div
                 className="absolute bottom-0 left-0 z-20"
                 animate={{
@@ -261,16 +261,15 @@ export function HeroSection() {
                   delay: 2,
                 }}
               >
-                <div className="relative w-auto h-[200px]">
+        <div className="relative w-auto h-[180px]">
                   <Image
                     src={kittenUrl}
                     alt="Adorable gatito en SANROQUE"
-                    width={300}
-                    height={200}
-                    style={{ width: 'auto' }}
-                    className="rounded-2xl shadow-2xl"
+          width={240}
+          height={160}
+          className="w-[240px] h-auto object-contain rounded-2xl shadow-2xl"
                     loading="lazy"
-                    sizes="(min-width: 1024px) 300px, 40vw"
+          sizes="240px"
                   />
                   {/* Glowing border effect */}
                   <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-brand-blue/20 to-brand-yellow/20 blur-sm -z-10 scale-105" />
