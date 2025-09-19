@@ -13,6 +13,12 @@ type StoreLocationData = {
   images?: { image?: any; alt?: string }[]
   features?: Feature[]
   locationCard?: { title?: string; description?: string; cityCountry?: string }
+  video?: {
+    sourceType?: 'youtube' | 'upload'
+    youtubeUrl?: string
+    caption?: string
+    file?: { url?: string }
+  }
 }
 
 const iconFor = (kind: Feature['kind']) => {
@@ -30,18 +36,25 @@ const iconFor = (kind: Feature['kind']) => {
 
 export function StoreLocationSection() {
   const [data, setData] = useState<StoreLocationData | null>(null)
+  const [site, setSite] = useState<any>(null)
 
   useEffect(() => {
     let mounted = true
     ;(async () => {
       try {
-        const res = await fetch('/api/store-location', { cache: 'no-store' })
-        const json = res.ok ? await res.json() : null
+        const [locRes, siteRes] = await Promise.all([
+          fetch('/api/store-location', { cache: 'no-store' }),
+          fetch('/api/site-settings', { cache: 'no-store' }),
+        ])
+        const json = locRes.ok ? await locRes.json() : null
+        const siteJson = siteRes.ok ? await siteRes.json() : null
         if (!mounted) return
         setData(json)
+        setSite(siteJson?.data || null)
       } catch {
         if (!mounted) return
         setData(null)
+        setSite(null)
       }
     })()
     return () => { mounted = false }
@@ -203,10 +216,27 @@ export function StoreLocationSection() {
                 <p className="text-gray-300 mb-4">
                   {data?.locationCard?.description ?? 'Estamos ubicados en una zona de fácil acceso con parqueadero disponible. Contáctanos para recibir indicaciones detalladas.'}
                 </p>
-                <div className="flex items-center gap-2 text-brand-pink">
-                  <MapPin className="w-4 h-4" />
-                  <span className="text-sm">{data?.locationCard?.cityCountry ?? 'Bogotá, Colombia'}</span>
-                </div>
+                {(() => {
+                  const href = site?.ubicacion?.googleMapsUrl || ''
+                  const label = data?.locationCard?.cityCountry ?? site?.ubicacion?.ciudadPais ?? 'Bogotá, Colombia'
+                  return href ? (
+                    <a
+                      className="flex items-center gap-2 text-brand-pink hover:underline"
+                      href={href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="Abrir ubicación en Google Maps"
+                    >
+                      <MapPin className="w-4 h-4" />
+                      <span className="text-sm">{label}</span>
+                    </a>
+                  ) : (
+                    <div className="flex items-center gap-2 text-brand-pink">
+                      <MapPin className="w-4 h-4" />
+                      <span className="text-sm">{label}</span>
+                    </div>
+                  )
+                })()}
               </CardContent>
             </Card>
           </motion.div>

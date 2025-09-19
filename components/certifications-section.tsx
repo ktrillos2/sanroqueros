@@ -185,12 +185,13 @@ export function CertificationsSection() {
                       animate={{ rotate: [0, 2, -2, 0] }}
                       transition={{ duration: 4, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
                     >
-                      <div className="w-32 h-32 rounded-2xl overflow-hidden bg-white p-2 shadow-none">
+                      <div className="w-40 h-40 lg:w-48 lg:h-48 rounded-2xl overflow-hidden bg-white p-2 shadow-none">
                         <Image
                           src={getMediaUrl(cert.logo) || "/placeholder.svg"}
                           alt={cert.title}
-                          width={128}
-                          height={128}
+                          width={192}
+                          height={192}
+                          sizes="(min-width: 1024px) 192px, 160px"
                           className="w-full h-full object-contain"
                         />
                       </div>

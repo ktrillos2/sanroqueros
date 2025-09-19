@@ -135,6 +135,14 @@ export default function RootLayout({
       <head>
         {/* Preconnect para acelerar la descarga de imágenes del Blob en LCP */}
         {blobOrigin && <link rel="preconnect" href={blobOrigin} crossOrigin="anonymous" />}
+        {/* Microsoft Clarity */}
+        <script
+          type="text/javascript"
+          dangerouslySetInnerHTML={{
+            __html:
+              '(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window, document, "clarity", "script", "tcza7bp1ci");',
+          }}
+        />
       </head>
       <body className="font-sans antialiased overflow-x-hidden">
         <GlobalFetchLoader />

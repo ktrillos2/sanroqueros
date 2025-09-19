@@ -229,26 +229,23 @@ export function HeroSection() {
                   ease: "easeInOut",
                 }}
               >
-                <div className="relative w-[400px] h-auto">
+                <div className="relative w-[280px] h-[420px] sm:w-[300px] sm:h-[460px] lg:w-[340px] lg:h-[520px]">
                   <Image
                     src={catUrl}
                     alt="Hermoso gato Ragdoll en SANROQUE"
-                    width={400}
-                    height={400}
-                    style={{ height: 'auto' }}
-                    className="rounded-2xl shadow-2xl"
+                    fill
+                    sizes="(min-width: 1024px) 340px, (min-width: 640px) 300px, 280px"
+                    className="object-cover rounded-2xl shadow-2xl"
                     priority
-                    fetchPriority="high"
-                    sizes="(min-width: 1024px) 400px, 60vw"
                   />
                   {/* Glowing border effect */}
                   <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-brand-yellow/20 to-brand-pink/20 blur-sm -z-10 scale-105" />
                 </div>
               </motion.div>
 
-              {/* Kitten image (más pequeña y fija) */}
+              {/* Kitten image */}
               <motion.div
-                className="absolute bottom-0 left-0 z-20"
+                className="absolute bottom-4 right-72 sm:right-80 lg:right-96 z-20"
                 animate={{
                   y: [0, -10, 0],
                   rotate: [0, -0.5, 0, 0.5, 0],
@@ -261,15 +258,14 @@ export function HeroSection() {
                   delay: 2,
                 }}
               >
-        <div className="relative w-auto h-[180px]">
+                <div className="relative w-[130px] h-[190px] sm:w-[150px] sm:h-[210px] lg:w-[170px] lg:h-[230px]">
                   <Image
                     src={kittenUrl}
                     alt="Adorable gatito en SANROQUE"
-          width={240}
-          height={160}
-          className="w-[240px] h-auto object-contain rounded-2xl shadow-2xl"
+                    fill
+                    sizes="(min-width: 1024px) 170px, (min-width: 640px) 150px, 130px"
+                    className="object-cover rounded-2xl shadow-2xl"
                     loading="lazy"
-          sizes="240px"
                   />
                   {/* Glowing border effect */}
                   <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-brand-blue/20 to-brand-yellow/20 blur-sm -z-10 scale-105" />

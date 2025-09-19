@@ -228,10 +228,24 @@ Me gustaría agendar una cita para mi mascota.`
                   <MapPin className="w-6 h-6 text-brand-yellow mt-1 flex-shrink-0" />
                   <div>
                     <h4 className="font-semibold mb-1">Ubicación</h4>
-                    <p className="text-gray-300">
-                      {site?.ubicacion?.ciudadPais || 'Bogotá, Colombia'}
-                      {site?.ubicacion?.direccion ? (<><br />{site.ubicacion.direccion}</>) : (<><br />(Ubicación exacta por WhatsApp)</>)}
-                    </p>
+                    {(() => {
+                      const href = site?.ubicacion?.googleMapsUrl || ''
+                      const labelCity = site?.ubicacion?.ciudadPais || 'Bogotá, Colombia'
+                      const address = site?.ubicacion?.direccion
+                      const content = (
+                        <>
+                          {labelCity}
+                          {address ? (<><br />{address}</>) : (<><br />(Ubicación exacta por WhatsApp)</>)}
+                        </>
+                      )
+                      return href ? (
+                        <a href={href} target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:underline">
+                          {content}
+                        </a>
+                      ) : (
+                        <p className="text-gray-300">{content}</p>
+                      )
+                    })()}
                   </div>
                 </div>
 
