@@ -8,6 +8,7 @@ import GlobalFetchLoader from "@/components/global-fetch-loader"
 import { Footer } from "@/components/footer"
 import { getSiteSettings } from "@/lib/site-settings"
 import { Toaster } from "@/components/ui/toaster"
+import Script from "next/script"
 
 // Use local Moonglade font files (Light 300, Regular 400, Bold 700)
 const moonglade = moongladeLocal
@@ -143,6 +144,20 @@ export default function RootLayout({
               '(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window, document, "clarity", "script", "tcza7bp1ci");',
           }}
         />
+        {/* Google Analytics */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-JQ2NTMBZ6T"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-JQ2NTMBZ6T');
+          `}
+        </Script>
       </head>
       <body className="font-sans antialiased overflow-x-hidden">
         <GlobalFetchLoader />
