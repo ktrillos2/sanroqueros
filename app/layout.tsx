@@ -8,7 +8,6 @@ import GlobalFetchLoader from "@/components/global-fetch-loader"
 import { Footer } from "@/components/footer"
 import { getSiteSettings } from "@/lib/site-settings"
 import { Toaster } from "@/components/ui/toaster"
-import Script from "next/script"
 
 // Use local Moonglade font files (Light 300, Regular 400, Bold 700)
 const moonglade = moongladeLocal
@@ -70,16 +69,16 @@ export async function generateMetadata(): Promise<Metadata> {
       title,
       description,
       url: baseUrl,
-  siteName,
+      siteName,
       images: ogImg
         ? [
-            {
-              url: ogImg,
-              width: 1200,
-              height: 630,
-              alt: siteName,
-            },
-          ]
+          {
+            url: ogImg,
+            width: 1200,
+            height: 630,
+            alt: siteName,
+          },
+        ]
         : undefined,
       locale: 'es_CO',
       type: 'website',
@@ -101,12 +100,12 @@ export async function generateMetadata(): Promise<Metadata> {
         'max-snippet': -1,
       },
     },
-  icons: favicon
+    icons: favicon
       ? {
-          icon: [{ url: favicon }],
-          shortcut: [{ url: favicon }],
-          apple: [{ url: favicon }],
-        }
+        icon: [{ url: favicon }],
+        shortcut: [{ url: favicon }],
+        apple: [{ url: favicon }],
+      }
       : undefined,
   }
 
@@ -145,27 +144,26 @@ export default function RootLayout({
           }}
         />
         {/* Google Analytics */}
-        <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-JQ2NTMBZ6T"
-          strategy="afterInteractive"
-        />
-        <Script id="google-analytics" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-JQ2NTMBZ6T" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
 
-            gtag('config', 'G-JQ2NTMBZ6T');
-          `}
-        </Script>
+              gtag('config', 'G-JQ2NTMBZ6T');
+            `,
+          }}
+        />
       </head>
       <body className="font-sans antialiased overflow-x-hidden">
         <GlobalFetchLoader />
-  <Toaster />
+        <Toaster />
         {children}
         <ConditionalWhatsapp />
-  {/* Footer global */}
-  <Footer />
+        {/* Footer global */}
+        <Footer />
       </body>
     </html>
   )
