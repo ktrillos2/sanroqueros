@@ -358,7 +358,7 @@ export default function PerrosPage() {
         <div className="container mx-auto px-4">
       <div className="text-center mb-10 md:mb-16">
             <h2 className="font-heading text-4xl lg:text-5xl font-bold text-white mb-6">
-              Lista de Precios <span className="text-[#FFE550] font-helvetica">2025</span>
+              Lista de Precios <span className="text-[#FFE550] font-helvetica">{new Date().getFullYear()}</span>
             </h2>
             <p className="text-lg text-gray-300 max-w-3xl mx-auto">
               Precios transparentes según el tamaño y tipo de manto de tu mascota

@@ -152,7 +152,17 @@ export async function Footer() {
 
         {/* Bottom Bar */}
         <div className="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-gray-400 text-sm">© {currentYear} SANROQUE. Todos los derechos reservados.</p>
+          <div className="flex flex-col items-center md:items-start gap-2">
+            <p className="text-gray-400 text-sm">© {currentYear} SANROQUE. Todos los derechos reservados.</p>
+            <a 
+              href="https://www.kytcode.lat" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="text-gray-400 hover:text-white transition-colors text-xs flex items-center gap-1.5"
+            >
+              Desarrollado por K&T <span className="text-white">❤️</span>
+            </a>
+          </div>
           <div className="flex space-x-6 mt-4 md:mt-0">
             {enlacesLegales?.map((l: any, idx: number) => (
               <Link key={idx} href={l?.url || '#'} className="text-gray-400 hover:text-brand-yellow text-sm transition-colors">
