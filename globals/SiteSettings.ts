@@ -62,8 +62,8 @@ export const SiteSettings: GlobalConfig = {
   labels: { singular: 'WhatsApp', plural: 'WhatsApps' },
       fields: [
         { name: 'etiqueta', label: 'Etiqueta', type: 'text', defaultValue: 'Principal' },
-        { name: 'numero', label: 'Número (sin signos)', type: 'text', required: true, admin: { description: 'Ej: 573154433109' } },
-        { name: 'mostrar', label: 'Formato visible', type: 'text', admin: { description: 'Ej: +57 315 443 3109' } },
+        { name: 'numero', label: 'Número (sin signos)', type: 'text', required: true, defaultValue: '573123114435', admin: { description: 'Ej: 573123114435' } },
+        { name: 'mostrar', label: 'Formato visible', type: 'text', defaultValue: '+57 312 311 4435', admin: { description: 'Ej: +57 312 311 4435' } },
         { name: 'principal', label: 'Principal', type: 'checkbox', defaultValue: true },
       ],
     },
@@ -83,9 +83,9 @@ export const SiteSettings: GlobalConfig = {
       name: 'ubicacion',
       label: 'Ubicación',
       fields: [
-        { name: 'ciudadPais', label: 'Ciudad y país', type: 'text', required: true },
-        { name: 'direccion', label: 'Dirección', type: 'text' },
-        { name: 'googleMapsUrl', label: 'URL de Google Maps', type: 'text' },
+        { name: 'ciudadPais', label: 'Ciudad y país', type: 'text', required: true, defaultValue: 'Bogotá, Colombia' },
+        { name: 'direccion', label: 'Dirección', type: 'text', defaultValue: 'Calle 118 #15 - 45' },
+        { name: 'googleMapsUrl', label: 'URL de Google Maps', type: 'text', defaultValue: 'https://www.google.com/maps/search/?api=1&query=Calle+118+%2315+-+45+Bogota' },
       ],
     },
     {

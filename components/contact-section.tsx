@@ -78,14 +78,23 @@ ${mensaje ? `💬 Mensaje: ${mensaje}` : ""}
 
 Me gustaría agendar una cita para mi mascota.`
 
-    const numero = principalWhatsapp?.numero || '573154433109'
+    const numero = principalWhatsapp?.numero || '573123114435'
     const whatsappUrl = `https://wa.me/${numero}?text=${encodeURIComponent(whatsappMessage)}`
     window.open(whatsappUrl, "_blank")
   }
   const defaultMsg = site?.mensajeWhatsAppPorDefecto || 'Hola, vengo desde la web. Me gustaría agendar una cita para mi mascota.'
   const directWhatsAppUrl = principalWhatsapp?.numero
     ? `https://wa.me/${principalWhatsapp.numero}?text=${encodeURIComponent(defaultMsg)}`
-    : undefined
+    : `https://wa.me/573123114435?text=${encodeURIComponent(defaultMsg)}`
+
+  const defaultServices = [
+    { label: "✨ OzoneGlow (Vapor + Ozono + Cromoterapia)", value: "OzoneGlow Spa" },
+    { label: "Spa Completo Canino", value: "Spa Canino" },
+    { label: "Spa Especial Felino", value: "Spa Felino" },
+    { label: "Grooming & Peluquería", value: "Grooming" },
+    { label: "Baño Terapéutico", value: "Baño Terapéutico" },
+  ]
+  const availableServices = (section.services && section.services.length > 0) ? section.services : defaultServices
 
   return (
     <section id="contacto" className="py-20 bg-brand-black">
@@ -176,7 +185,7 @@ Me gustaría agendar una cita para mi mascota.`
                         <SelectValue placeholder="Selecciona un servicio" />
                       </SelectTrigger>
                       <SelectContent>
-                        {(section.services || []).map((s) => (
+                        {availableServices.map((s) => (
                           <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
                         ))}
                       </SelectContent>
@@ -227,15 +236,16 @@ Me gustaría agendar una cita para mi mascota.`
                 <div className="flex items-start space-x-4">
                   <MapPin className="w-6 h-6 text-brand-yellow mt-1 flex-shrink-0" />
                   <div>
-                    <h4 className="font-semibold mb-1">Ubicación</h4>
+                    <h4 className="font-semibold mb-1">Nueva Sede</h4>
                     {(() => {
-                      const href = site?.ubicacion?.googleMapsUrl || ''
+                      const href = site?.ubicacion?.googleMapsUrl || 'https://www.google.com/maps/search/?api=1&query=Calle+118+%2315+-+45+Bogota'
+                      const address = site?.ubicacion?.direccion || 'Calle 118 #15 - 45'
                       const labelCity = site?.ubicacion?.ciudadPais || 'Bogotá, Colombia'
-                      const address = site?.ubicacion?.direccion
                       const content = (
                         <>
+                          <span className="font-bold text-brand-yellow">{address}</span>
+                          <br />
                           {labelCity}
-                          {address ? (<><br />{address}</>) : (<><br />(Ubicación exacta por WhatsApp)</>)}
                         </>
                       )
                       return href ? (
@@ -254,9 +264,11 @@ Me gustaría agendar una cita para mi mascota.`
                   <div>
                     <h4 className="font-semibold mb-1">Horarios</h4>
                     <div className="text-gray-300 space-y-1">
-                      {(site?.horarios || []).map((h: any, i: number) => (
+                      {site?.horarios?.length ? site.horarios.map((h: any, i: number) => (
                         <p key={i}>{h.dia}: {h.abre} - {h.cierra} {h.nota ? `(${h.nota})` : ''}</p>
-                      ))}
+                      )) : (
+                        <p>Lunes a Sábado: 8:00 AM - 6:00 PM</p>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -264,14 +276,22 @@ Me gustaría agendar una cita para mi mascota.`
                 <div className="flex items-start space-x-4">
                   <Phone className="w-6 h-6 text-brand-yellow mt-1 flex-shrink-0" />
                   <div>
-                    <h4 className="font-semibold mb-1">WhatsApp</h4>
+                    <h4 className="font-semibold mb-1">Teléfono / WhatsApp</h4>
                     <div className="text-gray-300 space-y-1">
-                      {(site?.whatsapps || []).map((w: any, i: number) => (
+                      {site?.whatsapps?.length ? (site.whatsapps).map((w: any, i: number) => (
                         <p key={i}>
-                          {w.mostrar || w.numero}
+                          <a href={`https://wa.me/${w.numero}`} target="_blank" rel="noopener noreferrer" className="hover:underline text-brand-yellow">
+                            {w.mostrar || w.numero}
+                          </a>
                           {w.principal ? ' (Principal)' : ''}
                         </p>
-                      ))}
+                      )) : (
+                        <p>
+                          <a href="https://wa.me/573123114435" target="_blank" rel="noopener noreferrer" className="hover:underline text-brand-yellow font-bold">
+                            +57 312 311 4435
+                          </a>
+                        </p>
+                      )}
                       <span className="text-sm text-gray-400 block">Respuesta rápida garantizada</span>
                     </div>
                   </div>

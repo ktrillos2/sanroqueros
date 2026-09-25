@@ -7,17 +7,34 @@ import { getPayload } from "payload"
 import config from "@/payload.config"
 
 export async function Footer() {
-  const payload = await getPayload({ config })
-  const [siteSettings, footer] = await Promise.all([
-    (payload as any).findGlobal({ slug: 'siteSettings' as any, depth: 1 }),
-    (payload as any).findGlobal({ slug: 'footer' as any, depth: 1 }),
-  ])
+  let siteSettings: any = null
+  let footer: any = null
+
+  try {
+    const fetchGlobals = async () => {
+      const payload = await getPayload({ config })
+      const [s, f] = await Promise.all([
+        (payload as any).findGlobal({ slug: 'siteSettings' as any, depth: 1 }),
+        (payload as any).findGlobal({ slug: 'footer' as any, depth: 1 }),
+      ])
+      return { s, f }
+    }
+    const timeoutPromise = new Promise<{ s: any; f: any }>((resolve) =>
+      setTimeout(() => resolve({ s: null, f: null }), 2500)
+    )
+    const result = await Promise.race([fetchGlobals(), timeoutPromise])
+    siteSettings = result.s
+    footer = result.f
+  } catch {
+    siteSettings = null
+    footer = null
+  }
 
   const currentYear = new Date().getFullYear()
   const social = siteSettings?.redes || {}
   const principalWa = (siteSettings?.whatsapps || []).find((w: any) => w?.principal) || siteSettings?.whatsapps?.[0]
-  const principalWaDisplay = principalWa?.mostrar || principalWa?.numero
-  const principalWaLink = principalWa?.numero ? `https://wa.me/${principalWa.numero}` : undefined
+  const principalWaDisplay = principalWa?.mostrar || (principalWa?.numero ? `+${principalWa.numero}` : '+57 312 311 4435')
+  const principalWaLink = principalWa?.numero ? `https://wa.me/${principalWa.numero}` : 'https://wa.me/573123114435'
   const principalEmail = (siteSettings?.correos || []).find((c: any) => c?.principal) || siteSettings?.correos?.[0]
   const emailDisplay = principalEmail?.direccion
   const ubicacion = siteSettings?.ubicacion
@@ -126,10 +143,17 @@ export async function Footer() {
                     rel="noopener noreferrer"
                     className="text-gray-300 hover:text-brand-yellow transition-colors text-sm"
                   >
-                    {ubicacion?.ciudadPais || 'Bogotá, Colombia'}
+                    {ubicacion?.direccion ? `${ubicacion.direccion}, ${ubicacion?.ciudadPais || 'Bogotá'}` : (ubicacion?.ciudadPais || 'Calle 118 #15 - 45, Bogotá')}
                   </a>
                 ) : (
-                  <span className="text-gray-300 text-sm">{ubicacion?.ciudadPais || 'Bogotá, Colombia'}</span>
+                  <a
+                    href="https://www.google.com/maps/search/?api=1&query=Calle+118+%2315+-+45+Bogota"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-300 hover:text-brand-yellow transition-colors text-sm"
+                  >
+                    Calle 118 #15 - 45, Bogotá
+                  </a>
                 )}
               </li>
               <li className="flex items-start space-x-3">

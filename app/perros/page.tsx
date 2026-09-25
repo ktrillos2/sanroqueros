@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { CheckCircle } from "lucide-react"
+import { CheckCircle, Sparkles, MessageCircle, Info } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useMemo, useState } from "react"
 
@@ -193,52 +193,251 @@ export default function PerrosPage() {
             </p>
           </div>
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
-  {(cms?.services || []).map((service: any) => (
-              <Card
+      {(() => {
+        const enrichedDefaults = [
+          {
+            id: "sanroquero",
+            title: "SanRoquero",
+            emoji: "🐾",
+            badge: "Mantenimiento & Higiene",
+            subtitle: "El cuidado esencial de SanRoque",
+            cosmetics: "Cosmética Velox + Hydra",
+            description: "El Sanroquero es nuestro servicio de mantenimiento, realizado con cosmética Velox, ideal para mantener a tu Sanroquero limpio, fresco y con una buena higiene.",
+            features: [
+              "Baño + enjuague / baño + enjuague (doble baño)",
+              "🐾 Secado y cepillado",
+              "✂️ Corte de uñas",
+              "👂 Limpieza de oídos",
+              "🦷 Limpieza dental",
+              "🧼 Limpieza facial con Hydra Extra Soft Facial Shampoo, especialmente formulado para brindar una limpieza suave y delicada en la zona facial.",
+            ],
+            exclusions: "No incluye corte de peluquería ni sesiones de desenredo.",
+            colorClass: "from-blue-500 to-cyan-500",
+            shadowClass: "shadow-blue-500/30",
+            borderClass: "border-blue-500/40 hover:border-blue-400",
+            pillClass: "bg-blue-500/10 text-blue-300 border-blue-500/30",
+            ctaHref: "https://wa.me/573123114435?text=Hola%20SANROQUE%2C%20me%20gustar%C3%ADa%20agendar%20el%20servicio%20SanRoquero%20para%20mi%20perro%20en%20la%20nueva%20sede%20Calle%20118",
+          },
+          {
+            id: "rockstar",
+            title: "Rockstar",
+            emoji: "⭐",
+            badge: "Grooming & Estilo",
+            subtitle: "Grooming + cuidado integral",
+            cosmetics: "Cosmética Velox + Pelunos + Hydra",
+            description: "El Rockstar combina cosmética Velox + Pelunos y está pensado para quienes buscan complementar el baño con un servicio de peluquería.",
+            process: "Realizamos nuestro protocolo de doble baño: baño + enjuague / baño + enjuague, seguido de secado, cepillado y grooming.",
+            features: [
+              "Baño + enjuague / baño + enjuague",
+              "🐾 Secado y cepillado",
+              "✂️ Corte de uñas",
+              "👂 Limpieza de oídos",
+              "🦷 Limpieza dental",
+              "🧼 Limpieza facial con Hydra Extra Soft Facial Shampoo",
+              "✂️ Corte de peluquería profesional según la raza y estilo.",
+            ],
+            colorClass: "from-purple-500 to-pink-500",
+            shadowClass: "shadow-purple-500/30",
+            borderClass: "border-purple-500/40 hover:border-purple-400",
+            pillClass: "bg-purple-500/10 text-purple-300 border-purple-500/30",
+            ctaHref: "https://wa.me/573123114435?text=Hola%20SANROQUE%2C%20me%20gustar%C3%ADa%20agendar%20el%20servicio%20Rockstar%20para%20mi%20perro%20en%20la%20nueva%20sede%20Calle%20118",
+          },
+          {
+            id: "superstar",
+            title: "Superstar",
+            emoji: "👑",
+            badge: "Alta Gama",
+            subtitle: "Nutrición profunda e hidratación de lujo",
+            cosmetics: "100% Hydra Groomers",
+            description: "Servicio premium de lujo formulado íntegramente con la prestigiosa línea Hydra, diseñado para hidratación profunda, recuperación de manto y brillo sedoso.",
+            process: "Protocolo de 4 baños especializados con mascarilla nutritiva Hydra, secado térmico controlado y terminado de concurso.",
+            features: [
+              "4 baños especializados + mascarilla Hydra",
+              "Todos los productos 100% Hydra Groomers",
+              "Tratamiento hidratante profundo de cutícula",
+              "Limpieza facial Hydra Extra Soft",
+              "Corte de uñas, limpieza de oídos y dental",
+              "Aromaterapia canina relajante",
+            ],
+            colorClass: "from-amber-400 to-yellow-500",
+            shadowClass: "shadow-yellow-500/30",
+            borderClass: "border-yellow-500/40 hover:border-yellow-400",
+            pillClass: "bg-yellow-500/10 text-yellow-300 border-yellow-500/30",
+            ctaHref: "https://wa.me/573123114435?text=Hola%20SANROQUE%2C%20me%20gustar%C3%ADa%20agendar%20el%20servicio%20Superstar%20para%20mi%20perro%20en%20la%20nueva%20sede%20Calle%20118",
+          },
+          {
+            id: "shanti",
+            title: "Shanti Pet Spa",
+            emoji: "🌿",
+            badge: "Terapéutico & Spa Zen",
+            subtitle: "Experiencia spa con productos Iv San Bernard",
+            cosmetics: "100% Iv San Bernard (Italia)",
+            description: "Tratamiento dermatológico y terapéutico de alta gama europea con Iv San Bernard, en un entorno libre de jaulas 100% Fear Free.",
+            process: "Terapia de baños minerales y ozonizados con masajes relajantes para equilibrio físico y mental de tu perro.",
+            features: [
+              "3 baños terapéuticos Iv San Bernard",
+              "Productos cosmecéuticos exclusivos italianos",
+              "Masaje relajante muscular y anti-estrés",
+              "Limpieza facial dermoprotectora",
+              "Ambiente zen completo y libre de estrés",
+            ],
+            colorClass: "from-emerald-400 to-teal-500",
+            shadowClass: "shadow-emerald-500/30",
+            borderClass: "border-emerald-500/40 hover:border-emerald-400",
+            pillClass: "bg-emerald-500/10 text-emerald-300 border-emerald-500/30",
+            ctaHref: "https://wa.me/573123114435?text=Hola%20SANROQUE%2C%20me%20gustar%C3%ADa%20agendar%20el%20servicio%20Shanti%20Spa%20para%20mi%20perro%20en%20la%20nueva%20sede%20Calle%20118",
+          },
+        ]
+
+        const displayServices = enrichedDefaults.map((def) => {
+          const cmsMatch = (cms?.services || []).find((s: any) => s.id === def.id)
+          return {
+            ...def,
+            title: cmsMatch?.title || def.title,
+            description: cmsMatch?.description || def.description,
+            subtitle: cmsMatch?.subtitle || def.subtitle,
+            cosmetics: cmsMatch?.cosmetics || def.cosmetics,
+            process: cmsMatch?.process || def.process,
+            exclusions: cmsMatch?.exclusions || def.exclusions,
+            features: (cmsMatch?.features && cmsMatch.features.length > 0) ? cmsMatch.features : def.features,
+            ctaHref: cmsMatch?.ctaHref || def.ctaHref,
+            isPopular: cmsMatch?.isPopular || false,
+          }
+        })
+
+        return (
+          <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+            {displayServices.map((service) => (
+              <div
                 key={service.id}
-  className={`relative bg-gray-900 border-gray-800 text-white hover:scale-105 transition-all duration-300 hover:${service.shadowClass || 'shadow-blue-500/50'} hover:shadow-2xl pt-6 ${
-                  service.isPopular ? "ring-2 ring-yellow-500" : ""
-                }`}
+                className={`relative bg-gradient-to-b from-[#141414] via-[#101010] to-[#0a0a0a] border ${service.borderClass} rounded-3xl p-6 md:p-8 text-white transition-all duration-300 hover:scale-[1.01] hover:${service.shadowClass} hover:shadow-2xl flex flex-col justify-between group backdrop-blur-md`}
               >
-                {service.isPopular && (
-                  <Badge className="text-black absolute -top-2 -right-2 font-semibold px-3 py-1 rounded-full text-xs">
-                    Más Popular
-                  </Badge>
-                )}
-
-                <CardHeader className="text-center pb-4">
-                  <div
-                    className={`w-16 h-16 bg-gradient-to-r ${service.colorClass || 'from-blue-500 to-blue-600'} rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg`}
-                  >
-                    {/* Icono fijo por ahora; opcional: mapear Heart/Sparkles/Crown/Leaf a componentes */}
-                    <CheckCircle className="w-8 h-8 text-white" />
+                <div>
+                  {/* Top Meta Badges */}
+                  <div className="flex flex-wrap items-center justify-between gap-2 mb-6">
+                    <span className={`px-3 py-1 rounded-full text-xs font-bold border ${service.pillClass}`}>
+                      {service.badge}
+                    </span>
+                    <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-gray-300 font-medium">
+                      {service.cosmetics}
+                    </span>
                   </div>
-                  <CardTitle className="font-heading text-xl text-white">{service.title}</CardTitle>
-                  <p className="text-gray-400 text-sm">{service.description}</p>
-                </CardHeader>
 
-                <CardContent className="flex-1 flex flex-col">
-                  <ul className="space-y-2 text-sm text-gray-300 mb-6 flex-1">
-          {(service.features || []).map((feature: any, idx: number) => (
-                      <li key={idx} className="flex items-start space-x-2">
-                        <div className="w-1.5 h-1.5 bg-yellow-400 rounded-full mt-2 flex-shrink-0"></div>
-            <span>{typeof feature === 'string' ? feature : feature.value}</span>
-                      </li>
-                    ))}
-                  </ul>
+                  {/* Title & Subtitle */}
+                  <div className="flex items-start gap-4 mb-4">
+                    <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${service.colorClass} flex items-center justify-center text-2xl shadow-lg shrink-0 group-hover:scale-110 transition-transform duration-300`}>
+                      {service.emoji}
+                    </div>
+                    <div>
+                      <h3 className="font-heading text-2xl md:text-3xl font-bold text-white leading-tight">
+                        {service.title}
+                      </h3>
+                      <p className="text-sm font-semibold text-brand-yellow mt-1">
+                        {service.subtitle}
+                      </p>
+                    </div>
+                  </div>
 
+                  {/* Description */}
+                  <p className="text-gray-300 text-sm md:text-base leading-relaxed mb-6 font-helvetica">
+                    {service.description}
+                  </p>
+
+                  {/* Process Box if available */}
+                  {service.process && (
+                    <div className="mb-6 p-4 rounded-2xl bg-white/[0.04] border border-white/10">
+                      <p className="text-xs uppercase tracking-wider text-brand-yellow font-bold mb-1.5 flex items-center gap-1.5">
+                        <Sparkles className="w-3.5 h-3.5 text-brand-yellow" /> Proceso:
+                      </p>
+                      <p className="text-gray-300 text-xs sm:text-sm leading-relaxed">
+                        {service.process}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Includes checklist */}
+                  <div className="space-y-3 mb-6">
+                    <p className="text-xs uppercase tracking-wider text-white font-bold flex items-center gap-1.5">
+                      <span>✨ Incluye:</span>
+                    </p>
+                    <ul className="space-y-2.5 text-xs sm:text-sm text-gray-200">
+                      {(service.features || []).map((feature: any, idx: number) => {
+                        const text = typeof feature === 'string' ? feature : feature.value
+                        return (
+                          <li key={idx} className="flex items-start gap-2.5">
+                            <CheckCircle className="w-4 h-4 text-brand-yellow shrink-0 mt-0.5" />
+                            <span>{text}</span>
+                          </li>
+                        )
+                      })}
+                    </ul>
+                  </div>
+
+                  {/* Exclusions warning pill */}
+                  {service.exclusions && (
+                    <div className="mb-6 p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/25 text-xs text-amber-200 flex items-start gap-2">
+                      <Info className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                      <span>{service.exclusions}</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Bottom Actions */}
+                <div className="pt-6 border-t border-white/10 space-y-3 mt-4">
                   <Button
-                    className={`w-full bg-gradient-to-r ${service.color || 'from-blue-500 to-blue-600'} hover:opacity-90 text-white font-semibold mt-auto`}
+                    className={`w-full bg-gradient-to-r ${service.colorClass} hover:opacity-95 text-white font-bold py-6 rounded-xl shadow-lg transition-all duration-300`}
                     asChild
                   >
-                    <Link href={service.ctaHref} target="_blank">
-                      Más Información
-                    </Link>
+                    <a
+                      href={service.ctaHref}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <MessageCircle className="w-4 h-4 mr-2" />
+                      Agendar {service.title} por WhatsApp
+                    </a>
                   </Button>
-                </CardContent>
-              </Card>
+                  <div className="text-center">
+                    <a href="#identificar-manto" className="text-xs text-gray-400 hover:text-brand-yellow transition-colors underline">
+                      Ver tarifas según tamaño y manto
+                    </a>
+                  </div>
+                </div>
+              </div>
             ))}
+          </div>
+        )
+      })()}
+
+          {/* OzoneGlow New Service Feature Card */}
+          <div className="mt-12 max-w-6xl mx-auto rounded-3xl bg-gradient-to-r from-gray-900 via-[#161616] to-gray-900 border-2 border-brand-yellow/40 p-6 md:p-8 shadow-2xl relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-80 h-80 bg-brand-yellow/10 rounded-full blur-3xl pointer-events-none" />
+            <div className="grid md:grid-cols-12 gap-6 items-center relative z-10">
+              <div className="md:col-span-8 space-y-3">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-yellow/20 text-brand-yellow text-xs font-bold">
+                  ✨ NUEVO SERVICIO: OZONEGLOW
+                </div>
+                <h3 className="font-heading text-2xl md:text-3xl font-bold text-white">
+                  Vapor + Ozono + Cromoterapia
+                </h3>
+                <p className="text-gray-300 text-sm md:text-base leading-relaxed">
+                  OzoneGlow es una experiencia adicional de spa que combina vapor con ozono + cromoterapia, diseñada para complementar el servicio y brindar un momento de bienestar durante el grooming en nuestra <strong className="text-brand-yellow">Nueva Sede (Calle 118 #15 - 45)</strong>.
+                </p>
+                <div className="flex flex-wrap gap-4 pt-1 text-xs md:text-sm text-gray-200">
+                  <span className="flex items-center gap-1.5">💨 <strong>Vapor:</strong> Humedad y cosmética</span>
+                  <span className="flex items-center gap-1.5">🫧 <strong>Ozono:</strong> Cuidado de piel y pelaje</span>
+                  <span className="flex items-center gap-1.5">🌈 <strong>Cromoterapia:</strong> Relajación</span>
+                </div>
+              </div>
+              <div className="md:col-span-4 flex flex-col gap-3 justify-center">
+                <Button className="bg-gradient-to-r from-[#FFE550] to-[#FFB1BE] text-black font-bold py-6 hover:opacity-90 shadow-lg text-sm" asChild>
+                  <a href={`https://wa.me/573123114435?text=${encodeURIComponent('Hola SANROQUE, me interesa agregar el nuevo servicio OzoneGlow para mi perro en la nueva sede (Calle 118 #15 - 45).')}`} target="_blank" rel="noopener noreferrer">
+                    Agendar OzoneGlow (312 3114435)
+                  </a>
+                </Button>
+                <p className="text-xs text-center text-gray-400">Disponible como complemento de cualquier baño o grooming</p>
+              </div>
+            </div>
           </div>
         </div>
       </section>

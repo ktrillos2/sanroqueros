@@ -84,7 +84,13 @@ export function SpaExperienceSection() {
   const titleLeft = data?.title?.left ?? 'Experiencia'
   const titleYellow = data?.title?.yellow ?? 'Spa 360°'
   const introParas = useMemo(() => extractRichParagraphs(data?.intro), [data?.intro])
-  const experiences: ExpItem[] = data?.experiences ?? []
+  const defaultExperiences: ExpItem[] = [
+    { title: '✨ OzoneGlow Spa', image: '/images/ozone-glow-spa.jpg', description: 'Vapor + ozono + cromoterapia para potenciar la hidratación y el bienestar durante el grooming' },
+    { title: 'Baños Terapéuticos', image: '/images/dog-bubble-bath.webp', description: 'Experiencia relajante con cosmética premium y agua a temperatura ideal' },
+    { title: 'Masajes Especializados', image: '/images/dog-head-massage.webp', description: 'Técnicas profesionales para relajar músculos y reducir el estrés' },
+    { title: 'Ambiente Profesional', image: '/images/spa-reception.webp', description: 'Instalaciones de primera clase sin jaulas en nuestra nueva sede' },
+  ]
+  const experiences: ExpItem[] = data?.experiences?.length ? data.experiences : defaultExperiences
 
   return (
     <section className="py-20 bg-white">

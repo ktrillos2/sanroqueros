@@ -25,13 +25,11 @@ export function FloatingWhatsappButton() {
 
   const principalWhatsapp = useMemo(() => {
     const arr = site?.whatsapps || []
-    return arr.find((w: any) => w?.principal) || arr[0]
+    return arr.find((w: any) => w?.principal) || arr[0] || { numero: '573123114435' }
   }, [site])
 
   const defaultMsg = site?.mensajeWhatsAppPorDefecto || 'Hola, vengo desde la web. Me gustaría agendar una cita para mi mascota.'
-  const whatsappUrl = principalWhatsapp?.numero
-    ? `https://wa.me/${principalWhatsapp.numero}?text=${encodeURIComponent(defaultMsg)}`
-    : undefined
+  const whatsappUrl = `https://wa.me/${principalWhatsapp.numero}?text=${encodeURIComponent(defaultMsg)}`
 
   return (
     whatsappUrl ? (

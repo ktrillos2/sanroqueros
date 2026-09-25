@@ -100,9 +100,9 @@ const StoreLocationGlobal: GlobalConfig = {
         { name: 'description', type: 'text', label: 'Descripción', required: false },
       ],
       defaultValue: [
-        { kind: 'location', title: 'Ubicación Privilegiada', description: 'En el corazón de Bogotá, fácil acceso y parqueadero' },
+        { kind: 'location', title: 'Nueva Sede en Bogotá', description: 'Calle 118 #15 - 45, fácil acceso y parqueadero' },
         { kind: 'hours', title: 'Horarios Flexibles', description: 'Lunes a Sábado: 8:00 AM - 6:00 PM' },
-        { kind: 'whatsapp', title: 'Reservas', description: 'WhatsApp: +57 315 443 3109' },
+        { kind: 'whatsapp', title: 'Reservas & WhatsApp', description: 'WhatsApp: +57 312 311 4435' },
       ],
     },
     {
@@ -110,9 +110,9 @@ const StoreLocationGlobal: GlobalConfig = {
       label: 'Tarjeta de ubicación',
       type: 'group',
       fields: [
-        { name: 'title', label: 'Título', type: 'text', defaultValue: '¿Cómo llegar?' },
-        { name: 'description', label: 'Descripción', type: 'textarea', defaultValue: 'Estamos ubicados en una zona de fácil acceso con parqueadero disponible. Contáctanos para recibir indicaciones detalladas.' },
-        { name: 'cityCountry', label: 'Ciudad, País', type: 'text', defaultValue: 'Bogotá, Colombia' },
+        { name: 'title', label: 'Título', type: 'text', defaultValue: '¿Cómo llegar a nuestra Nueva Sede?' },
+        { name: 'description', label: 'Descripción', type: 'textarea', defaultValue: 'Estamos ubicados en Calle 118 #15 - 45, Bogotá, con parqueadero disponible y fácil acceso. Contáctanos al 312 3114435 para recibir indicaciones detalladas o agendar tu cita.' },
+        { name: 'cityCountry', label: 'Ciudad, País', type: 'text', defaultValue: 'Calle 118 #15 - 45, Bogotá' },
       ],
     },
   ],

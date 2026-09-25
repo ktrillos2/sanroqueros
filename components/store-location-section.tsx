@@ -184,9 +184,9 @@ export function StoreLocationSection() {
 
             <div className="space-y-6">
               {(data?.features ?? [
-                { kind: 'location', title: 'Ubicación Privilegiada', description: 'En el corazón de Bogotá, fácil acceso y parqueadero' },
+                { kind: 'location', title: 'Nueva Sede en Bogotá', description: 'Calle 118 #15 - 45, fácil acceso y parqueadero' },
                 { kind: 'hours', title: 'Horarios Flexibles', description: 'Lunes a Sábado: 8:00 AM - 6:00 PM' },
-                { kind: 'whatsapp', title: 'Reservas', description: 'WhatsApp: +57 315 443 3109' },
+                { kind: 'whatsapp', title: 'Reservas & WhatsApp', description: 'WhatsApp: +57 312 311 4435' },
               ]).map((feature, index) => (
                 <motion.div
                   key={feature.title}
@@ -212,13 +212,13 @@ export function StoreLocationSection() {
 
             <Card className="bg-brand-black text-white border-0">
               <CardContent className="p-6">
-                <h4 className="font-heading text-xl font-bold mb-4 text-brand-yellow">{data?.locationCard?.title ?? '¿Cómo llegar?'}</h4>
+                <h4 className="font-heading text-xl font-bold mb-4 text-brand-yellow">{data?.locationCard?.title ?? '¿Cómo llegar a nuestra Nueva Sede?'}</h4>
                 <p className="text-gray-300 mb-4">
-                  {data?.locationCard?.description ?? 'Estamos ubicados en una zona de fácil acceso con parqueadero disponible. Contáctanos para recibir indicaciones detalladas.'}
+                  {data?.locationCard?.description ?? 'Estamos ubicados en Calle 118 #15 - 45, Bogotá, con parqueadero disponible y fácil acceso. Contáctanos al 312 3114435 para indicaciones o asistencia inmediata.'}
                 </p>
                 {(() => {
-                  const href = site?.ubicacion?.googleMapsUrl || ''
-                  const label = data?.locationCard?.cityCountry ?? site?.ubicacion?.ciudadPais ?? 'Bogotá, Colombia'
+                  const href = site?.ubicacion?.googleMapsUrl || 'https://www.google.com/maps/search/?api=1&query=Calle+118+%2315+-+45+Bogota'
+                  const label = data?.locationCard?.cityCountry ?? (site?.ubicacion?.direccion ? `${site.ubicacion.direccion}, ${site?.ubicacion?.ciudadPais || 'Bogotá'}` : 'Calle 118 #15 - 45, Bogotá')
                   return href ? (
                     <a
                       className="flex items-center gap-2 text-brand-pink hover:underline"
