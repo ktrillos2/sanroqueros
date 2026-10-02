@@ -108,17 +108,16 @@ export default buildConfig({
       }),
     ],
   }),
-  secret: process.env.PAYLOAD_SECRET || 'f3b14529d3cfbeecad885c3bba019a12c4161bb7d2cead633dbe57488053a479',
+  secret: process.env.PAYLOAD_SECRET!,
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
   db: sqliteAdapter({
-    // Para Turso/libSQL se debe pasar el cliente como objeto.
-    // Si no hay variables, hacemos fallback a un archivo local.
-    client:  {
-          url: 'libsql://sanroqueros-ktrillos2.aws-us-east-1.turso.io',
-          authToken: 'eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJpYXQiOjE3NTcwMzgwMDEsImlkIjoiN2FhNjE1NDctMzlkNy00ODljLWIwNzMtZjk3Y2ZmZjlkZWEzIiwicmlkIjoiNzExOWRmYzAtNTE4Ny00NDQyLWIzZGQtMzNlNTYxYTc5M2E5In0.zwvJyOE2SiQQv1H_IcHx0qhGuRFCm_fGghgPQTuWQslxHhEW5XBx9bEMhiJUbVVamWsARAQ7PCPXcXkJtoHLCA',
-        },
+    // Credenciales exclusivamente desde variables de entorno — nunca hardcodeadas
+    client: {
+      url: process.env.TURSO_DATABASE_URL!,
+      authToken: process.env.TURSO_AUTH_TOKEN!,
+    },
   } as any),
   sharp,
   plugins: [

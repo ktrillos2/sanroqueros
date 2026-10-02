@@ -1,8 +1,11 @@
 import { createClient } from '@libsql/client'
 
 export function getTursoClient() {
-  const url = process.env.TURSO_DATABASE_URL || 'libsql://sanroqueros-ktrillos2.aws-us-east-1.turso.io'
-  const authToken = process.env.TURSO_AUTH_TOKEN || 'eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJpYXQiOjE3NTcwMzgwMDEsImlkIjoiN2FhNjE1NDctMzlkNy00ODljLWIwNzMtZjk3Y2ZmZjlkZWEzIiwicmlkIjoiNzExOWRmYzAtNTE4Ny00NDQyLWIzZGQtMzNlNTYxYTc5M2E5In0.zwvJyOE2SiQQv1H_IcHx0qhGuRFCm_fGghgPQTuWQslxHhEW5XBx9bEMhiJUbVVamWsARAQ7PCPXcXkJtoHLCA'
+  const url = process.env.TURSO_DATABASE_URL
+  const authToken = process.env.TURSO_AUTH_TOKEN
+  if (!url || !authToken) {
+    throw new Error('TURSO_DATABASE_URL y TURSO_AUTH_TOKEN son requeridos en las variables de entorno.')
+  }
   return createClient({ url, authToken })
 }
 

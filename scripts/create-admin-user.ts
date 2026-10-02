@@ -5,7 +5,11 @@ const config = require('../payload.config').default
 
 async function main() {
   const email = process.env.NEW_ADMIN_EMAIL || 'contacto@kytcode.lat'
-  const password = process.env.NEW_ADMIN_PASSWORD || 'SanRoque2026*VIP'
+  const password = process.env.NEW_ADMIN_PASSWORD
+  if (!password) {
+    console.error('ERROR: Debes definir NEW_ADMIN_PASSWORD como variable de entorno antes de ejecutar este script.')
+    process.exit(1)
+  }
 
   console.log(`Inicializando Payload para crear usuario: ${email}...`)
   const payload = await getPayload({ config })
