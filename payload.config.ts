@@ -9,6 +9,7 @@ import sharp from 'sharp'
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { Posts } from './collections/Posts'
+import { Surveys } from './collections/Surveys'
 import SiteSettings from './globals/SiteSettings'
 import HeaderGlobal from './globals/Header'
 import HomeHeroGlobal from './globals/HomeHero'
@@ -62,7 +63,7 @@ export default buildConfig({
       }
       : undefined,
   } as any,
-  collections: [Users, Media, Posts],
+  collections: [Users, Media, Posts, Surveys],
   i18n: {
     supportedLanguages: { es },
   },

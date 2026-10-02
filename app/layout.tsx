@@ -6,6 +6,7 @@ import "./globals.css"
 import { ConditionalWhatsapp } from "@/components/conditional-whatsapp"
 import GlobalFetchLoader from "@/components/global-fetch-loader"
 import { Footer } from "@/components/footer"
+import { ConditionalFooter } from "@/components/conditional-footer"
 import { getSiteSettings } from "@/lib/site-settings"
 import { Toaster } from "@/components/ui/toaster"
 
@@ -163,7 +164,9 @@ export default function RootLayout({
         {children}
         <ConditionalWhatsapp />
         {/* Footer global */}
-        <Footer />
+        <ConditionalFooter>
+          <Footer />
+        </ConditionalFooter>
       </body>
     </html>
   )

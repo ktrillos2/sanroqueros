@@ -1,9 +1,11 @@
 "use client"
-import { usePathname } from "next/navigation"
-import { FloatingWhatsappButton } from "@/components/floating-whatsapp-button"
 
-export function ConditionalWhatsapp() {
+import { usePathname } from "next/navigation"
+import type React from "react"
+
+export function ConditionalFooter({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
+
   if (
     pathname?.startsWith("/admin") ||
     pathname === "/redes" ||
@@ -12,6 +14,6 @@ export function ConditionalWhatsapp() {
   ) {
     return null
   }
-  return <FloatingWhatsappButton />
-}
 
+  return <>{children}</>
+}
