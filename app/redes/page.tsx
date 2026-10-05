@@ -3,12 +3,12 @@ import { getSiteSettings } from "@/lib/site-settings"
 import { RedesClient } from "./redes-client"
 
 export const metadata: Metadata = {
-  title: "Redes Sociales y Enlaces Oficiales | SANROQUE Pet Spa",
+  title: "Elige tu sede | SANROQUE Spa & Bienestar para Mascotas",
   description:
-    "Conéctate con SANROQUE: WhatsApp de citas, Instagram, TikTok, Facebook, ubicación en Bogotá y encuesta de satisfacción.",
+    "Elige tu sede de SANROQUE en Bogotá: Cedritos (Calle 140) o Santa Bárbara (Calle 118). Agenda tu cita por WhatsApp, califica tu experiencia o visita nuestro sitio web.",
   openGraph: {
-    title: "SANROQUE Pet Spa | Enlaces y Redes Oficiales",
-    description: "Accede rápidamente a nuestro WhatsApp, redes sociales, ubicación y catálogo.",
+    title: "Elige tu sede | SANROQUE Pet Spa",
+    description: "Sede Cedritos (Calle 140) y Sede Santa Bárbara (Calle 118). Cuidado boutique libre de estrés para perros y gatos.",
     locale: "es_CO",
     type: "website",
   },
