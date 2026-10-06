@@ -99,20 +99,33 @@ export function RedesClient({ siteSettings }: RedesClientProps) {
   const tiktokUrl = social?.tiktok || "https://www.tiktok.com/@sanroquetupetspa"
   const youtubeUrl = social?.youtube || "https://www.youtube.com/@sanroquetupetspa"
 
-  // Número único de SANROQUE para ambas sedes
-  const principalWa =
-    (siteSettings?.whatsapps || []).find((w: any) => w?.principal) || siteSettings?.whatsapps?.[0]
-  const waNumber = principalWa?.numero || "573123114435"
-  const waDisplay = principalWa?.mostrar || "+57 312 311 4435"
+  // Números de WhatsApp por sede
+  const waNumbers = siteSettings?.whatsapps || []
+  // Sede 140 – Cedritos
+  const waCedritos =
+    waNumbers.find((w: any) => w?.sede === '140' || w?.label?.includes('140') || w?.label?.includes('Cedritos'))
+    || { numero: '573154433109', mostrar: '+57 315 443 3109' }
+  // Sede 118 – Santa Bárbara (número principal/fallback)
+  const waSantaBarbara =
+    waNumbers.find((w: any) => w?.sede === '118' || w?.label?.includes('118') || w?.label?.includes('Santa'))
+    || waNumbers.find((w: any) => w?.principal)
+    || { numero: '573123114435', mostrar: '+57 312 311 4435' }
 
-  const buildWaUrl = (message: string) =>
-    `https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`
+  // Para el modal "Prefiero llamar" se usa el número de la sede 118 (o principal)
+  const principalWa = waSantaBarbara
+  const waNumber = principalWa?.numero || '573123114435'
+  const waDisplay = principalWa?.mostrar || '+57 312 311 4435'
+
+  const buildWaUrl = (numero: string, message: string) =>
+    `https://wa.me/${numero}?text=${encodeURIComponent(message)}`
 
   const waCedritosUrl = buildWaUrl(
-    "Hola SANROQUE, me comunico para agendar una cita en la sede Cedritos (Calle 140)."
+    waCedritos?.numero || '573154433109',
+    'Hola 😀 ! Estoy en el Instagram y me encantaría conocer la experiencia SanRoque en Cedritos 140 😺🐶, tengo un ______'
   )
   const waSantaBarbaraUrl = buildWaUrl(
-    "Hola SANROQUE, me comunico para agendar una cita en la sede Santa Bárbara (Calle 118)."
+    waSantaBarbara?.numero || '573123114435',
+    'Hola 😀 ! Estoy en el Instagram y me encantaría conocer la experiencia SanRoque en Santa Bárbara 118 😺🐶, tengo ______'
   )
 
   // Google Review URL
